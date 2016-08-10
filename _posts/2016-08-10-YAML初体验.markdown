@@ -52,5 +52,15 @@ def foo:
 a=[1,2,3]
 ```
 
+$$-\infty,x_1$$
+
+<script type="math/tex; mode=display">
+    O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}
+</script>
+
+
+* any list
+{:toc}
+
 
 
