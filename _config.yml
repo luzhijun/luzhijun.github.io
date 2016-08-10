@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: trucyluce0@gmail.com
 description: "我想静静"
 keyword: "关键字"
-url: "luzhijun.github.io"              # your host, for absolute URL
+url: "https://luzhijun.github.io"              # your host, for absolute URL
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
@@ -63,7 +63,7 @@ duoshuo_share: true                     # set to false if you want to use Commen
 ba_track_id: c07b62da6a94126e41877e6b30e15413
 # Google Analytics
 ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: huangxuan.me
+ga_domain: https://luzhijun.github.io
 
 
 
