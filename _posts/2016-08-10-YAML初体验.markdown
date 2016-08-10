@@ -33,11 +33,17 @@ YAML 支持的数据结构有三种。
 
 {% highlight python linenos%}
 def foo:
-
-  puts 'foo'
-  
+  puts 'foo' 
 a=[1,2,3]
-
+print(a)
+def foo:
+  puts 'foo' 
+a=[1,2,3]
+print(a)
+def foo:
+  puts 'foo' 
+a=[1,2,3]
+print(a)
 {% endhighlight %}
 
 ```python
