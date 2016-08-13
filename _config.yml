@@ -48,7 +48,7 @@ kramdown:
     - autolink
     - footnotes
     - smart
-  use_coderay: false
+  enable_coderay: false
   syntax_highlighter: rouge
   coderay:
     coderay_wrap: div

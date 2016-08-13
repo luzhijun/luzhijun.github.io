@@ -4,12 +4,15 @@ title:      "YAML 初体验"
 subtitle:   "YAML从标记语言阵营走出并应以为傲，宣称JSON是自己小弟"
 date:       2016-08-10
 author:     "T.L"
-header-img: "img/post-bg-js-version.jpg"
+header-img: "img/post-bg-js-apple.jpg"
 tags:
     - 语言
 ---
 
 **YAML is a human friendly data serialization standard for all programming languages.——official site**
+
+* any list
+{:toc}
 
 赞一下这个名字，YAML（YAML Ain't Markup Language） （/ˈjæməl/ ），戏谑得不行，本身就是递归的写法，起初他还是叫"Yet Another Markup Language"（另外一种置标语言）。但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名，YAML的官方定义很简单，即
 **一种人性化的数据格式定义语言**
@@ -27,40 +30,12 @@ YAML 支持的数据结构有三种。
 * 数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）
 * 纯量（scalars）：单个的、不可再分的值
 
-这里以python版本的YAML作为示例:[ruamel.yaml](https://pypi.python.org/pypi/ruamel.yaml)以下为在jupyter运行内容。
 
+### python 运行YAML案例
+这里以python版本的YAML作为示例:[ruamel.yaml](https://pypi.python.org/pypi/ruamel.yaml)以下为在jupyter运行内容。
 [点击查看](/html/YAML.html)
 
-{% highlight python linenos%}
-def foo:
-  puts 'foo' 
-a=[1,2,3]
-print(a)
-def foo:
-  puts 'foo' 
-a=[1,2,3]
-print(a)
-def foo:
-  puts 'foo' 
-a=[1,2,3]
-print(a)
-{% endhighlight %}
 
-```python
-def foo:
-  puts 'foo'  
-a=[1,2,3]
-```
-
-$$-\infty,x_1$$
-
-<script type="math/tex; mode=display">
-    O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}
-</script>
-
-
-* any list
-{:toc}
 
 
 
