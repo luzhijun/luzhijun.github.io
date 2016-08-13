@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Example Post"
+title:      "unix-note"
 subtitle:   "不适合人类阅读，非常水的自我笔记"
 date:       2015-04-14
 author:     "Hux"
