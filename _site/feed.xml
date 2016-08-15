@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>T.L</title>
+    <title>T.L Blog</title>
     <description>我想静静</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 15 Aug 2016 11:07:43 +0800</pubDate>
-    <lastBuildDate>Mon, 15 Aug 2016 11:07:43 +0800</lastBuildDate>
+    <pubDate>Mon, 15 Aug 2016 12:03:27 +0800</pubDate>
+    <lastBuildDate>Mon, 15 Aug 2016 12:03:27 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
