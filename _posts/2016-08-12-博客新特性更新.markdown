@@ -2,7 +2,7 @@
 layout:     post
 title:      "博客新特性更新"
 subtitle:   "修复原版部分bug，更新样式显示"
-date:       2016-08-10
+date:       2016-08-12
 author:     "T.L"
 header-img: "img/post-bg-kuaidi.jpg"
 tags:
@@ -89,12 +89,3 @@ O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}
 $$O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}$$  
 
 $O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}$
-
-
-
-    
-  
-
-
-
-

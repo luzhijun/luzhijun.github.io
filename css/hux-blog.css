@@ -124,9 +124,31 @@ img.shadow {
     background: white;
   }
 }
-.table th,
-.table td {
-  border: 1px solid #eee !important;
+.table thead, .table tr {
+border-top-width: 1px;
+border-top-style: solid;
+border-top-color: #A8BFDE;
+}
+.table {
+border-bottom-width: 1px;
+border-bottom-style: solid;
+border-bottom-color: #A8BFDE;
+}
+
+/* Padding and font style */
+.table td, .table th {
+padding: 5px 10px;
+font-size: 12px;
+font-family: Verdana;
+color: #5B7CB1;
+}
+
+/* Alternating background colors */
+.table tr:nth-child(even) {
+background: #D3DFED
+}
+.table tr:nth-child(odd) {
+background: #FFF
 }
 hr.small {
   max-width: 100px;
