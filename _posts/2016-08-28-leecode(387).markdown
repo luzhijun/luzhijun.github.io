@@ -1,0 +1,82 @@
+---
+layout:     post
+title:      "Leecode(387)"
+subtitle:   "First Unique Character in a String"
+date:       2016-08-16
+author:     "T.L"
+header-img: "img/post-bg-cube.jpg"
+tags:
+    - 算法题
+    - python
+---
+### 题目
+从一个字符串中找出第一个非重复字符，输出所在字符串中的位置，如果不存在，输出-1.  
+难度评价：简单  
+
+### 例子
+>Examples:  
+ s = "leetcode"  
+ return 0.  
+ s = "loveleetcode",  
+ return 2.
+
+### 解法
+思路很简单，就是对每个字符计数，然后找出计数为1的字符输出。既然要输出索引，那么就要想办法在计数的时候就把索引信息输进去，千万别用index(x)或者find(x)方法来增大时间开销。
+
+第一种方法，利用Ordereddict. Ordereddict为python中的顺序字典，存储结构为FIFO的链式。
+
+```python
+from collections import OrderedDict
+def firstUniqChar1(string):
+    """
+    :type s: str
+    :rtype: int
+    """
+    o=OrderedDict()
+    for i,s in enumerate(string):
+        if o.get(s)==None:
+            o[s]=i
+        else:
+            o[s]=-1
+    for  oi in o:
+        if o[oi]!=-1:
+            return o[oi]
+    return -1
+```
+上述程序设置OrderedDict初始值都为字符所在索引值，若有重复标记为-1，那么结果中只要查第一个非-1的item即可拿到索引。程序中用OrderedDict保持索引顺序性，但实际上字符串本身就有顺序性，只需要一个普通字典就可以了，以字符串为字典的键，无需OrderedDict这种高昂的结构。
+
+第二种方法，利用collections中的计数字典Counter来替代
+
+```python
+from collections import Counter
+def firstUniqChar2(string):
+    char_dict = Counter(list(string))     
+    for i, s in enumerate(string):
+        if not char_dict[s]-1:
+            return i
+    return -1
+```
+
+其实仔细想想字典的键值既然都是字符，那么其ASCII码对应的整数可以用数组索引表示。初始化一个128位的字符数组即可表示所有可能的拉丁字符,对应字典中的键值。
+
+```python
+def firstUniqChar3(string):
+    chars=[0]*128
+    for s in string:
+        chars[ord(s)]+=1
+    for i,s in enumerate(string):
+        if chars[ord(s)]==1:
+            return i        
+    return -1
+```
+
+以上三种数据结构虽然都能解决问题，但时间复杂度明显有差距，尤其是第三种。
+以"dddccdbba"为例，重复1万次，对应时间做成柱状图如下：  
+![](http://oc5ofszxe.bkt.clouddn.com/16-8-28/9428434.jpg)
+
+### 总结
+能用数组尽量数组，当键值为整数或者字符的时候，数组完全可以替代字典的功能。
+
+
+
+

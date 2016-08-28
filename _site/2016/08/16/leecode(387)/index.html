@@ -10,9 +10,9 @@
     <meta name="keyword"  content="关键字">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>楚汐|Trucy Luce Blog</title>
+    <title>Leecode(387) - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/">
+    <link rel="canonical" href="https://luzhijun.github.io/2016/08/16/leecode(387)/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -123,365 +123,244 @@
 </script>
 
 
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-cube.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-cube.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>T.L Blog</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">大道至简</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#算法题" title="算法题">算法题</a>
+                        
+                        <a class="tag" href="/tags/#python" title="python">python</a>
+                        
+                    </div>
+                    <h1>Leecode(387)</h1>
+                    
+                    
+                    <h2 class="subheading">First Unique Character in a String</h2>
+                    
+                    <span class="meta">Posted by T.L on August 16, 2016</span>
                 </div>
             </div>
         </div>
     </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-	<div class="row">
-        
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
-    		<div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-    			
-<div class="post-preview">
-    <a href="/2016/08/16/leecode(387)/">
-        <h2 class="post-title">
-            Leecode(387)
-        </h2>
-        
-        <h3 class="post-subtitle">
-            First Unique Character in a String
-        </h3>
-        
-        <div class="post-content-preview">
-            题目
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<h3 id="section">题目</h3>
+<p>从一个字符串中找出第一个非重复字符，输出所在字符串中的位置，如果不存在，输出-1.<br />
+难度评价：简单</p>
+
+<h3 id="section-1">例子</h3>
+<blockquote>
+  <p>Examples:<br />
+ s = “leetcode”<br />
+ return 0.<br />
+ s = “loveleetcode”,<br />
+ return 2.</p>
+</blockquote>
+
+<h3 id="section-2">解法</h3>
+<p>思路很简单，就是对每个字符计数，然后找出计数为1的字符输出。既然要输出索引，那么就要想办法在计数的时候就把索引信息输进去，千万别用index(x)或者find(x)方法来增大时间开销。</p>
+
+<p>第一种方法，利用Ordereddict. Ordereddict为python中的顺序字典，存储结构为FIFO的链式。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="k">def</span> <span class="nf">firstUniqChar1</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="s">"""
+    :type s: str
+    :rtype: int
+    """</span>
+    <span class="n">o</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">==</span><span class="bp">None</span><span class="p">:</span>
+            <span class="n">o</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">o</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="k">for</span>  <span class="n">oi</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre>
+</div>
+<p>上述程序设置OrderedDict初始值都为字符所在索引值，若有重复标记为-1，那么结果中只要查第一个非-1的item即可拿到索引。程序中用OrderedDict保持索引顺序性，但实际上字符串本身就有顺序性，只需要一个普通字典就可以了，以字符串为字典的键，无需OrderedDict这种高昂的结构。</p>
+
+<p>第二种方法，利用collections中的计数字典Counter来替代</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="k">def</span> <span class="nf">firstUniqChar2</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">char_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>     
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">char_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre>
+</div>
+
+<p>其实仔细想想字典的键值既然都是字符，那么其ASCII码对应的整数可以用数组索引表示。初始化一个128位的字符数组即可表示所有可能的拉丁字符,对应字典中的键值。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">firstUniqChar3</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">chars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">128</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
+        <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>        
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre>
+</div>
+
+<p>以上三种数据结构虽然都能解决问题，但时间复杂度明显有差距，尤其是第三种。
+以”dddccdbba”为例，重复1万次，对应时间做成柱状图如下：<br />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-8-28/9428434.jpg" alt="" /></p>
+
+<h3 id="section-3">总结</h3>
+<p>能用数组尽量数组，当键值为整数或者字符的时候，数组完全可以替代字典的功能。</p>
+
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/08/16/leecode(387)"
+                    data-title="Leecode(387)"
+                    data-url="https://luzhijun.github.io/2016/08/16/leecode(387)/"
+                    data-images="https://luzhijun.github.io/img/post-bg-cube.jpg"
+                    data-content="题目
 从一个字符串中找出第一个非重复字符，输出所在字符串中的位置，如果不存在，输出-1.
 难度评价：简单
 
 例子
 
   Examples:
- s = “leetcode”
- return 0.
- s = “loveleetcode”,
- return 2.
+ s = “l... | 楚汐|Trucy Luce Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
 
 
-解法
-思路很简单，就是对每个字符计数，然后找出计数为1的字符输出。既然要输出索引，那么就要想办法在计数的时候就把索引信息输进去，千万...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by T.L on August 16, 2016
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90-copy/">
-        <h2 class="post-title">
-            RSS订阅源整理
-        </h2>
-        
-        <h3 class="post-subtitle">
-            适合kindle电子书推送
-        </h3>
-        
-        <div class="post-content-preview">
-            
-  
-    
-      Title
-      HTML URL
-      XML URL
-    
-  
-  
-    
-      Beyond the Void
-      http://www.byvoid.com/
-      https://www.byvoid.com/blog/feed
-    
-    
-      中文互联网数据研究资讯中心
-      http:...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by T.L on August 16, 2016
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/">
-        <h2 class="post-title">
-            博客新特性更新
-        </h2>
-        
-        <h3 class="post-subtitle">
-            修复原版部分bug，更新样式显示
-        </h3>
-        
-        <div class="post-content-preview">
-            新博客模板或许作者不更新了，部署了之后发现了一些bug。让一个程序员做前端的细节优化还真是耗时间呐，ok这次更新主要集中在以下三方面：
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90-copy/" data-toggle="tooltip" data-placement="top" title="RSS订阅源整理">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
 
 
-  解决代码显示问题
-  更改高亮样式
-  添加latex公式支持
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/08/16/leecode(387)"
+                        data-title="Leecode(387)"
+                        data-url="https://luzhijun.github.io/2016/08/16/leecode(387)/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
 
+                
 
-更改高亮样式
-使用rouge重新生成了github样式，喜欢这种简明的风格，也很简单。
-rouge专注语法高亮，纯ruby代码，支持主题在https://github.com/jne...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by T.L on August 12, 2016
-    </p>
-</div>
-<hr>
+            </div>
 
-<div class="post-preview">
-    <a href="/2016/08/10/YAML%E5%88%9D%E4%BD%93%E9%AA%8C/">
-        <h2 class="post-title">
-            YAML 初体验
-        </h2>
-        
-        <h3 class="post-subtitle">
-            YAML从标记语言阵营走出并应以为傲，宣称JSON是自己小弟
-        </h3>
-        
-        <div class="post-content-preview">
-            YAML is a human friendly data serialization standard for all programming languages.——official site
-
-
-  YAML vs JSON
-  数据结构
-  python 运行YAML案例
-
-
-赞一下这个名字，YAML（YAML Ain’t Markup Language） （/ˈjæməl/ ），戏...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by T.L on August 10, 2016
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2015/09/22/js-version/">
-        <h2 class="post-title">
-            ES5, ES6, ES2016
-        </h2>
-        
-        <h3 class="post-subtitle">
-            ES5, ES6, ES2016, ES.Next: What's going on with JavaScript versioning?
-        </h3>
-        
-        <div class="post-content-preview">
-            JavaScript 有着很奇怪的命名史。
-
-1995 年，它作为网景浏览器（Netscape Navigator）的一部分首次发布，网景给这个新语言命名为 LiveScript。一年后，为了搭上当时媒体热炒 Java 的顺风车，临时改名为了 JavaScript （当然，Java 和 JavaScript 的关系，就和雷锋和雷锋塔一样 —— 并没有什么关系）
-
-
-歪果仁的笑话怎么一点都不好...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Hux on September 22, 2015
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2015/07/09/js-module-7day/">
-        <h2 class="post-title">
-            Example Post using Keynote Layout
-        </h2>
-        
-        <h3 class="post-subtitle">
-            Keynote: JavaScript Modularization Journey
-        </h3>
-        
-        <div class="post-content-preview">
-            
-  下滑这里查看更多内容
-
-
-7月9日，我在公司内部进行了名为「JavaScript 模块化七日谈」分享，并将该 Slides 分享到了微博上。出乎意料地，这篇微博先后被 @JS小组 @尤小右 @寸志 等近 200 人转发，阅读达到 10w，获得了还不错的评价。
-
-于是，我决定将它重新发到我的博客上，并为它专门制作了适用于 Keynote 展示文稿的新布局。它能自动根据屏幕大小/旋转以一定...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Hux on July 9, 2015
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2015/04/14/unix-linux-note/">
-        <h2 class="post-title">
-            unix-note
-        </h2>
-        
-        <h3 class="post-subtitle">
-            不适合人类阅读，非常水的自我笔记
-        </h3>
-        
-        <div class="post-content-preview">
-            
-  This document is not completed and will be updated anytime.
-
-
-Catagory
-
-
-  Unix
-    
-      Bell Labs
-      Xenix
-      BSD
-      FreeBSD &amp; Apple
-      NeXTStep
-      Darwin
-      POSIX
-    
-...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Hux on April 14, 2015
-    </p>
-</div>
-<hr>
-
-
-<!-- Pager -->
-
-
-    		</div>
     <!-- Sidebar Container -->
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <hr class="hidden-sm hidden-xs">
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                                <a href="/tags/#前端开发" title="前端开发" rel="2">
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
                                     前端开发
                                 </a>
                             
-                        
+        				
                             
-                                <a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
                                     JavaScript
                                 </a>
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
-                    </div>
+        				
+        			</div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-                        
-                            <img src="/img/avatar-tl.jpg" />
-                        
-                        
-                            <p>敲敲代码，写写博客，听听音乐，出去走走。</p>
-                        
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa  fa-stack-1x fa-inverse">知</i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            <li>
-                                <a target="_blank" href="http://weibo.com/TrucyLuce">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://www.facebook.com/TrucyLuce">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://github.com/luzhijun">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                </section>
                 <!-- Friends Blog -->
                 
                 <hr>
@@ -500,10 +379,70 @@ Catagory
                     
                 </ul>
                 
-    		</div>
-        
-	</div>
-</div>
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'TrucyLuce';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->
