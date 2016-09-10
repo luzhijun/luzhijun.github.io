@@ -99,11 +99,11 @@ friends: [
         title: "Hux Blog",
         href: "http://huangxuan.me"
     },{
-        title: "Foo",
-        href: "#"
+        title: "在线时序图",
+        href: "http://echoma.github.io/text_sequence_diagram/"
     },{
-        title: "Bar",
-        href: "#"
+        title: "在线思维导图",
+        href: "http://naotu.baidu.com/"
     },{
         title: "Example Friends",
         href: "#"
