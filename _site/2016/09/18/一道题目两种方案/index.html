@@ -186,25 +186,25 @@ MathJax.Hub.Config({
 <p>具体题目网上没有搜到，那就造点数据来说明下。<br />
 首先造张员工表和部门表，结构如下：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>mysql&gt; describe Employee;
-+--------------+-------------------+------+-----+---------+----------------+
-| Field        | Type              | Null | Key | Default | Extra          |
-+--------------+-------------------+------+-----+---------+----------------+
-| Id           | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
-| Name         | varchar(6)        | NO   |     | NULL    |                |
-| Gender       | enum('男','女') | YES  |     | NULL    |                |
-| Birthday     | date              | YES  |     | NULL    |                |
-| Salary       | decimal(7,2)      | YES  |     | 0.00    |                |
-| DepartmentId | int(10) unsigned  | NO   | MUL | NULL    |                |
-+--------------+-------------------+------+-----+---------+----------------+
-mysql&gt; describe Department;
-+-------+------------------+------+-----+---------+----------------+
-| Field | Type             | Null | Key | Default | Extra          |
-+-------+------------------+------+-----+---------+----------------+
-| Id    | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
-| Name  | varchar(15)      | NO   |     | NULL    |                |
-+-------+------------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">describe</span> <span class="n">Employee</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">--------------+-------------------+------+-----+---------+----------------+</span>
+<span class="o">|</span> <span class="n">Field</span>        <span class="o">|</span> <span class="k">Type</span>              <span class="o">|</span> <span class="k">Null</span> <span class="o">|</span> <span class="k">Key</span> <span class="o">|</span> <span class="k">Default</span> <span class="o">|</span> <span class="n">Extra</span>          <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+-------------------+------+-----+---------+----------------+</span>
+<span class="o">|</span> <span class="n">Id</span>           <span class="o">|</span> <span class="n">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span>  <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span> <span class="n">PRI</span> <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span> <span class="n">auto_increment</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>        <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Gender</span>       <span class="o">|</span> <span class="n">enum</span><span class="p">(</span><span class="s1">'男'</span><span class="p">,</span><span class="s1">'女'</span><span class="p">)</span> <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Birthday</span>     <span class="o">|</span> <span class="n">date</span>              <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Salary</span>       <span class="o">|</span> <span class="n">decimal</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>      <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="mi">0</span><span class="p">.</span><span class="mi">00</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">DepartmentId</span> <span class="o">|</span> <span class="n">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span>  <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span> <span class="n">MUL</span> <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+-------------------+------+-----+---------+----------------+</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">describe</span> <span class="n">Department</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------+------------------+------+-----+---------+----------------+</span>
+<span class="o">|</span> <span class="n">Field</span> <span class="o">|</span> <span class="k">Type</span>             <span class="o">|</span> <span class="k">Null</span> <span class="o">|</span> <span class="k">Key</span> <span class="o">|</span> <span class="k">Default</span> <span class="o">|</span> <span class="n">Extra</span>          <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+------------------+------+-----+---------+----------------+</span>
+<span class="o">|</span> <span class="n">Id</span>    <span class="o">|</span> <span class="n">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span> <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span> <span class="n">PRI</span> <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span> <span class="n">auto_increment</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Name</span>  <span class="o">|</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>      <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+------------------+------+-----+---------+----------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -460,6 +460,7 @@ mysql&gt; describe Department;
 <span class="k">where</span> <span class="n">computed</span><span class="p">.</span><span class="n">Rank</span><span class="o">&lt;=</span><span class="mi">3</span><span class="p">;</span>
 </code></pre>
 </div>
+
 <p>方案一的槽点1：SELECT DISTINCT 没优化，应该先select 。。。 from （select distinct(…) form …).<br />
 槽点2:两张表做笛卡尔乘积来比较，要死的节奏。</p>
 
@@ -486,32 +487,33 @@ hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce�
   <span class="c1">--warehouse-dir  /tmp/sqoop/</span>
 </code></pre>
 </div>
+
 <p>–hive-delims-replacement这个参数习惯上加上，虽然我们知道数据中没有’\001\002\003’字符（hive的默认数据分隔、数组分隔、字典分隔），会把出现的这些字符替换成’,’。<br />
   –warehouse-dir：生成的中转文件目录，后面如果重复执行，最好的换目录。导入到hive其实分两步，第一步先将数据库表导入到hadoop中，临时文件存储位置可以自定： –target-dir or –warehouse-dir参数。千万别把–warehouse-dir设置为hive仓库位置，因为第二部就是load data到仓库语句，可能会出现冲突。<br />
  –num-mappers  1 可选参数，根据实际业务量配置，如果配置多个，中间文件也会被分区成多个，默认按主键分区。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>...
-Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
-OK
-Time taken: 2.341 seconds    #第一部分时间
-Loading data to table default.department
-Table default.department stats: [numFiles=1, totalSize=34]
-OK
-Time taken: 0.755 seconds    #第二部分时间
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">Logging</span> <span class="n">initialized</span> <span class="k">using</span> <span class="n">configuration</span> <span class="k">in</span> <span class="n">jar</span><span class="p">:</span><span class="n">file</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">cloudera</span><span class="o">/</span><span class="n">parcels</span><span class="o">/</span><span class="n">CDH</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">p0</span><span class="p">.</span><span class="mi">45</span><span class="o">/</span><span class="n">jars</span><span class="o">/</span><span class="n">hive</span><span class="o">-</span><span class="n">common</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">jar</span><span class="o">!/</span><span class="n">hive</span><span class="o">-</span><span class="n">log4j</span><span class="p">.</span><span class="n">properties</span>
+<span class="n">OK</span>
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">2</span><span class="p">.</span><span class="mi">341</span> <span class="n">seconds</span>    <span class="o">#</span><span class="err">第一部分时间</span>
+<span class="n">Loading</span> <span class="k">data</span> <span class="k">to</span> <span class="k">table</span> <span class="k">default</span><span class="p">.</span><span class="n">department</span>
+<span class="k">Table</span> <span class="k">default</span><span class="p">.</span><span class="n">department</span> <span class="n">stats</span><span class="p">:</span> <span class="p">[</span><span class="n">numFiles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">totalSize</span><span class="o">=</span><span class="mi">34</span><span class="p">]</span>
+<span class="n">OK</span>
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">755</span> <span class="n">seconds</span>    <span class="o">#</span><span class="err">第二部分时间</span>
 
-#查询下结果
-beeline&gt; !connect jdbc:hive2://node3:10000/default
-0: jdbc:hive2://node3:10000/default&gt; SELECT * FROM department;
-+----------------+------------------+--+
-| department.id  | department.name  |
-+----------------+------------------+--+
-| 1              | HR               |
-| 2              | IT               |
-| 3              | TEST             |
-| 4              | ADMIN            |
-| 5              | MARKET           |
-+----------------+------------------+--+
-5 rows selected (0.386 seconds)
+<span class="o">#</span><span class="err">查询下结果</span>
+<span class="n">beeline</span><span class="o">&gt;</span> <span class="o">!</span><span class="k">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">hive2</span><span class="p">:</span><span class="o">//</span><span class="n">node3</span><span class="p">:</span><span class="mi">10000</span><span class="o">/</span><span class="k">default</span>
+<span class="mi">0</span><span class="p">:</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">hive2</span><span class="p">:</span><span class="o">//</span><span class="n">node3</span><span class="p">:</span><span class="mi">10000</span><span class="o">/</span><span class="k">default</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">department</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------------+------------------+--+</span>
+<span class="o">|</span> <span class="n">department</span><span class="p">.</span><span class="n">id</span>  <span class="o">|</span> <span class="n">department</span><span class="p">.</span><span class="n">name</span>  <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+------------------+--+</span>
+<span class="o">|</span> <span class="mi">1</span>              <span class="o">|</span> <span class="n">HR</span>               <span class="o">|</span>
+<span class="o">|</span> <span class="mi">2</span>              <span class="o">|</span> <span class="n">IT</span>               <span class="o">|</span>
+<span class="o">|</span> <span class="mi">3</span>              <span class="o">|</span> <span class="n">TEST</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="mi">4</span>              <span class="o">|</span> <span class="k">ADMIN</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="mi">5</span>              <span class="o">|</span> <span class="n">MARKET</span>           <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+------------------+--+</span>
+<span class="mi">5</span> <span class="k">rows</span> <span class="n">selected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">386</span> <span class="n">seconds</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -544,18 +546,18 @@ beeline&gt; !connect jdbc:hive2://node3:10000/default
   <span class="c1">--map-column-hive Birthday="DATE" \</span>
   <span class="c1">--num-mappers  1 \</span>
   <span class="c1">--warehouse-dir  /tmp/sqoop4/</span>
- <span class="nv">`</span><span class="se">``</span><span class="nv">
-参数解释下：
---map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
---where "Gender=2" </span><span class="se">\ </span><span class="nv"> 
---columns "Id,Name,Birthday,Salary,DepartmentId" </span><span class="se">\ </span><span class="nv"> 
---hive-partition-key Gender</span><span class="se">\ </span><span class="nv"> 
---hive-partition-value 'Woman' </span><span class="se">\ </span><span class="nv"> 
-以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" </span><span class="se">\ </span><span class="nv"> --hive-partition-value 'Woman' </span><span class="se">\即</span><span class="nv">可。
+</code></pre>
+</div>
 
+<p>参数解释下：
+–map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。<br />
+–where “Gender=2” \<br />
+–columns “Id,Name,Birthday,Salary,DepartmentId” \<br />
+–hive-partition-key Gender\<br />
+–hive-partition-value ‘Woman’ \<br />
+以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  –where “Gender=2” \  –hive-partition-value ‘Woman’ \即可。</p>
 
-</span><span class="se">``</span><span class="nv">`</span><span class="k">sql</span>
-<span class="p">...</span>
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="p">...</span>
 <span class="n">Logging</span> <span class="n">initialized</span> <span class="k">using</span> <span class="n">configuration</span> <span class="k">in</span> <span class="n">jar</span><span class="p">:</span><span class="n">file</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">cloudera</span><span class="o">/</span><span class="n">parcels</span><span class="o">/</span><span class="n">CDH</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">p0</span><span class="p">.</span><span class="mi">45</span><span class="o">/</span><span class="n">jars</span><span class="o">/</span><span class="n">hive</span><span class="o">-</span><span class="n">common</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">jar</span><span class="o">!/</span><span class="n">hive</span><span class="o">-</span><span class="n">log4j</span><span class="p">.</span><span class="n">properties</span>
 <span class="n">OK</span>
 <span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">1</span><span class="p">.</span><span class="mi">809</span> <span class="n">seconds</span>

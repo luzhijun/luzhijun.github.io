@@ -17,7 +17,7 @@ tags:
 具体题目网上没有搜到，那就造点数据来说明下。  
 首先造张员工表和部门表，结构如下：
 
-```
+```sql
 mysql> describe Employee;
 +--------------+-------------------+------+-----+---------+----------------+
 | Field        | Type              | Null | Key | Default | Extra          |
@@ -132,6 +132,7 @@ join Department d
 on computed.DepartmentId=d.Id
 where computed.Rank<=3;
 ```
+
 方案一的槽点1：SELECT DISTINCT 没优化，应该先select 。。。 from （select distinct(...) form ...).  
 槽点2:两张表做笛卡尔乘积来比较，要死的节奏。
 
@@ -158,11 +159,12 @@ sqoop import \
   --hive-delims-replacement ','
   --warehouse-dir  /tmp/sqoop/
 ```
+
   --hive-delims-replacement这个参数习惯上加上，虽然我们知道数据中没有'\001\002\003'字符（hive的默认数据分隔、数组分隔、字典分隔），会把出现的这些字符替换成','。  
   --warehouse-dir：生成的中转文件目录，后面如果重复执行，最好的换目录。导入到hive其实分两步，第一步先将数据库表导入到hadoop中，临时文件存储位置可以自定： --target-dir or --warehouse-dir参数。千万别把--warehouse-dir设置为hive仓库位置，因为第二部就是load data到仓库语句，可能会出现冲突。  
  --num-mappers  1 可选参数，根据实际业务量配置，如果配置多个，中间文件也会被分区成多个，默认按主键分区。  
  
-```
+```sql
 ...
 Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
 OK
@@ -187,7 +189,7 @@ beeline> !connect jdbc:hive2://node3:10000/default
 5 rows selected (0.386 seconds)
 ```
  
- 将员工表导入到hive数据仓库中去,按照性别分区。（突发奇想加个分区吧，后面会用到）
+将员工表导入到hive数据仓库中去,按照性别分区。（突发奇想加个分区吧，后面会用到）
  
  
 ```sql
@@ -216,14 +218,14 @@ sqoop import \
   --map-column-hive Birthday="DATE" \
   --num-mappers  1 \
   --warehouse-dir  /tmp/sqoop4/
- ```
+```
+ 
 参数解释下：
 --map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
 --where "Gender=2" \  
 --columns "Id,Name,Birthday,Salary,DepartmentId" \  
 --hive-partition-key Gender\  --hive-partition-value 'Woman' \  
-以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" \  --hive-partition-value 'Woman' \即可。
-
+以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" \  --hive-partition-value 'Woman' \即可。  
 
 ```sql
 ...
