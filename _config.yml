@@ -96,8 +96,8 @@ featured-condition-size: 1              # A tag will be featured if the size of 
 # Friends
 friends: [
     {
-        title: "Hux Blog",
-        href: "http://huangxuan.me"
+        title: "Trucy CSDN Blog",
+        href: "http://blog.csdn.net/trucyluce"
     },{
         title: "在线时序图",
         href: "http://echoma.github.io/text_sequence_diagram/"
@@ -105,10 +105,10 @@ friends: [
         title: "在线思维导图",
         href: "http://naotu.baidu.com/"
     },{
-        title: "Example Friends",
-        href: "#"
+        title: "HUX",
+        href: "http://huangxuan.me"
     },{
-        title: "It helps SEO",
+        title: "Wait",
         href: "#"
     }
 ]
