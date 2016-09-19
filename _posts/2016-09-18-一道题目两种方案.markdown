@@ -1,0 +1,289 @@
+---
+layout:     post
+title:      "一道题目两种方案"
+subtitle:   "通过巧妙的算法和相应的数据结构来提供大数据下的单机方案"
+date:       2016-09-18
+author:     "T.L"
+header-img: "img/post-bg-2Case.jpg"
+tags:
+    - 算法 
+    - 大数据
+---
+
+阿里数据开发工程师一道笔试题，分组统计排名。
+
+## 数据准备
+
+具体题目网上没有搜到，那就造点数据来说明下。  
+首先造张员工表和部门表，结构如下：
+
+```
+mysql> describe Employee;
++--------------+-------------------+------+-----+---------+----------------+
+| Field        | Type              | Null | Key | Default | Extra          |
++--------------+-------------------+------+-----+---------+----------------+
+| Id           | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
+| Name         | varchar(6)        | NO   |     | NULL    |                |
+| Gender       | enum('男','女') | YES  |     | NULL    |                |
+| Birthday     | date              | YES  |     | NULL    |                |
+| Salary       | decimal(7,2)      | YES  |     | 0.00    |                |
+| DepartmentId | int(10) unsigned  | NO   | MUL | NULL    |                |
++--------------+-------------------+------+-----+---------+----------------+
+mysql> describe Department;
++-------+------------------+------+-----+---------+----------------+
+| Field | Type             | Null | Key | Default | Extra          |
++-------+------------------+------+-----+---------+----------------+
+| Id    | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| Name  | varchar(15)      | NO   |     | NULL    |                |
++-------+------------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+```
+
+
+表中数据可以随机存储嘛，见脚本:
+
+```sql
+--存储数据
+----部门
+INSERT INTO Department(Name) values("HR");
+INSERT INTO Department(Name) values("IT");
+INSERT INTO Department(Name) values("TEST");
+INSERT INTO Department(Name) values("ADMIN");
+INSERT INTO Department(Name) values("MARKET");
+----员工
+SET @today=DATE(NOW());
+DELIMITER //
+CREATE PROCEDURE MakeData(IN N INT,IN id INT)
+    BEGIN
+    DECLARE i INT;
+    SET i=0;
+    WHILE i<N DO
+    INSERT INTO Employee(Name,Gender,Birthday,Salary,DepartmentId) 
+      VALUES(LEFT(MD5(RAND()),5),1+FLOOR(RAND()*2),DATE_SUB(@today,INTERVAL 8000+RAND()*10000 DAY),
+      3000+RAND()*20001,id);
+    SET i=i+1;
+    END WHILE;
+    END//
+DELIMITER ;
+CALL MakeData(20,1);--HR部门共有20个人
+CALL MakeData(1000,2);--IT部门共有1000个人
+CALL MakeData(200,3);
+CALL MakeData(50,4);
+CALL MakeData(500,5);
+```
+
+给部门表填的数据：
+
+
+| Id | Name   |
+|----|--------|
+|  1 | HR     |
+|  2 | IT     |
+|  3 | TEST   |
+|  4 | ADMIN  |
+|  5 | MARKET |
+  
+员工表的数据：
+
+|Id    |Name   |Gender|Birthday     |Salart    |DepartmentId  |
+|:-----|:------|:-----:|------------|-----------|:--------------:|
+|...|...|...|...|...|...|
+| 1259 | d0fa3 | 男    | 1969-07-30 | 10050.65 |            4 |
+| 1260 | 7bc72 | 女    | 1976-05-12 | 14343.07 |            4 |
+| 1261 | 2ed3a | 男    | 1983-05-17 | 22405.97 |            4 |
+| 1262 | cf36e | 男    | 1977-10-10 | 20173.57 |            4 |
+| 1263 | 93d90 | 女    | 1980-07-20 | 21434.79 |            4 |
+| 1264 | 4d966 | 男    | 1989-05-11 | 14828.95 |            4 |
+| 1265 | 6a7f8 | 男    | 1993-04-06 |  6983.03 |            4 |
+| 1266 | e9889 | 女    | 1989-04-10 | 11013.51 |            4 |
+| 1267 | 0e74b | 女    | 1974-11-01 |  8888.45 |            4 |
+| 1268 | f0a8d | 女    | 1972-02-27 | 13574.80 |            4 |
+| 1269 | 5e4d5 | 男    | 1977-06-03 | 13034.31 |            4 |
+| 1270 | a2c25 | 女    | 1974-01-06 |  8079.51 |            4 |
+| 1271 | 58fa7 | 男    | 1994-06-11 | 12448.21 |            4 |
+| 1272 | 84279 | 男    | 1994-07-26 | 12154.49 |            5 |
+| 1273 | c5e9b | 女    | 1969-11-28 | 17566.93 |            5 |
+| 1274 | 9d652 | 男    | 1989-12-10 | 17733.23 |            5 |
+|...|...|...|...|...|...|
+
+## 传统数据库方案
+还算有点样子，用传统RDBM来做，mysql没有直接的rank函数，按照题目要求，可以写两个方案：
+
+```sql
+--方案一（1.2s）
+SELECT D.Name AS Department, E.Name AS Employee, E.Salary AS Salary 
+FROM Employee E, Department D
+WHERE (SELECT COUNT(DISTINCT(Salary)) FROM Employee 
+       WHERE DepartmentId = E.DepartmentId AND Salary > E.Salary) < 3
+AND E.DepartmentId = D.Id 
+ORDER by E.DepartmentId, E.Salary DESC;
+
+--方案二(0.01ms)
+select d.Name as Department, computed.Name as Employee, computed.Salary as Salary
+from (
+  select Name, Salary, DepartmentId, @row := IF(DepartmentId=@did, @row + 1,1) as Rank , @did:=DepartmentId
+  from (
+    select Name, Salary, DepartmentId
+    from Employee
+    order by DepartmentId, Salary desc
+    ) ordered, (select @row:=0, @did:=0) variables
+  ) computed
+join Department d
+on computed.DepartmentId=d.Id
+where computed.Rank<=3;
+```
+方案一的槽点1：SELECT DISTINCT 没优化，应该先select 。。。 from （select distinct(...) form ...).  
+槽点2:两张表做笛卡尔乘积来比较，要死的节奏。
+
+方案二的好处是先多级排序，复杂度是线性的，然后在计数，又是线性的，效率结果很快就出来了。
+
+大数据时代的做法呢，如果记录有几十亿条呢？  
+
+## hadoop方案
+我们把数据迁移到hadoop上去。
+hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce。  
+
+### 数据导入
+通过以下sqoop脚本（注意这里是sqoop1，sqoop2不支持导出到hive表的）
+
+```sql
+--将部门表导入到hive数据仓库中去。
+sqoop import \
+  --connect jdbc:mysql://node4:3306/test \
+  --username root \
+  --P \				#隐式密码输入
+  --table Department \   
+  --hive-import \   
+  --num-mappers  1 \  
+  --hive-delims-replacement ','
+  --warehouse-dir  /tmp/sqoop/
+```
+  --hive-delims-replacement这个参数习惯上加上，虽然我们知道数据中没有'\001\002\003'字符（hive的默认数据分隔、数组分隔、字典分隔），会把出现的这些字符替换成','。  
+  --warehouse-dir：生成的中转文件目录，后面如果重复执行，最好的换目录。导入到hive其实分两步，第一步先将数据库表导入到hadoop中，临时文件存储位置可以自定： --target-dir or --warehouse-dir参数。千万别把--warehouse-dir设置为hive仓库位置，因为第二部就是load data到仓库语句，可能会出现冲突。  
+ --num-mappers  1 可选参数，根据实际业务量配置，如果配置多个，中间文件也会被分区成多个，默认按主键分区。  
+ 
+```
+...
+Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
+OK
+Time taken: 2.341 seconds    #第一部分时间
+Loading data to table default.department
+Table default.department stats: [numFiles=1, totalSize=34]
+OK
+Time taken: 0.755 seconds    #第二部分时间
+
+#查询下结果
+beeline> !connect jdbc:hive2://node3:10000/default
+0: jdbc:hive2://node3:10000/default> SELECT * FROM department;
++----------------+------------------+--+
+| department.id  | department.name  |
++----------------+------------------+--+
+| 1              | HR               |
+| 2              | IT               |
+| 3              | TEST             |
+| 4              | ADMIN            |
+| 5              | MARKET           |
++----------------+------------------+--+
+5 rows selected (0.386 seconds)
+```
+ 
+ 将员工表导入到hive数据仓库中去,按照性别分区。（突发奇想加个分区吧，后面会用到）
+ 
+ 
+```sql
+ sqoop import \
+  --connect jdbc:mysql://node4:3306/test \
+  --username root \
+  --P \
+  --table Employee \
+  --where "Gender=1" \
+  --columns "Id,Name,Birthday,Salary,DepartmentId" \
+   --hive-import \
+  --hive-partition-key Gender\  --hive-partition-value 'Man' \
+  --map-column-hive Birthday="DATE" \
+  --num-mappers  1 \
+  --warehouse-dir  /tmp/sqoop3/
+
+sqoop import \
+  --connect jdbc:mysql://node4:3306/test \
+  --username root \
+  --P \
+  --table Employee \
+  --where "Gender=2" \
+  --columns "Id,Name,Birthday,Salary,DepartmentId" \
+   --hive-import \
+  --hive-partition-key Gender\  --hive-partition-value 'Woman' \
+  --map-column-hive Birthday="DATE" \
+  --num-mappers  1 \
+  --warehouse-dir  /tmp/sqoop4/
+ ```
+参数解释下：
+--map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
+--where "Gender=2" \  
+--columns "Id,Name,Birthday,Salary,DepartmentId" \  
+--hive-partition-key Gender\  --hive-partition-value 'Woman' \  
+以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" \  --hive-partition-value 'Woman' \即可。
+
+
+```sql
+...
+Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
+OK
+Time taken: 1.809 seconds
+Loading data to table default.employee partition (gender=Woman)   #分区
+Partition default.employee{gender=Woman} stats: [numFiles=1, numRows=0, totalSize=28803, rawDataSize=0]
+OK
+Time taken: 1.226 seconds
+看下结果：
+0: jdbc:hive2://node3:10000/default> SELECT * FROM employee WHERE gender='Woman' LIMIT 3;
++--------------+----------------+--------------------+------------------+------------------------+------------------+--+
+| employee.id  | employee.name  | employee.birthday  | employee.salary  | employee.departmentid  | employee.gender  |
++--------------+----------------+--------------------+------------------+------------------------+------------------+--+
+| 8            | 1048a          | 1992-10-06         | 3898.31          | 1                      | Woman            |
+| 9            | 5c3bb          | 1985-05-16         | 5299.02          | 1                      | Woman            |
+| 11           | 5fd48          | 1982-05-15         | 3799.24          | 1                      | Woman            |
++--------------+----------------+--------------------+------------------+------------------------+------------------+--+
+3 rows selected (0.312 seconds)
+0: jdbc:hive2://node3:10000/default> DESCRIBE employee;
++--------------------------+-----------------------+-----------------------+--+
+|         col_name         |       data_type       |        comment        |
++--------------------------+-----------------------+-----------------------+--+
+| id                       | int                   |                       |
+| name                     | string                |                       |
+| birthday                 | date                  |                       |
+| salary                   | double                |                       |
+| departmentid             | int                   |                       |
+| gender                   | string                |                       |
+|                          | NULL                  | NULL                  |
+| # Partition Information  | NULL                  | NULL                  |
+| # col_name               | data_type             | comment               |
+|                          | NULL                  | NULL                  |
+| gender                   | string                |                       |
++--------------------------+-----------------------+-----------------------+--+
+```
+
+### hive操作
+因为前面有个分区表，所以改下需求取各部门工资排名前3名的男员工吧，这样快一些。
+
+```sql
+SELECT /*+MAPJOIN(B)*/A.*,B.name FROM
+(SELECT  departmentid,name,salary, ROW_NUMBER() OVER(PARTITION BY departmentid ORDER BY  salary DESC)rank
+FROM employee
+WHERE gender='Man')A 
+JOIN department B ON A.departmentid=B.id
+WHERE A.rank<=3;
+```
+
+这里因为department是个小表，当然就直接用mapjoin解决联结问题了。ROW_NUMBER() OVER(PARTITION BY departmentid ORDER BY  salary DESC)是hive的窗口函数，首先是按照departmentid分区，单独对这个分区对同一个departmentid 按照工资排序，ROW_NUMBER()实现功能和mysql方案2一致，最后取其前三名就完事了。  
+
+```
+16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 6.3 sec   HDFS Read: 41587 HDFS Write: 687 SUCCESS #分了两个区来处理，比如第一个区处理1，2，3部门，第二个区处理5，4部门16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-4: Map: 2   Cumulative CPU: 3.38 sec   HDFS Read: 11577 HDFS Write: 355 SUCCESS #map join操作，只要一个map就好了16/09/18 23:02:40 INFO ql.Driver: Total MapReduce CPU Time Spent: 9 seconds 680 msec
+```
+
+结果：
+![](http://oc5ofszxe.bkt.clouddn.com/16-9-19/23975352.jpg)
+
+
+ 
+   
+  

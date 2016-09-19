@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="我想静静">
+    <meta name="keyword"  content="关键字">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>海量大数据处理单机方案 - 楚汐|Trucy Luce Blog</title>
+
+    <link rel="canonical" href="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">T.L Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-bigData.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-bigData.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#算法" title="算法">算法</a>
+                        
+                        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                    </div>
+                    <h1>海量大数据处理单机方案</h1>
+                    
+                    
+                    <h2 class="subheading">通过巧妙的算法和相应的数据结构来提供大数据下的单机方案</h2>
+                    
+                    <span class="meta">Posted by T.L on September 2, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<p>所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。<br />
+现在如果要求单机解决海量数据处理呢？显然只有通过空间换时间，通过把大数据分成小块小块解决，或者通过巧妙的算法和相应的数据结构来各个击破。</p>
+
+<h2 id="hash">1. HASH算法</h2>
+
+<p>Hash可以通过散列函数将任意长度的输入变成固定长度的输出，也可以将不同的输入映射成为相同的相同的输出，而且这些输出范围也是可控制的，所以起到了很好的压缩映射和等价映射功能。这些特性被应用到了信息安全领域中加密算法，其中等价映射这一特性在海量数据解决方案中起到相当大的作用，特别是在整个MapReduce框架中，下面章节会对这二方面详细说。话说，Hash为什么会有这种压缩映射和等价映射功能，主要是因为Hash函数在实现上都使用到了取模。下面看看几种常用的Hash函数：</p>
+
+<ul>
+  <li>直接取余法：$f(x)= x \mod p;p$一般是不太接近 $2^t$ 的一个质数。</li>
+  <li>乘法取整法：$f(x)=(xA-floor(xA))M$该方法包括两个步骤：首先用关键字key乘上某个常数A(0&lt;A&lt;1)，并抽取出key.A的小数部分；然后用m乘以该小数后取整。最大的优点是选取M不再像除余法那样关键。比如，完全可选择它是2的整数次幂。虽然该方法对任何A的值都适用，但对某些值效果会更好。</li>
+  <li>平方取中法：$f(x)=(x^2 div 1000 ) \mod M)$ 平方后取中间的，每位包含信息比较多,因为一个乘积的中间几位数和乘数的每一位都相关，所以由此产生的散列地址较为均匀.</li>
+  <li>将关键字分割成位数相同的几个部分（最后一部分位数可以不同），然后取这几个部分的叠加和（舍弃进位）作为哈希地址。关键字位数很多，而且关键字中每一位数字分布大致均匀时，可以采用折叠法。。</li>
+</ul>
+
+<h3 id="hash-1">1.1 Hash算法在海量数据处理方案中的应用</h3>
+
+<p>单机处理海量数据的大体主流思想是和MapReduce框架一样，都是采取分而治之的方法，将海量数据切分为若干小份来进行处理，并且在处理的过程中要兼顾内存的使用情况和处理并发量情况。而更加仔细的处理流程大体上分为几步（对大多数情况都使用，其中少部分情况要根据你自己的实际情况和其他解决方法做比较采用最符合实际的方法）:</p>
+
+<p>第一步：分而治之。<br />
+采用Hash取模进行等价映射。采用这种方法可以将巨大的文件进行等价分割（注意：符合一定规律的数据要被分割到同一个小文件）变成若干个小文件再进行处理。这个方法针对数据量巨大，内存受到限制时十分有效。</p>
+
+<p>第二步：利用hashMap在内存中进行统计。<br />
+我们通过Hash映射将大文件分割为小文件后，就可以采用HashMap这样的存储结构来对小文件中的关注项进行频率统计。具体的做法是将要进行统计的Item作为HashMap的key，此Item出现的次数作为value。</p>
+
+<p>第三步：在上一步进行统计完毕之后根据场景需求往往需要对存储在HashMap中的数据根据出现的次数来进行排序。其中排序我们可以采用堆排序、快速排序、归并排序等方法。</p>
+
+<p><strong>【案例1】海量日志数据，提取出某日访问百度次数最多的那个IP</strong></p>
+
+<p>思路：当看到这样的业务场景，我们脑子里应该立马会想到这些海量网关日志数据量有多大？这些IP有多少中组合情况，最大情况下占多少存储空间？解决这样的问题前我们最重要的先要知道数据的规模，这样才能从大体上制定解决方案。所以现在假设这些这些网关日志量有3T。下面大体按照我们上面的步骤来对解决此场景进行分析：<br />
+	（1）首先，从这些海量数据中过滤出指定一天访问百度的用户IP,并逐个写到一个大文件中。<br />
+	（2）采用“分而治之”的思想用Hash映射将大文件进行分割降低数据规模。按照IP地址的Hash(IP)%1024值，把海量IP日志分别存储到1024个小文件中，其中Hash函数得出值为分割后小文件的编号。<br />
+	（3）逐个读小文件，对于每一个小文件构建一个IP为key，出现次数为value的HashMap。对于怎么利用HashMap记录IP出现的次数这个比较简单，因为我们可以通过程序读小文件将IP放到HashMap中key的之后可以先判断此IP是否已经存在如果不存在直接放进去，其出现次数记录为1，如果此IP已经存储则过得其对应的value值也就是出现的次数然后加1就ok。最后，按照IP出现的次数采用排序算法对HashMap中的数据进行排序，同时记录当前出现次数最多的那个IP地址；<br />
+	（4）走到这步，我们可以得到1024个小文件中出现次数最多的IP了，再采用常规的排序算法找出总体上出现次数最多的IP就ok了。  <br />
+	这个我们需要特别地明确知道一下几点内容：<br />
+	第一：我们通过Hash函数:Hash(IP)%1024将大文件映射分割为了1024个小文件，那么这1024个小文件的大小是否均匀？另外，我们采用HashMap来进行IP频率的统计，内存消耗是否合适？   <br />
+	 首先是第一个问题，被分割的小文件的大小的均匀程度是取决于我们使用怎么样的Hash函数，对本场景而言就是：Hash(IP)%1024。设计良好的Hash函数可以减少冲突，使数据均匀的分割到1024个小文件中。但是尽管数据映射到了另外一些不同的位置，但数据还是原来的数据，只是代替和表示这些原始数据的形式发生了变化而已。<br />
+	另外，看看第二个问题：用HashMap统计IP出现频率的内存使用情况。<br />
+	要想知道HashMap在统计IP出现的频率，那么我们必须对IP组合的情况有所了解。32Bit的IP最多可以有2^32种的组合方式，也就是说去所有IP最多占4G存储空间。在此场景中，我们已经根据IP的hash值将大文件分割出了1024个小文件，也就是说这4G的IP已经被分散到了1024个文件中。那么在Hash函数设计合理最perfect的情况下针对每个小文件的HashMap占的内存大小最多为4G/1024+存储IP对应的次数所占的空间，所以内存绝对够用。<br />
+	第二：Hash取模是一种等价映射，换句话说通过映射分割之后相同的元素只会分到同一个小文件中去的。就本场景而言，相同的IP通过Hash函数后只会被分割到这1024个小文件中的其中一个文件。</p>
+
+<p><strong>【例子2】给定a、b两个文件，各存放50亿个url，每个url各占64字节，内存限制是4G，让你找出a、b文件共同的url？</strong></p>
+
+<p>思路:还是老一套，先Hash映射降低数据规模，然后统计排序。<br />
+具体做法：</p>
+
+<p>（1）分析现有数据的规模。<br />
+	   按照每个url64字节来算，每个文件有50亿个url，那么每个文件大小为5G*64=320G。320G远远超出内存限定的4G，所以不能将其全部加载到内存中来进行处理，需要采用分而治之的方法进行处理。<br />
+	   
+	(2)Hash映射分割文件。逐行读取文件a，采用hash函数：Hash(url)%1000将url分割到1000个小文件中，文件即为$f1<em>1,f1_2,f1_3,…,f1</em>{1000}$。那么理想情况下每个小文件的大小大约为300m左右。再以相同的方法对大文件b进行相同的操作再得到1000个小文件，记为：$f2<em>1,f2_2,f2_3,…,f2</em>{1000}$。</p>
+
+<p>经过一番折腾后我们将大文件进行了分割并且将相同url都分割到了这2组小文件中下标相同的两个文件中,其实我们可以将这2组文件看成一个整体：$f1<em>1 \&amp; f2_1，f1_2\&amp;,f2_2,f1_3\&amp;f2_3,…,f1</em>{1000} \&amp; f2_{1000}$。那么我们就可以将问题转化成为求这1000对小文件中相同的url就可以了。接下来，求每对小文件中的相同url，首先将每对对小文件中较小的那个的url放到HashSet结构中，然后遍历对应这对小文件中的另一个文件，看其是否存才刚刚构建的HashSet中，如果存在说明是一样的url，将这url直接存到结果文件就ok了。</p>
+
+<p><strong>【例子3】有10个文件，每个文件1G，每个文件的每一行存放的都是用户的query，每个文件的query都可能重复。要求你按照query的频度排序。</strong></p>
+
+<p><strong>【例子4】有一个1G大小的一个文件，里面每一行是一个词，词的大小不超过16字节，内存限制大小是1M。返回频数最高的100个词。</strong></p>
+
+<p>像例子3和例子4这些场景都可以用我们的一贯老招数解决：先Hash映射降低数据规模，然后统计加载到内存，最后排序。具体做法可以参考上面2个例子。</p>
+
+<h3 id="hashmapreduce">1.2 Hash算法在Mapreduce中的应用</h3>
+<p>Hash算法在分布式计算框架MapReduce中起着核心作用。先来看看下面整个mapreduce的运行流程，首先是原始数据经过切片进入到map函数中，经过map函数的数据会在整个环形缓冲区里边进行第一次排序，接着map的输出结果会根据key值(默认情况是这样，另外可以自定义)进行Hash映射将数据量庞大的map输出分割为N份（N为reduce数目）来实现数据的并行处理，这就是Partition阶段，另外MapReduce框架中Partition的实现方式往往能够决定数据的倾斜度，所以在处理数据前最好要对数据的分布情况有所了解。其Partition的实现主要有：HashPartitioner、BinaryPartitioner、KeyFieldBasedPartitioner、TotalOrderPartitioner这几种，其中HashPartitioner是默认的。首先来看看HashPartitioner的核心实现： 
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/50512419.jpg" alt="" />
+	接下来从MapReudce的源码角度来研究一下Partition的实现原理：</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>	<span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">mapreduce</span><span class="o">.</span><span class="na">lib</span><span class="o">.</span><span class="na">partition</span><span class="o">;</span>
+	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceAudience</span><span class="o">;</span>
+	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceStability</span><span class="o">;</span>
+	<span class="kn">import</span> <span class="nn">org.apache.hadoop.mapreduce.Partitioner</span><span class="o">;</span>
+	<span class="cm">/** Partition keys by their {@link Object#hashCode()}. */</span>
+	<span class="nd">@InterfaceAudience</span><span class="o">.</span><span class="na">Public</span>
+	<span class="nd">@InterfaceStability</span><span class="o">.</span><span class="na">Stable</span>
+	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HashPartitioner</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Partitioner</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+	<span class="err"> </span> <span class="cm">/** Use {@link Object#hashCode()} to partition. */</span>
+	<span class="err"> </span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPartition</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="n">V</span> <span class="n">value</span><span class="o">,</span><span class="err"> </span><span class="kt">int</span> <span class="n">numReduceTasks</span><span class="o">)</span> <span class="o">{</span>
+	<span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">%</span> <span class="n">numReduceTasks</span><span class="o">;</span>
+	<span class="err"> </span> <span class="o">}</span>
+	<span class="o">}</span>
+</code></pre>
+</div>
+<p>我们看到第11行，在这里我们有看到了可爱的Hash取模映射方法，这样做的原因大家看到这里都应该已经了然于心了。另外，TotalOrderPartitioner、BinaryPartitioner等几种Partitioner的实现都是基于Hash取模映射方法，只是他们为了实现自己自定义的功能而添加了一些逻辑，例如其中的TotalOrderPartitioner可以实现全排序功能。其他几个Partition的源代码这里就不贴了，有兴趣的可以自己看看。<br />
+## 2. BitMap
+先看看这样的一个场景：给一台普通PC，2G内存，要求处理一个包含40亿个不重复并且没有排过序的无符号的int整数，给出一个整数，问如果快速地判断这个整数是否在文件40亿个数据当中？</p>
+
+<p>问题思考：<br />
+40亿个int占（40亿*4）/1024/1024/1024 大概为14.9G左右，很明显内存只有2G，放不下，因此不可能将这40亿数据放到内存中计算。要快速的解决这个问题最好的方案就是将数据搁内存了，所以现在的问题就在如何在2G内存空间以内存储着40亿整数。一个int整数在java中是占4个字节的即要32bit位，如果能够用一个bit位来标识一个int整数那么存储空间将大大减少，算一下40亿个int需要的内存空间为40亿/8/1024/1024大概为476.83 mb，这样的话我们完全可以将这40亿个int数放到内存中进行处理。
+	   <br />
+具体思路：<br />
+1个int占4字节即4*8=32位，那么我们只需要申请一个int数组长度为 int tmp[1+N/32]即可存储完这些数据，其中N代表要进行查找的总数，tmp中的每个元素在内存在占32位可以对应表示十进制数0~31,所以可得到BitMap表:<br />
+tmp[0]:可表示0~31<br />
+tmp[1]:可表示32~63<br />
+tmp[2]可表示64~95<br />
+…….
+那么接下来就看看十进制数如何转换为对应的bit位：<br />
+假设这40亿int数据为：6,3,8,32,36,……，那么具体的BitMap表示为： 
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/19570036.jpg" alt="" />
+如何判断int数字在tmp数组的哪个下标，这个其实可以通过直接除以32取整数部分，例如：整数8除以32取整等于0，那么8就在tmp[0]上。另外，我们如何知道了8在tmp[0]中的32个位中的哪个位，这种情况直接mod上32就ok，又如整数8，在tmp[0]中的第8 mod上32等于8，那么整数8就在tmp[0]中的第八个bit位（从右边数起）。
+### 2.1 BitMap算法实现</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">BitMap</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">BITWORD</span><span class="o">=</span><span class="mi">32</span><span class="o">;</span><span class="c1">//int32大小</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">SHIFT</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span><span class="c1">//2^5=32</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">MASK</span><span class="o">=</span><span class="mh">0x1f</span><span class="o">;</span><span class="c1">//0001 1111   </span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="o">;</span> <span class="c1">//存放1~10000个数</span>
+	<span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">A</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="nf">BitMap</span><span class="o">(){</span>
+	<span class="n">A</span><span class="o">=</span><span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">N</span><span class="o">/</span><span class="n">BITWORD</span><span class="o">+</span><span class="mi">1</span><span class="o">];</span><span class="c1">//所需字节数</span>
+	<span class="o">}</span>
+	<span class="cm">/**
+	* 将i位设置为1
+	* @param i
+	*/</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
+	<span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]|=</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="cm">/**
+	* 清空第i位为0
+	* @param i
+	*/</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">clr</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
+	<span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]&amp;=~(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">));</span>
+	<span class="o">}</span>
+	<span class="cm">/**
+	* 返回第i位的状态
+	* @param i
+	* @return 0或2^k,k表示在BitWord单元中的位置
+	*/</span>
+	<span class="kd">public</span><span class="err"> </span> <span class="kt">int</span> <span class="nf">getI</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
+	<span class="k">return</span> <span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]&amp;(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">));</span>
+	<span class="o">}</span>
+	<span class="cm">/**
+	* 统计二进制几个1
+	* @param value 待统计的整数
+	*/</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="nf">count_ones_bit</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">){</span>
+	<span class="kt">int</span> <span class="n">one</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+	<span class="k">while</span> <span class="o">(</span><span class="n">value</span> <span class="o">!=</span><span class="mi">0</span><span class="o">){</span>
+	<span class="n">one</span><span class="o">++;</span>
+	<span class="n">value</span><span class="o">&amp;=</span><span class="n">value</span><span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+	<span class="o">}</span>
+	<span class="k">return</span> <span class="n">one</span><span class="o">;</span>
+	<span class="o">}</span>
+	<span class="cm">/**
+	* 返回bitmap中元素的个数
+	* @return bitmap中元素的个数
+	*/</span>
+	<span class="kd">public</span> <span class="kt">int</span> <span class="nf">count</span><span class="o">(){</span>
+	<span class="kt">int</span> <span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+	<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="nl">a:</span><span class="n">A</span><span class="o">){</span>
+	<span class="n">cnt</span><span class="o">+=</span><span class="n">count_ones_bit</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="k">return</span> <span class="n">cnt</span><span class="o">;</span>
+	<span class="o">}</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">BitMap</span> <span class="n">b</span><span class="o">=</span><span class="k">new</span> <span class="n">BitMap</span><span class="o">();</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span>
+	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">toBinaryString</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">)));</span><span class="c1">//结果：0b100000</span>
+	<span class="n">b</span><span class="o">.</span><span class="na">clr</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">));</span><span class="c1">//结果:0</span>
+	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">count</span><span class="o">());</span><span class="c1">//结果：2</span>
+	<span class="o">}</span>
+	<span class="o">}</span>
+</code></pre>
+</div>
+<p>### 2.2 bitmap应用案例
+<strong>案例1 已知某文件中包含一些电话号码，每个号码8位，统计不同号码个数。</strong></p>
+
+<p>8位数字最大表示99999999，用bitmap解决，每个数字对应一个比特位，就有10^8»3=12M,也就是说3M表示了所有8位数电话，依次读入每个号码，将对应bit置为1，最后统计bit-map中1的个数即可。</p>
+
+<p><strong>案例2 给40亿个不重复的unsigned int，没顺序，然后问x在不在这堆数中。</strong></p>
+
+<p>40亿的数据要全部存放到内存是不可能的，但40亿个放入bitmap中还是可以的。unsigned int 32位，共有2^32个数，申请2^29B空间，约512M内存。全部读入并设置相应比特位，查看x对应的bit位是否为1即可。<br />
+现代计算机至少都有个2G内存，那么对200亿个整数用bitmap计算游刃有余。</p>
+
+<p><strong>案例3 在2.5亿个整数中查找只出现一次的整数。</strong></p>
+
+<p>简单的bitmap只能标记存在于不存在，即1和0.要标记存在一次、不存在、存在多次那至少需要2bit的信息量，即用00表示不存在，01表示存在1次，10表示存在多次，11未使用。计算下所需内存2^29*2=1GB。然后同上。<br />
+当然2.5亿全放入内存中也就差不多1G内存，用HashMap计数的话加上value差不多2GB，单机还是可以算的。但效率相对于前者比较低的。</p>
+
+<p><strong>案例4 寻找中数</strong>
+一共有N个机器，每个机器上有N个数。每个机器最多存O(N)个数并对它们操作。如何找到N^2个数中的中数？<br />
+方案1：先大体估计一下这些数的范围，比如这里假设这些数都是32位无符号整数（共有$N^{32}$个，我们把$0 \sim 2^{32}-1$的整数划分为N个范围段，每个段包含$\frac{2^{32}}{N}$个整数，第一段为$0 \sim \frac{2^{32}}{N}-1$,第二段为$\frac{2^{32}}{N} \sim 2\frac{2^{32}}{N}-1$,…,以此类推。然后，扫描每个机器上的N个数，把属于第一个区段的数放到第一个机器上，属于第二个区段的数放到第二个机器上，…，属于第N个区段的数放到第N个机器上。 注意这个过程每个机器上存储的数应该是O(N)的。下面我们依次统计每个机器上数的个数，一次累加，直到找到第k个机器，在该机器上累加的数大于或等于$\frac{N^2}{2}$,而k-1个机器的累加和小于$\frac{N^2}{2}$，
+把这个数记作$x$，那么第k个机器的上只要找第$\frac{N^2}{2}-x$个数即为所求中位数。复杂度$O(N^2)$。</p>
+
+<h2 id="trie">3. Trie树</h2>
+<p>Trie 树， 又称字典树，单词查找树。它来源于retrieval(检索)中取中间四个字符构成(读音同try)。用于存储大量的字符串以便支持快速模式匹配。主要应用在信息检索领域。Trie 有三种结构： 标准trie (standard trie)、压缩trie、后缀trie(suffix trie) 。简要说下这个standard trie。</p>
+
+<p>标准Trie树的结构 ：所有含有公共前缀的字符串将挂在树中同一个结点下。实际上trie简明的存储了存在于串集合中的所有公共前缀。 假如有这样一个字符串集合$X{bear,bell,bid,bull,buy,sell,stock,stop}$。它的标准Trie树如下图：
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/11236094.jpg" alt="" />
+上图（蓝色圆形结点为内部结点，红色方形结点为外部结点），我们可以很清楚的看到字符串集合X构造的Trie树结构。其中从根结点到红色方框叶子节点所经历的所有字符组成的串就是字符串集合X中的一个串。</p>
+
+<p>注意这里有一个问题： 如果X集合中有一个串是另一个串的前缀呢？ 比如，X集合中加入串bi。那么上图的Trie树在绿色箭头所指的内部结点i 就应该也标记成红色方形结点。这样话，一棵树的枝干上将出现两个连续的叶子结点(这是不合常理的)。 </p>
+
+<p>也就是说字符串集合X中不存在一个串是另外一个串的前缀 。如何满足这个要求呢？我们可以在X中的每个串后面加入一个特殊字符$(这个字符将不会出现在字母表中)。这样，集合$X{bear$、bell$、…. bi$、bid$}$一定会满足这个要求。</p>
+
+<p>总结：一个存储长度为n，来自大小为d的字母表中s个串的集合X的标准trie具有性质如下：</p>
+
+<ol>
+  <li>树中每个内部结点至多有d个子结点。</li>
+  <li>树有s个外部结点。</li>
+  <li>树的高度等于X中最长串的长度。</li>
+  <li>树中的结点数为O(n)。</li>
+</ol>
+
+<p>对于英文单词的查找，我们完全可以在内部结点中建立26个元素组成的指针数组。如果要查找a，只需要在内部节点的指针数组中找第0个指针即可(b=第1个指针，随机定位)。时间复杂度为O(1)。</p>
+
+<p>查找过程：假如我们要在上面那棵Trie中查找字符串bull (b-u-l-l)。</p>
+
+<ol>
+  <li>在root结点中查找第(‘b’-‘a’=1)号孩子指针，发现该指针不为空，则定位到第1号孩子结点处——b结点。</li>
+  <li>在b结点中查找第(‘u’-‘a’=20)号孩子指针，发现该指针不为空，则定位到第20号孩子结点处——u结点。</li>
+  <li>一直查找到叶子结点出现特殊字符’$‘位置，表示找到了bull字符串。</li>
+</ol>
+
+<p>如果在查找过程中终止于内部结点，则表示没有找到待查找字符串。</p>
+
+<p>效率：对于有n个英文字母的串来说，在内部结点中定位指针所需要花费O(d)时间，d为字母表的大小，英文为26。由于在上面的算法中内部结点指针定位使用了数组随机存储方式，因此时间复杂度降为了O(1)。但是，当查找集合X中所有字符串两两都不共享前缀时，trie中出现最坏情况。除根之外，所有内部结点都自由一个子结点。此时的查找时间复杂度蜕化为$O(d*(n^2))$。</p>
+
+<p>由于中文的字远比英文的26个字母多的多。因此对于trie树的内部结点，不可能用一个26的数组来存储指针。如果每个结点都开辟几万个中国字的指针空间。估计内存要爆了，就连磁盘也消耗很大。
+	 
+一般我们采取这样种措施：</p>
+
+<p>(1) 以词语中相同的第一个字为根组成一棵树。这样的话，一个中文词汇的集合就可以构成一片Trie森林。这篇森林都存储在磁盘上。森林的root中的字和root所在磁盘的位置都记录在一张以Unicode码值排序的有序字表中。字表可以存放在内存里。<br />
+(2) 内部结点的指针用可变长数组存储。<br />
+特点：由于中文词语很少操作4个字的，因此Trie树的高度不长。查找的时间主要耗费在内部结点指针的查找。因此将这项指向字的指针按照字的Unicode码值排序，然后加载进内存以后通过二分查找能够提高效率。</p>
+
+<h3 id="section">3.1 应用案例</h3>
+<p><strong>案例1.热门查询</strong><br />
+	搜索引擎会通过日志文件把用户每次检索使用的所有检索串都记录下来，每个查询串的长度为1-255字节。假设目前有一千万个记录，这些查询串的 重复读比较高，虽然总数是1千万，但是如果去除重复和，不超过3百万个。一个查询串的重复度越高，说明查询它的用户越多，也就越热门。请你统计最热门的 10个查询串，要求使用的内存不能超过1G。<br />
+	解决：300万个记录，每个记录不超过2^8B，总共存储的话不超过1G内存。采用trie树，关键字域存该查询串出现的次数，没有出现为0。最后用10个元素的最小推来对出现频率进行排序。</p>
+
+<h2 id="bloom-filter">4.Bloom Filter</h2>
+<p>像1中例2，用分块hash的方法的确能处理问题，那如果允许少量错误的不分块解决方案呢？
+我们可不可以不存url本身？这样子所需空间就会大大减少了。于是我们想到一个很经典的做法：bitmap。将集合S中的url哈希到bitmap上，给定一个url，只需要将它hash，得到它在bitmap的下标，检查该位置是否为1即可。</p>
+
+<p>这样做空间是省了，可是也产生了一个问题：由于冲突（碰撞）不同的url可能会hash到同一个位置上，导致错误。如何降低hash冲突呢？Bloom Filter的想法是使用多个独立的哈希函数。
+### 4.1 Standard Bloom Filter
+传统的Bloom Filter中，我们有：集合S：其大小为m。也就是说，集合中有m个不同元素。可用内存B：B被当成位数组bitmap来使用，大小为n。（有n个bit）。哈希函数：有k个独立的、均匀分布的哈希函数。</p>
+
+<p>Bloom Filter的做法是：初始时，所有比特位都初始化为0。对于集合中的每个元素，利用k个哈希函数，对它哈希得到k个位置，将bitmap中的对应的k个位置置为1。</p>
+
+<p>给定一个元素e，为了判断它是否是集合中的元素，也利用该k个函数得到k个位置，检查该k个位置是否都为1，如果是，认为$e\in S$，否则认为$e\notin S$.不难看出，如果e∈S
+，那么Bloom Filter肯定会正确判断出$e\in S$
+，但是它还是可能产生false positive。那么，如何分析false positive的概率呢？
+false positive发生时，表示哈希该元素后得到的k个位置都为1。这个概率大概为：<script type="math/tex">P≈p_1^k</script>其中$p_1$代表某位为1的概率，它等于：<br />
+<script type="math/tex">p_1=1-p_0</script><br />
+对于$p_0$，表示某个特定的比特位为0。什么时候该位才为0呢？也就是说m个元素各自经过k次哈希得到km个对象，没有一个对象定位到了该位置。某个对象定位到该位置的概率为$\frac{1}{n}$，因此我们可以得到：<br />
+<script type="math/tex">p_0=(1-\frac{1}{n})^{mk}</script><br />
+分析$p_0$。在实际应用中，n一般很大，根据重要极限公式，我们有：<br />
+<script type="math/tex">p_0=(1-\frac{1}{n})^{mk}=(1-\frac{1}{n})^{-n\frac{mk}{-n}}\approx e^{-\frac{mk}{n}}</script><br />
+代入到最上面的那个式子，我们不难得到：<br />
+<script type="math/tex">P\approx (1-e^{-\frac{mk}{n}})^k</script><br />
+当k为何值时，P取得最小，false positive possibility最低呢？<br />
+令$f(k)=P\approx (1-e^{-\frac{mk}{n}})^k$<br />
+<script type="math/tex">ln(f(k))=kln(1-e^{-\frac{mk}{n}})</script><br />
+求导，得<br />
+<script type="math/tex">\frac{f'(k)}{f(k)}=ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})</script><br />
+令$f’(k)=0$, 我们有(注意到f(k)&gt;0恒成立)：<br />
+<script type="math/tex">ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})=0</script><br />
+令$\lambda=e^{-\frac{mk}{n}},则k=-\frac{nln\lambda }{m}$,代入上式,得到<br />
+<script type="math/tex">(1-\lambda)ln(1-\lambda)=\lambda ln\lambda</script><br />
+因此，$\lambda=\frac{1}{2},k=\frac{n}{m}ln2$.<br />
+也就是说，当n和m固定时，选择$k=\frac{n}{m}ln2\approx0.693\frac{n}{m}$
+附近的一个整数，将使false positive possibility最小。注意$\lambda=\frac{1}{2}$表示最后数组中取0的概率占一半，也就是说要想误差率最低，最好让数组一半空着。<br />
+工程实现时，我们需要k个哈希函数或者哈希函数值。如何构造和获得k个独立的哈希函数呢？<a href="https://www.eecs.harvard.edu/~michaelm/postscripts/rsa2008.pdf">这篇论文</a> 提出，只需要两个独立的哈希函数hf1和hf2即可，也就是通过如下方式获得k个哈希函数值：</p>
+
+<p><script type="math/tex">hash value = hf_1(key) + ihf_2(key)</script>
+其中$i=0、1、2…k-1$。</p>
+
+<p>在允许误差$\epsilon$内应该分配n为多大呢？通过一系列计算，可以算出：
+<script type="math/tex">n\geq m\frac{-log_2^\epsilon } {ln2}</script>
+总结一下，Bloom filter将集合中的元素映射到位数组中，用k（k为哈希函数个数）个映射位是否全1表示元素在不在这个集合中。另外Counting bloom filter（CBF）将位数组中的每一位扩展为一个counter，从而支持了元素的删除操作。Spectral Bloom Filter（SBF）将其与集合元素的出现次数关联。SBF采用counter中的最小值来近似表示元素的出现频率。感兴趣可以自己百科。
+总结下，使用bloom filter的场景必然允许false positive。也就是说，发生false positive不应该是致命的。比如说，搜索引擎的爬虫里，如果url不是set的元素，却被bloom filter过滤了，那么顶多就是不抓它而已，没啥特别大的损失。</p>
+
+<h3 id="section-1">4.2 案例应用</h3>
+<p><strong>【案例1】给你A,B两个文件，各存放50亿条URL，每条URL占用64字节，内存限制是4G，让你找出A,B文件共同的URL。如果是三个乃至n个文件呢？</strong><br />
+根据这个问题我们来计算下内存的占用，4G=2^32大概是40亿字节，*8大概是320亿比特，m=50亿，如果按出错率0.01算需要的大概是650亿个bit。现在可用的是480亿，相差并不多，这样可能会使出错率上升些。另外如果这些url与ip是一一对应的，就可以转换成ip，则大大简单了。</p>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/09/02/海量数据处理"
+                    data-title="海量大数据处理单机方案"
+                    data-url="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/"
+                    data-images="https://luzhijun.github.io/img/post-bg-bigData.jpg"
+                    data-content="所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次... | 楚汐|Trucy Luce Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/08/28/leecode(387)/" data-toggle="tooltip" data-placement="top" title="Leecode(387)">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/" data-toggle="tooltip" data-placement="top" title="如何理解特征值">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/09/02/海量数据处理"
+                        data-title="海量大数据处理单机方案"
+                        data-url="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
+                                    前端开发
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                                    JavaScript
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#算法" title="算法" rel="2">
+                                    算法
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#大数据" title="大数据" rel="2">
+                                    大数据
+                                </a>
+                            
+        				
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://huangxuan.me">Hux Blog</a></li>
+                    
+                        <li><a href="http://echoma.github.io/text_sequence_diagram/">在线时序图</a></li>
+                    
+                        <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
+                    
+                        <li><a href="#">Example Friends</a></li>
+                    
+                        <li><a href="#">It helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'TrucyLuce';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/luzhijun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; T.L Blog 2016
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'https://luzhijun.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'f2fd34a3c5de02cf1e94e7584f314dc6';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<!-- 代码行号-->
+<script type="text/javascript">
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(\w+)\b/i,t=0,n=_self.Prism={util:{encode:function(e){return e instanceof a?new a(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e){var t=n.util.type(e);switch(t){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=n.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return n.util.clone(e)})}return e}},languages:{extend:function(e,t){var a=n.util.clone(n.languages[e]);for(var r in t)a[r]=t[r];return a},insertBefore:function(e,t,a,r){r=r||n.languages;var l=r[e];if(2==arguments.length){a=arguments[1];for(var i in a)a.hasOwnProperty(i)&&(l[i]=a[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in a)a.hasOwnProperty(i)&&(o[i]=a[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,t,a,r){r=r||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],a||l),"Object"!==n.util.type(e[l])||r[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||r[n.util.objId(e[l])]||(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,r)):(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,r)))}},plugins:{},highlightAll:function(e,t){var a={callback:t,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var r,l=a.elements||document.querySelectorAll(a.selector),i=0;r=l[i++];)n.highlightElement(r,e===!0,a.callback)},highlightElement:function(t,a,r){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1],i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(!s||!i)return n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),a&&_self.Worker){var c=new Worker(n.filename);c.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},c.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,r){var l=n.tokenize(e,t);return a.stringify(n.util.encode(l),r)},tokenize:function(e,t){var a=n.Token,r=[e],l=t.rest;if(l){for(var i in l)t[i]=l[i];delete t.rest}e:for(var i in t)if(t.hasOwnProperty(i)&&t[i]){var o=t[i];o="Array"===n.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],c=u.inside,g=!!u.lookbehind,h=!!u.greedy,f=0,d=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var m=r[p];if(r.length>e.length)break e;if(!(m instanceof a)){u.lastIndex=0;var y=u.exec(m),v=1;if(!y&&h&&p!=r.length-1){var b=r[p+1].matchedStr||r[p+1],k=m+b;if(p<r.length-2&&(k+=r[p+2].matchedStr||r[p+2]),u.lastIndex=0,y=u.exec(k),!y)continue;var w=y.index+(g?y[1].length:0);if(w>=m.length)continue;var _=y.index+y[0].length,P=m.length+b.length;if(v=3,P>=_){if(r[p+1].greedy)continue;v=2,k=k.slice(0,P)}m=k}if(y){g&&(f=y[1].length);var w=y.index+f,y=y[0].slice(f),_=w+y.length,S=m.slice(0,w),O=m.slice(_),j=[p,v];S&&j.push(S);var A=new a(i,c?n.tokenize(y,c):y,d,y,h);j.push(A),O&&j.push(O),Array.prototype.splice.apply(r,j)}}}}}return r},hooks:{all:{},add:function(e,t){var a=n.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=n.hooks.all[e];if(a&&a.length)for(var r,l=0;r=a[l++];)r(t)}}},a=n.Token=function(e,t,n,a,r){this.type=e,this.content=t,this.alias=n,this.matchedStr=a||null,this.greedy=!!r};if(a.stringify=function(e,t,r){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return a.stringify(n,t,e)}).join("");var l={type:e.type,content:a.stringify(e.content,t,r),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:r};if("comment"==l.type&&(l.attributes.spellcheck="true"),e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o="";for(var s in l.attributes)o+=(o?" ":"")+s+'="'+(l.attributes[s]||"")+'"';return"<"+l.tag+' class="'+l.classes.join(" ")+'" '+o+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,r=t.code,l=t.immediateClose;_self.postMessage(n.highlight(r,n.languages[a],a)),l&&_self.close()},!1),_self.Prism):_self.Prism;var r=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return r&&(n.filename=r.src,document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",n.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+</script>
+<script >
+!function(){"undefined"!=typeof self&&self.Prism&&self.document&&Prism.hooks.add("complete",function(e){if(e.code){var t=e.element.parentNode,s=/\s*\bhighlight\b\s*/;if(t&&/pre/i.test(t.nodeName)&&(s.test(t.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s,"")),s.test(t.className)||(t.className+="highlight");var n,a=e.code.match(/\n(?!$)/g),l=a?a.length+1:1,m=new Array(l+1);m=m.join("<span></span>"),n=document.createElement("span"),n.className="line-numbers-rows",n.innerHTML=m,t.hasAttribute("data-start")&&(t.style.counterReset="linenumber "+(parseInt(t.getAttribute("data-start"),10)-1)),e.element.appendChild(n)}}})}();
+</script>
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

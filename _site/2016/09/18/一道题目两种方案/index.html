@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="我想静静">
+    <meta name="keyword"  content="关键字">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>一道题目两种方案 - 楚汐|Trucy Luce Blog</title>
+
+    <link rel="canonical" href="https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">T.L Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-2Case.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-2Case.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#算法" title="算法">算法</a>
+                        
+                        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                    </div>
+                    <h1>一道题目两种方案</h1>
+                    
+                    
+                    <h2 class="subheading">通过巧妙的算法和相应的数据结构来提供大数据下的单机方案</h2>
+                    
+                    <span class="meta">Posted by T.L on September 18, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<p>阿里数据开发工程师一道笔试题，分组统计排名。</p>
+
+<h2 id="section">数据准备</h2>
+
+<p>具体题目网上没有搜到，那就造点数据来说明下。<br />
+首先造张员工表和部门表，结构如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysql&gt; describe Employee;
++--------------+-------------------+------+-----+---------+----------------+
+| Field        | Type              | Null | Key | Default | Extra          |
++--------------+-------------------+------+-----+---------+----------------+
+| Id           | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
+| Name         | varchar(6)        | NO   |     | NULL    |                |
+| Gender       | enum('男','女') | YES  |     | NULL    |                |
+| Birthday     | date              | YES  |     | NULL    |                |
+| Salary       | decimal(7,2)      | YES  |     | 0.00    |                |
+| DepartmentId | int(10) unsigned  | NO   | MUL | NULL    |                |
++--------------+-------------------+------+-----+---------+----------------+
+mysql&gt; describe Department;
++-------+------------------+------+-----+---------+----------------+
+| Field | Type             | Null | Key | Default | Extra          |
++-------+------------------+------+-----+---------+----------------+
+| Id    | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| Name  | varchar(15)      | NO   |     | NULL    |                |
++-------+------------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+</code></pre>
+</div>
+
+<p>表中数据可以随机存储嘛，见脚本:</p>
+
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="c1">--存储数据</span>
+<span class="c1">----部门</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Department</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span> <span class="k">values</span><span class="p">(</span><span class="nv">"HR"</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Department</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span> <span class="k">values</span><span class="p">(</span><span class="nv">"IT"</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Department</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span> <span class="k">values</span><span class="p">(</span><span class="nv">"TEST"</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Department</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span> <span class="k">values</span><span class="p">(</span><span class="nv">"ADMIN"</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Department</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span> <span class="k">values</span><span class="p">(</span><span class="nv">"MARKET"</span><span class="p">);</span>
+<span class="c1">----员工</span>
+<span class="k">SET</span> <span class="o">@</span><span class="n">today</span><span class="o">=</span><span class="n">DATE</span><span class="p">(</span><span class="n">NOW</span><span class="p">());</span>
+<span class="k">DELIMITER</span> <span class="o">//</span>
+<span class="k">CREATE</span> <span class="k">PROCEDURE</span> <span class="n">MakeData</span><span class="p">(</span><span class="k">IN</span> <span class="n">N</span> <span class="n">INT</span><span class="p">,</span><span class="k">IN</span> <span class="n">id</span> <span class="n">INT</span><span class="p">)</span>
+    <span class="k">BEGIN</span>
+    <span class="k">DECLARE</span> <span class="n">i</span> <span class="n">INT</span><span class="p">;</span>
+    <span class="k">SET</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">WHILE</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">N</span> <span class="k">DO</span>
+    <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">Employee</span><span class="p">(</span><span class="n">Name</span><span class="p">,</span><span class="n">Gender</span><span class="p">,</span><span class="n">Birthday</span><span class="p">,</span><span class="n">Salary</span><span class="p">,</span><span class="n">DepartmentId</span><span class="p">)</span> 
+      <span class="k">VALUES</span><span class="p">(</span><span class="k">LEFT</span><span class="p">(</span><span class="n">MD5</span><span class="p">(</span><span class="n">RAND</span><span class="p">()),</span><span class="mi">5</span><span class="p">),</span><span class="mi">1</span><span class="o">+</span><span class="n">FLOOR</span><span class="p">(</span><span class="n">RAND</span><span class="p">()</span><span class="o">*</span><span class="mi">2</span><span class="p">),</span><span class="n">DATE_SUB</span><span class="p">(</span><span class="o">@</span><span class="n">today</span><span class="p">,</span><span class="n">INTERVAL</span> <span class="mi">8000</span><span class="o">+</span><span class="n">RAND</span><span class="p">()</span><span class="o">*</span><span class="mi">10000</span> <span class="k">DAY</span><span class="p">),</span>
+      <span class="mi">3000</span><span class="o">+</span><span class="n">RAND</span><span class="p">()</span><span class="o">*</span><span class="mi">20001</span><span class="p">,</span><span class="n">id</span><span class="p">);</span>
+    <span class="k">SET</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">END</span> <span class="n">WHILE</span><span class="p">;</span>
+    <span class="k">END</span><span class="o">//</span>
+<span class="k">DELIMITER</span> <span class="p">;</span>
+<span class="k">CALL</span> <span class="n">MakeData</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="c1">--HR部门共有20个人</span>
+<span class="k">CALL</span> <span class="n">MakeData</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="c1">--IT部门共有1000个人</span>
+<span class="k">CALL</span> <span class="n">MakeData</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="k">CALL</span> <span class="n">MakeData</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+<span class="k">CALL</span> <span class="n">MakeData</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>给部门表填的数据：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>HR</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>IT</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>TEST</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ADMIN</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>MARKET</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>员工表的数据：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Id</th>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: center">Gender</th>
+      <th>Birthday</th>
+      <th>Salart</th>
+      <th style="text-align: center">DepartmentId</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: center">…</td>
+      <td>…</td>
+      <td>…</td>
+      <td style="text-align: center">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1259</td>
+      <td style="text-align: left">d0fa3</td>
+      <td style="text-align: center">男</td>
+      <td>1969-07-30</td>
+      <td>10050.65</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1260</td>
+      <td style="text-align: left">7bc72</td>
+      <td style="text-align: center">女</td>
+      <td>1976-05-12</td>
+      <td>14343.07</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1261</td>
+      <td style="text-align: left">2ed3a</td>
+      <td style="text-align: center">男</td>
+      <td>1983-05-17</td>
+      <td>22405.97</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1262</td>
+      <td style="text-align: left">cf36e</td>
+      <td style="text-align: center">男</td>
+      <td>1977-10-10</td>
+      <td>20173.57</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1263</td>
+      <td style="text-align: left">93d90</td>
+      <td style="text-align: center">女</td>
+      <td>1980-07-20</td>
+      <td>21434.79</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1264</td>
+      <td style="text-align: left">4d966</td>
+      <td style="text-align: center">男</td>
+      <td>1989-05-11</td>
+      <td>14828.95</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1265</td>
+      <td style="text-align: left">6a7f8</td>
+      <td style="text-align: center">男</td>
+      <td>1993-04-06</td>
+      <td>6983.03</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1266</td>
+      <td style="text-align: left">e9889</td>
+      <td style="text-align: center">女</td>
+      <td>1989-04-10</td>
+      <td>11013.51</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1267</td>
+      <td style="text-align: left">0e74b</td>
+      <td style="text-align: center">女</td>
+      <td>1974-11-01</td>
+      <td>8888.45</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1268</td>
+      <td style="text-align: left">f0a8d</td>
+      <td style="text-align: center">女</td>
+      <td>1972-02-27</td>
+      <td>13574.80</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1269</td>
+      <td style="text-align: left">5e4d5</td>
+      <td style="text-align: center">男</td>
+      <td>1977-06-03</td>
+      <td>13034.31</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1270</td>
+      <td style="text-align: left">a2c25</td>
+      <td style="text-align: center">女</td>
+      <td>1974-01-06</td>
+      <td>8079.51</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1271</td>
+      <td style="text-align: left">58fa7</td>
+      <td style="text-align: center">男</td>
+      <td>1994-06-11</td>
+      <td>12448.21</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1272</td>
+      <td style="text-align: left">84279</td>
+      <td style="text-align: center">男</td>
+      <td>1994-07-26</td>
+      <td>12154.49</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1273</td>
+      <td style="text-align: left">c5e9b</td>
+      <td style="text-align: center">女</td>
+      <td>1969-11-28</td>
+      <td>17566.93</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">1274</td>
+      <td style="text-align: left">9d652</td>
+      <td style="text-align: center">男</td>
+      <td>1989-12-10</td>
+      <td>17733.23</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: center">…</td>
+      <td>…</td>
+      <td>…</td>
+      <td style="text-align: center">…</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="section-1">传统数据库方案</h2>
+<p>还算有点样子，用传统RDBM来做，mysql没有直接的rank函数，按照题目要求，可以写两个方案：</p>
+
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="c1">--方案一（1.2s）</span>
+<span class="k">SELECT</span> <span class="n">D</span><span class="p">.</span><span class="n">Name</span> <span class="k">AS</span> <span class="n">Department</span><span class="p">,</span> <span class="n">E</span><span class="p">.</span><span class="n">Name</span> <span class="k">AS</span> <span class="n">Employee</span><span class="p">,</span> <span class="n">E</span><span class="p">.</span><span class="n">Salary</span> <span class="k">AS</span> <span class="n">Salary</span> 
+<span class="k">FROM</span> <span class="n">Employee</span> <span class="n">E</span><span class="p">,</span> <span class="n">Department</span> <span class="n">D</span>
+<span class="k">WHERE</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">Salary</span><span class="p">))</span> <span class="k">FROM</span> <span class="n">Employee</span> 
+       <span class="k">WHERE</span> <span class="n">DepartmentId</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">DepartmentId</span> <span class="k">AND</span> <span class="n">Salary</span> <span class="o">&gt;</span> <span class="n">E</span><span class="p">.</span><span class="n">Salary</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span>
+<span class="k">AND</span> <span class="n">E</span><span class="p">.</span><span class="n">DepartmentId</span> <span class="o">=</span> <span class="n">D</span><span class="p">.</span><span class="n">Id</span> 
+<span class="k">ORDER</span> <span class="k">by</span> <span class="n">E</span><span class="p">.</span><span class="n">DepartmentId</span><span class="p">,</span> <span class="n">E</span><span class="p">.</span><span class="n">Salary</span> <span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">--方案二(0.01ms)</span>
+<span class="k">select</span> <span class="n">d</span><span class="p">.</span><span class="n">Name</span> <span class="k">as</span> <span class="n">Department</span><span class="p">,</span> <span class="n">computed</span><span class="p">.</span><span class="n">Name</span> <span class="k">as</span> <span class="n">Employee</span><span class="p">,</span> <span class="n">computed</span><span class="p">.</span><span class="n">Salary</span> <span class="k">as</span> <span class="n">Salary</span>
+<span class="k">from</span> <span class="p">(</span>
+  <span class="k">select</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Salary</span><span class="p">,</span> <span class="n">DepartmentId</span><span class="p">,</span> <span class="o">@</span><span class="k">row</span> <span class="p">:</span><span class="o">=</span> <span class="n">IF</span><span class="p">(</span><span class="n">DepartmentId</span><span class="o">=@</span><span class="n">did</span><span class="p">,</span> <span class="o">@</span><span class="k">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">Rank</span> <span class="p">,</span> <span class="o">@</span><span class="n">did</span><span class="p">:</span><span class="o">=</span><span class="n">DepartmentId</span>
+  <span class="k">from</span> <span class="p">(</span>
+    <span class="k">select</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Salary</span><span class="p">,</span> <span class="n">DepartmentId</span>
+    <span class="k">from</span> <span class="n">Employee</span>
+    <span class="k">order</span> <span class="k">by</span> <span class="n">DepartmentId</span><span class="p">,</span> <span class="n">Salary</span> <span class="k">desc</span>
+    <span class="p">)</span> <span class="n">ordered</span><span class="p">,</span> <span class="p">(</span><span class="k">select</span> <span class="o">@</span><span class="k">row</span><span class="p">:</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">@</span><span class="n">did</span><span class="p">:</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="n">variables</span>
+  <span class="p">)</span> <span class="n">computed</span>
+<span class="k">join</span> <span class="n">Department</span> <span class="n">d</span>
+<span class="k">on</span> <span class="n">computed</span><span class="p">.</span><span class="n">DepartmentId</span><span class="o">=</span><span class="n">d</span><span class="p">.</span><span class="n">Id</span>
+<span class="k">where</span> <span class="n">computed</span><span class="p">.</span><span class="n">Rank</span><span class="o">&lt;=</span><span class="mi">3</span><span class="p">;</span>
+</code></pre>
+</div>
+<p>方案一的槽点1：SELECT DISTINCT 没优化，应该先select 。。。 from （select distinct(…) form …).<br />
+槽点2:两张表做笛卡尔乘积来比较，要死的节奏。</p>
+
+<p>方案二的好处是先多级排序，复杂度是线性的，然后在计数，又是线性的，效率结果很快就出来了。</p>
+
+<p>大数据时代的做法呢，如果记录有几十亿条呢？</p>
+
+<h2 id="hadoop">hadoop方案</h2>
+<p>我们把数据迁移到hadoop上去。
+hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce。</p>
+
+<h3 id="section-2">数据导入</h3>
+<p>通过以下sqoop脚本（注意这里是sqoop1，sqoop2不支持导出到hive表的）</p>
+
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="c1">--将部门表导入到hive数据仓库中去。</span>
+<span class="n">sqoop</span> <span class="n">import</span> <span class="err">\</span>
+  <span class="c1">--connect jdbc:mysql://node4:3306/test \</span>
+  <span class="c1">--username root \</span>
+  <span class="c1">--P \				#隐式密码输入</span>
+  <span class="c1">--table Department \   </span>
+  <span class="c1">--hive-import \   </span>
+  <span class="c1">--num-mappers  1 \  </span>
+  <span class="c1">--hive-delims-replacement ','</span>
+  <span class="c1">--warehouse-dir  /tmp/sqoop/</span>
+</code></pre>
+</div>
+<p>–hive-delims-replacement这个参数习惯上加上，虽然我们知道数据中没有’\001\002\003’字符（hive的默认数据分隔、数组分隔、字典分隔），会把出现的这些字符替换成’,’。<br />
+  –warehouse-dir：生成的中转文件目录，后面如果重复执行，最好的换目录。导入到hive其实分两步，第一步先将数据库表导入到hadoop中，临时文件存储位置可以自定： –target-dir or –warehouse-dir参数。千万别把–warehouse-dir设置为hive仓库位置，因为第二部就是load data到仓库语句，可能会出现冲突。<br />
+ –num-mappers  1 可选参数，根据实际业务量配置，如果配置多个，中间文件也会被分区成多个，默认按主键分区。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>...
+Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
+OK
+Time taken: 2.341 seconds    #第一部分时间
+Loading data to table default.department
+Table default.department stats: [numFiles=1, totalSize=34]
+OK
+Time taken: 0.755 seconds    #第二部分时间
+
+#查询下结果
+beeline&gt; !connect jdbc:hive2://node3:10000/default
+0: jdbc:hive2://node3:10000/default&gt; SELECT * FROM department;
++----------------+------------------+--+
+| department.id  | department.name  |
++----------------+------------------+--+
+| 1              | HR               |
+| 2              | IT               |
+| 3              | TEST             |
+| 4              | ADMIN            |
+| 5              | MARKET           |
++----------------+------------------+--+
+5 rows selected (0.386 seconds)
+</code></pre>
+</div>
+
+<p>将员工表导入到hive数据仓库中去,按照性别分区。（突发奇想加个分区吧，后面会用到）</p>
+
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code> <span class="n">sqoop</span> <span class="n">import</span> <span class="err">\</span>
+  <span class="c1">--connect jdbc:mysql://node4:3306/test \</span>
+  <span class="c1">--username root \</span>
+  <span class="c1">--P \</span>
+  <span class="c1">--table Employee \</span>
+  <span class="c1">--where "Gender=1" \</span>
+  <span class="c1">--columns "Id,Name,Birthday,Salary,DepartmentId" \</span>
+   <span class="c1">--hive-import \</span>
+  <span class="c1">--hive-partition-key Gender\</span>
+  <span class="c1">--hive-partition-value 'Man' \</span>
+  <span class="c1">--map-column-hive Birthday="DATE" \</span>
+  <span class="c1">--num-mappers  1 \</span>
+  <span class="c1">--warehouse-dir  /tmp/sqoop3/</span>
+
+<span class="n">sqoop</span> <span class="n">import</span> <span class="err">\</span>
+  <span class="c1">--connect jdbc:mysql://node4:3306/test \</span>
+  <span class="c1">--username root \</span>
+  <span class="c1">--P \</span>
+  <span class="c1">--table Employee \</span>
+  <span class="c1">--where "Gender=2" \</span>
+  <span class="c1">--columns "Id,Name,Birthday,Salary,DepartmentId" \</span>
+   <span class="c1">--hive-import \</span>
+  <span class="c1">--hive-partition-key Gender\</span>
+  <span class="c1">--hive-partition-value 'Woman' \</span>
+  <span class="c1">--map-column-hive Birthday="DATE" \</span>
+  <span class="c1">--num-mappers  1 \</span>
+  <span class="c1">--warehouse-dir  /tmp/sqoop4/</span>
+ <span class="nv">`</span><span class="se">``</span><span class="nv">
+参数解释下：
+--map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
+--where "Gender=2" </span><span class="se">\ </span><span class="nv"> 
+--columns "Id,Name,Birthday,Salary,DepartmentId" </span><span class="se">\ </span><span class="nv"> 
+--hive-partition-key Gender</span><span class="se">\ </span><span class="nv"> 
+--hive-partition-value 'Woman' </span><span class="se">\ </span><span class="nv"> 
+以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" </span><span class="se">\ </span><span class="nv"> --hive-partition-value 'Woman' </span><span class="se">\即</span><span class="nv">可。
+
+
+</span><span class="se">``</span><span class="nv">`</span><span class="k">sql</span>
+<span class="p">...</span>
+<span class="n">Logging</span> <span class="n">initialized</span> <span class="k">using</span> <span class="n">configuration</span> <span class="k">in</span> <span class="n">jar</span><span class="p">:</span><span class="n">file</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">cloudera</span><span class="o">/</span><span class="n">parcels</span><span class="o">/</span><span class="n">CDH</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">p0</span><span class="p">.</span><span class="mi">45</span><span class="o">/</span><span class="n">jars</span><span class="o">/</span><span class="n">hive</span><span class="o">-</span><span class="n">common</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="n">cdh5</span><span class="p">.</span><span class="mi">7</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="n">jar</span><span class="o">!/</span><span class="n">hive</span><span class="o">-</span><span class="n">log4j</span><span class="p">.</span><span class="n">properties</span>
+<span class="n">OK</span>
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">1</span><span class="p">.</span><span class="mi">809</span> <span class="n">seconds</span>
+<span class="n">Loading</span> <span class="k">data</span> <span class="k">to</span> <span class="k">table</span> <span class="k">default</span><span class="p">.</span><span class="n">employee</span> <span class="n">partition</span> <span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="n">Woman</span><span class="p">)</span>   <span class="o">#</span><span class="err">分区</span>
+<span class="n">Partition</span> <span class="k">default</span><span class="p">.</span><span class="n">employee</span><span class="err">{</span><span class="n">gender</span><span class="o">=</span><span class="n">Woman</span><span class="err">}</span> <span class="n">stats</span><span class="p">:</span> <span class="p">[</span><span class="n">numFiles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">numRows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">totalSize</span><span class="o">=</span><span class="mi">28803</span><span class="p">,</span> <span class="n">rawDataSize</span><span class="o">=</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">OK</span>
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">1</span><span class="p">.</span><span class="mi">226</span> <span class="n">seconds</span>
+<span class="err">看下结果：</span>
+<span class="mi">0</span><span class="p">:</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">hive2</span><span class="p">:</span><span class="o">//</span><span class="n">node3</span><span class="p">:</span><span class="mi">10000</span><span class="o">/</span><span class="k">default</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employee</span> <span class="k">WHERE</span> <span class="n">gender</span><span class="o">=</span><span class="s1">'Woman'</span> <span class="k">LIMIT</span> <span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">--------------+----------------+--------------------+------------------+------------------------+------------------+--+</span>
+<span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">id</span>  <span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">name</span>  <span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">birthday</span>  <span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">salary</span>  <span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">departmentid</span>  <span class="o">|</span> <span class="n">employee</span><span class="p">.</span><span class="n">gender</span>  <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+----------------+--------------------+------------------+------------------------+------------------+--+</span>
+<span class="o">|</span> <span class="mi">8</span>            <span class="o">|</span> <span class="mi">1048</span><span class="n">a</span>          <span class="o">|</span> <span class="mi">1992</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">06</span>         <span class="o">|</span> <span class="mi">3898</span><span class="p">.</span><span class="mi">31</span>          <span class="o">|</span> <span class="mi">1</span>                      <span class="o">|</span> <span class="n">Woman</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="mi">9</span>            <span class="o">|</span> <span class="mi">5</span><span class="n">c3bb</span>          <span class="o">|</span> <span class="mi">1985</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">16</span>         <span class="o">|</span> <span class="mi">5299</span><span class="p">.</span><span class="mi">02</span>          <span class="o">|</span> <span class="mi">1</span>                      <span class="o">|</span> <span class="n">Woman</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="mi">11</span>           <span class="o">|</span> <span class="mi">5</span><span class="n">fd48</span>          <span class="o">|</span> <span class="mi">1982</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">15</span>         <span class="o">|</span> <span class="mi">3799</span><span class="p">.</span><span class="mi">24</span>          <span class="o">|</span> <span class="mi">1</span>                      <span class="o">|</span> <span class="n">Woman</span>            <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+----------------+--------------------+------------------+------------------------+------------------+--+</span>
+<span class="mi">3</span> <span class="k">rows</span> <span class="n">selected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">312</span> <span class="n">seconds</span><span class="p">)</span>
+<span class="mi">0</span><span class="p">:</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">hive2</span><span class="p">:</span><span class="o">//</span><span class="n">node3</span><span class="p">:</span><span class="mi">10000</span><span class="o">/</span><span class="k">default</span><span class="o">&gt;</span> <span class="k">DESCRIBE</span> <span class="n">employee</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">--------------------------+-----------------------+-----------------------+--+</span>
+<span class="o">|</span>         <span class="n">col_name</span>         <span class="o">|</span>       <span class="n">data_type</span>       <span class="o">|</span>        <span class="k">comment</span>        <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------+-----------------------+-----------------------+--+</span>
+<span class="o">|</span> <span class="n">id</span>                       <span class="o">|</span> <span class="n">int</span>                   <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span> <span class="n">name</span>                     <span class="o">|</span> <span class="n">string</span>                <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span> <span class="n">birthday</span>                 <span class="o">|</span> <span class="n">date</span>                  <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span> <span class="n">salary</span>                   <span class="o">|</span> <span class="n">double</span>                <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span> <span class="n">departmentid</span>             <span class="o">|</span> <span class="n">int</span>                   <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span> <span class="n">gender</span>                   <span class="o">|</span> <span class="n">string</span>                <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">|</span>                          <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span>
+<span class="o">|</span> <span class="o">#</span> <span class="n">Partition</span> <span class="n">Information</span>  <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span>
+<span class="o">|</span> <span class="o">#</span> <span class="n">col_name</span>               <span class="o">|</span> <span class="n">data_type</span>             <span class="o">|</span> <span class="k">comment</span>               <span class="o">|</span>
+<span class="o">|</span>                          <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span> <span class="k">NULL</span>                  <span class="o">|</span>
+<span class="o">|</span> <span class="n">gender</span>                   <span class="o">|</span> <span class="n">string</span>                <span class="o">|</span>                       <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------+-----------------------+-----------------------+--+</span>
+</code></pre>
+</div>
+
+<h3 id="hive">hive操作</h3>
+<p>因为前面有个分区表，所以改下需求取各部门工资排名前3名的男员工吧，这样快一些。</p>
+
+<div class="language-sql highlighter-rouge"><pre class="highlight"><code><span class="k">SELECT</span> <span class="cm">/*+MAPJOIN(B)*/</span><span class="n">A</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="n">B</span><span class="p">.</span><span class="n">name</span> <span class="k">FROM</span>
+<span class="p">(</span><span class="k">SELECT</span>  <span class="n">departmentid</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">salary</span><span class="p">,</span> <span class="n">ROW_NUMBER</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">departmentid</span> <span class="k">ORDER</span> <span class="k">BY</span>  <span class="n">salary</span> <span class="k">DESC</span><span class="p">)</span><span class="n">rank</span>
+<span class="k">FROM</span> <span class="n">employee</span>
+<span class="k">WHERE</span> <span class="n">gender</span><span class="o">=</span><span class="s1">'Man'</span><span class="p">)</span><span class="n">A</span> 
+<span class="k">JOIN</span> <span class="n">department</span> <span class="n">B</span> <span class="k">ON</span> <span class="n">A</span><span class="p">.</span><span class="n">departmentid</span><span class="o">=</span><span class="n">B</span><span class="p">.</span><span class="n">id</span>
+<span class="k">WHERE</span> <span class="n">A</span><span class="p">.</span><span class="n">rank</span><span class="o">&lt;=</span><span class="mi">3</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>这里因为department是个小表，当然就直接用mapjoin解决联结问题了。ROW_NUMBER() OVER(PARTITION BY departmentid ORDER BY  salary DESC)是hive的窗口函数，首先是按照departmentid分区，单独对这个分区对同一个departmentid 按照工资排序，ROW_NUMBER()实现功能和mysql方案2一致，最后取其前三名就完事了。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 6.3 sec   HDFS Read: 41587 HDFS Write: 687 SUCCESS #分了两个区来处理，比如第一个区处理1，2，3部门，第二个区处理5，4部门
+16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-4: Map: 2   Cumulative CPU: 3.38 sec   HDFS Read: 11577 HDFS Write: 355 SUCCESS #map join操作，只要一个map就好了
+16/09/18 23:02:40 INFO ql.Driver: Total MapReduce CPU Time Spent: 9 seconds 680 msec
+</code></pre>
+</div>
+
+<p>结果：
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-9-19/23975352.jpg" alt="" /></p>
+
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/09/18/一道题目两种方案"
+                    data-title="一道题目两种方案"
+                    data-url="https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/"
+                    data-images="https://luzhijun.github.io/img/post-bg-2Case.jpg"
+                    data-content="阿里数据开发工程师一道笔试题，分组统计排名。
+
+数据准备
+
+具体题目网上没有搜到，那就造点数据来说明下。
+首先造张员工表和部门表，结构如下：
+
+mysql... | 楚汐|Trucy Luce Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/" data-toggle="tooltip" data-placement="top" title="如何理解特征值">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/09/18/一道题目两种方案"
+                        data-title="一道题目两种方案"
+                        data-url="https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
+                                    前端开发
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                                    JavaScript
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#算法" title="算法" rel="2">
+                                    算法
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#大数据" title="大数据" rel="2">
+                                    大数据
+                                </a>
+                            
+        				
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://huangxuan.me">Hux Blog</a></li>
+                    
+                        <li><a href="http://echoma.github.io/text_sequence_diagram/">在线时序图</a></li>
+                    
+                        <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
+                    
+                        <li><a href="#">Example Friends</a></li>
+                    
+                        <li><a href="#">It helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'TrucyLuce';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/luzhijun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; T.L Blog 2016
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'https://luzhijun.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'f2fd34a3c5de02cf1e94e7584f314dc6';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<!-- 代码行号-->
+<script type="text/javascript">
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(\w+)\b/i,t=0,n=_self.Prism={util:{encode:function(e){return e instanceof a?new a(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e){var t=n.util.type(e);switch(t){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=n.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return n.util.clone(e)})}return e}},languages:{extend:function(e,t){var a=n.util.clone(n.languages[e]);for(var r in t)a[r]=t[r];return a},insertBefore:function(e,t,a,r){r=r||n.languages;var l=r[e];if(2==arguments.length){a=arguments[1];for(var i in a)a.hasOwnProperty(i)&&(l[i]=a[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in a)a.hasOwnProperty(i)&&(o[i]=a[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,t,a,r){r=r||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],a||l),"Object"!==n.util.type(e[l])||r[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||r[n.util.objId(e[l])]||(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,r)):(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,r)))}},plugins:{},highlightAll:function(e,t){var a={callback:t,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var r,l=a.elements||document.querySelectorAll(a.selector),i=0;r=l[i++];)n.highlightElement(r,e===!0,a.callback)},highlightElement:function(t,a,r){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1],i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(!s||!i)return n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),a&&_self.Worker){var c=new Worker(n.filename);c.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},c.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,r){var l=n.tokenize(e,t);return a.stringify(n.util.encode(l),r)},tokenize:function(e,t){var a=n.Token,r=[e],l=t.rest;if(l){for(var i in l)t[i]=l[i];delete t.rest}e:for(var i in t)if(t.hasOwnProperty(i)&&t[i]){var o=t[i];o="Array"===n.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],c=u.inside,g=!!u.lookbehind,h=!!u.greedy,f=0,d=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var m=r[p];if(r.length>e.length)break e;if(!(m instanceof a)){u.lastIndex=0;var y=u.exec(m),v=1;if(!y&&h&&p!=r.length-1){var b=r[p+1].matchedStr||r[p+1],k=m+b;if(p<r.length-2&&(k+=r[p+2].matchedStr||r[p+2]),u.lastIndex=0,y=u.exec(k),!y)continue;var w=y.index+(g?y[1].length:0);if(w>=m.length)continue;var _=y.index+y[0].length,P=m.length+b.length;if(v=3,P>=_){if(r[p+1].greedy)continue;v=2,k=k.slice(0,P)}m=k}if(y){g&&(f=y[1].length);var w=y.index+f,y=y[0].slice(f),_=w+y.length,S=m.slice(0,w),O=m.slice(_),j=[p,v];S&&j.push(S);var A=new a(i,c?n.tokenize(y,c):y,d,y,h);j.push(A),O&&j.push(O),Array.prototype.splice.apply(r,j)}}}}}return r},hooks:{all:{},add:function(e,t){var a=n.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=n.hooks.all[e];if(a&&a.length)for(var r,l=0;r=a[l++];)r(t)}}},a=n.Token=function(e,t,n,a,r){this.type=e,this.content=t,this.alias=n,this.matchedStr=a||null,this.greedy=!!r};if(a.stringify=function(e,t,r){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return a.stringify(n,t,e)}).join("");var l={type:e.type,content:a.stringify(e.content,t,r),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:r};if("comment"==l.type&&(l.attributes.spellcheck="true"),e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o="";for(var s in l.attributes)o+=(o?" ":"")+s+'="'+(l.attributes[s]||"")+'"';return"<"+l.tag+' class="'+l.classes.join(" ")+'" '+o+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,r=t.code,l=t.immediateClose;_self.postMessage(n.highlight(r,n.languages[a],a)),l&&_self.close()},!1),_self.Prism):_self.Prism;var r=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return r&&(n.filename=r.src,document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",n.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+</script>
+<script >
+!function(){"undefined"!=typeof self&&self.Prism&&self.document&&Prism.hooks.add("complete",function(e){if(e.code){var t=e.element.parentNode,s=/\s*\bhighlight\b\s*/;if(t&&/pre/i.test(t.nodeName)&&(s.test(t.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s,"")),s.test(t.className)||(t.className+="highlight");var n,a=e.code.match(/\n(?!$)/g),l=a?a.length+1:1,m=new Array(l+1);m=m.join("<span></span>"),n=document.createElement("span"),n.className="line-numbers-rows",n.innerHTML=m,t.hasAttribute("data-start")&&(t.style.counterReset="linenumber "+(parseInt(t.getAttribute("data-start"),10)-1)),e.element.appendChild(n)}}})}();
+</script>
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

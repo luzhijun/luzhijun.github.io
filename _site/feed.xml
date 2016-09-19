@@ -5,23 +5,475 @@
     <description>我想静静</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 10 Sep 2016 11:32:09 +0800</pubDate>
-    <lastBuildDate>Sat, 10 Sep 2016 11:32:09 +0800</lastBuildDate>
+    <pubDate>Mon, 19 Sep 2016 10:07:34 +0800</pubDate>
+    <lastBuildDate>Mon, 19 Sep 2016 10:07:34 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
+    
+      <item>
+        <title>一道题目两种方案</title>
+        <description>&lt;p&gt;阿里数据开发工程师一道笔试题，分组统计排名。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;数据准备&lt;/h2&gt;
+
+&lt;p&gt;具体题目网上没有搜到，那就造点数据来说明下。&lt;br /&gt;
+首先造张员工表和部门表，结构如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; describe Employee;
++--------------+-------------------+------+-----+---------+----------------+
+| Field        | Type              | Null | Key | Default | Extra          |
++--------------+-------------------+------+-----+---------+----------------+
+| Id           | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
+| Name         | varchar(6)        | NO   |     | NULL    |                |
+| Gender       | enum('男','女') | YES  |     | NULL    |                |
+| Birthday     | date              | YES  |     | NULL    |                |
+| Salary       | decimal(7,2)      | YES  |     | 0.00    |                |
+| DepartmentId | int(10) unsigned  | NO   | MUL | NULL    |                |
++--------------+-------------------+------+-----+---------+----------------+
+mysql&amp;gt; describe Department;
++-------+------------------+------+-----+---------+----------------+
+| Field | Type             | Null | Key | Default | Extra          |
++-------+------------------+------+-----+---------+----------------+
+| Id    | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| Name  | varchar(15)      | NO   |     | NULL    |                |
++-------+------------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;表中数据可以随机存储嘛，见脚本:&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;--存储数据&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;----部门&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;HR&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;IT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;TEST&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;ADMIN&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;MARKET&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;----员工&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;today&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NOW&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DELIMITER&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PROCEDURE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;IN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;IN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;BEGIN&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;DECLARE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;WHILE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DO&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Gender&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Birthday&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+      &lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;LEFT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MD5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RAND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FLOOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RAND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DATE_SUB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;today&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RAND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DAY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RAND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;END&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WHILE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;END&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DELIMITER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CALL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--HR部门共有20个人&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CALL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--IT部门共有1000个人&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CALL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CALL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CALL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MakeData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;给部门表填的数据：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Id&lt;/th&gt;
+      &lt;th&gt;Name&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;HR&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;IT&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;TEST&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;ADMIN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;MARKET&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;员工表的数据：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Id&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Name&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Gender&lt;/th&gt;
+      &lt;th&gt;Birthday&lt;/th&gt;
+      &lt;th&gt;Salart&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;DepartmentId&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1259&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;d0fa3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1969-07-30&lt;/td&gt;
+      &lt;td&gt;10050.65&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1260&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7bc72&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1976-05-12&lt;/td&gt;
+      &lt;td&gt;14343.07&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1261&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;2ed3a&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1983-05-17&lt;/td&gt;
+      &lt;td&gt;22405.97&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1262&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;cf36e&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1977-10-10&lt;/td&gt;
+      &lt;td&gt;20173.57&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1263&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;93d90&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1980-07-20&lt;/td&gt;
+      &lt;td&gt;21434.79&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1264&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;4d966&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1989-05-11&lt;/td&gt;
+      &lt;td&gt;14828.95&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1265&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;6a7f8&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1993-04-06&lt;/td&gt;
+      &lt;td&gt;6983.03&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1266&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;e9889&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1989-04-10&lt;/td&gt;
+      &lt;td&gt;11013.51&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1267&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;0e74b&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1974-11-01&lt;/td&gt;
+      &lt;td&gt;8888.45&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1268&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;f0a8d&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1972-02-27&lt;/td&gt;
+      &lt;td&gt;13574.80&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1269&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5e4d5&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1977-06-03&lt;/td&gt;
+      &lt;td&gt;13034.31&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1270&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;a2c25&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1974-01-06&lt;/td&gt;
+      &lt;td&gt;8079.51&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1271&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;58fa7&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1994-06-11&lt;/td&gt;
+      &lt;td&gt;12448.21&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1272&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;84279&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1994-07-26&lt;/td&gt;
+      &lt;td&gt;12154.49&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1273&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;c5e9b&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;女&lt;/td&gt;
+      &lt;td&gt;1969-11-28&lt;/td&gt;
+      &lt;td&gt;17566.93&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1274&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;9d652&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;男&lt;/td&gt;
+      &lt;td&gt;1989-12-10&lt;/td&gt;
+      &lt;td&gt;17733.23&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;传统数据库方案&lt;/h2&gt;
+&lt;p&gt;还算有点样子，用传统RDBM来做，mysql没有直接的rank函数，按照题目要求，可以写两个方案：&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;--方案一（1.2s）&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt; 
+       &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Id&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;E&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;--方案二(0.01ms)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;computed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;computed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;did&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;did&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Employee&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;order&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Salary&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;desc&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ordered&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;did&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;variables&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;computed&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Department&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;computed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DepartmentId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Id&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;computed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;方案一的槽点1：SELECT DISTINCT 没优化，应该先select 。。。 from （select distinct(…) form …).&lt;br /&gt;
+槽点2:两张表做笛卡尔乘积来比较，要死的节奏。&lt;/p&gt;
+
+&lt;p&gt;方案二的好处是先多级排序，复杂度是线性的，然后在计数，又是线性的，效率结果很快就出来了。&lt;/p&gt;
+
+&lt;p&gt;大数据时代的做法呢，如果记录有几十亿条呢？&lt;/p&gt;
+
+&lt;h2 id=&quot;hadoop&quot;&gt;hadoop方案&lt;/h2&gt;
+&lt;p&gt;我们把数据迁移到hadoop上去。
+hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;数据导入&lt;/h3&gt;
+&lt;p&gt;通过以下sqoop脚本（注意这里是sqoop1，sqoop2不支持导出到hive表的）&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;--将部门表导入到hive数据仓库中去。&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sqoop&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--connect jdbc:mysql://node4:3306/test \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--username root \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--P \				#隐式密码输入&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--table Department \   &lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-import \   &lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--num-mappers  1 \  &lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-delims-replacement ','&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--warehouse-dir  /tmp/sqoop/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;–hive-delims-replacement这个参数习惯上加上，虽然我们知道数据中没有’\001\002\003’字符（hive的默认数据分隔、数组分隔、字典分隔），会把出现的这些字符替换成’,’。&lt;br /&gt;
+  –warehouse-dir：生成的中转文件目录，后面如果重复执行，最好的换目录。导入到hive其实分两步，第一步先将数据库表导入到hadoop中，临时文件存储位置可以自定： –target-dir or –warehouse-dir参数。千万别把–warehouse-dir设置为hive仓库位置，因为第二部就是load data到仓库语句，可能会出现冲突。&lt;br /&gt;
+ –num-mappers  1 可选参数，根据实际业务量配置，如果配置多个，中间文件也会被分区成多个，默认按主键分区。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
+Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.7.0-1.cdh5.7.0.p0.45/jars/hive-common-1.1.0-cdh5.7.0.jar!/hive-log4j.properties
+OK
+Time taken: 2.341 seconds    #第一部分时间
+Loading data to table default.department
+Table default.department stats: [numFiles=1, totalSize=34]
+OK
+Time taken: 0.755 seconds    #第二部分时间
+
+#查询下结果
+beeline&amp;gt; !connect jdbc:hive2://node3:10000/default
+0: jdbc:hive2://node3:10000/default&amp;gt; SELECT * FROM department;
++----------------+------------------+--+
+| department.id  | department.name  |
++----------------+------------------+--+
+| 1              | HR               |
+| 2              | IT               |
+| 3              | TEST             |
+| 4              | ADMIN            |
+| 5              | MARKET           |
++----------------+------------------+--+
+5 rows selected (0.386 seconds)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;将员工表导入到hive数据仓库中去,按照性别分区。（突发奇想加个分区吧，后面会用到）&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;n&quot;&gt;sqoop&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--connect jdbc:mysql://node4:3306/test \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--username root \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--P \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--table Employee \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--where &quot;Gender=1&quot; \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--columns &quot;Id,Name,Birthday,Salary,DepartmentId&quot; \&lt;/span&gt;
+   &lt;span class=&quot;c1&quot;&gt;--hive-import \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-partition-key Gender\&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-partition-value 'Man' \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--map-column-hive Birthday=&quot;DATE&quot; \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--num-mappers  1 \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--warehouse-dir  /tmp/sqoop3/&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;sqoop&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--connect jdbc:mysql://node4:3306/test \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--username root \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--P \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--table Employee \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--where &quot;Gender=2&quot; \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--columns &quot;Id,Name,Birthday,Salary,DepartmentId&quot; \&lt;/span&gt;
+   &lt;span class=&quot;c1&quot;&gt;--hive-import \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-partition-key Gender\&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--hive-partition-value 'Woman' \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--map-column-hive Birthday=&quot;DATE&quot; \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--num-mappers  1 \&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;--warehouse-dir  /tmp/sqoop4/&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;``&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;
+参数解释下：
+--map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
+--where &quot;Gender=2&quot; &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; 
+--columns &quot;Id,Name,Birthday,Salary,DepartmentId&quot; &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; 
+--hive-partition-key Gender&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; 
+--hive-partition-value 'Woman' &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; 
+以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where &quot;Gender=2&quot; &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; --hive-partition-value 'Woman' &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\即&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;可。
+
+
+&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;``&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;sql&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Logging&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialized&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;configuration&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cloudera&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parcels&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CDH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cdh5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;45&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jars&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;common&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cdh5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hive&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log4j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;OK&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Time&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;taken&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;809&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seconds&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Loading&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partition&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Woman&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;分区&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Partition&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Woman&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;numFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numRows&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalSize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28803&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rawDataSize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;OK&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Time&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;taken&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;226&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seconds&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;看下结果：&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jdbc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hive2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Woman'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------+----------------+--------------------+------------------+------------------------+------------------+--+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;birthday&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;salary&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;departmentid&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------+----------------+--------------------+------------------+------------------------+------------------+--+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1048&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1992&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;06&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3898&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;31&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;                      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Woman&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c3bb&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1985&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;05&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5299&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;02&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;                      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Woman&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fd48&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1982&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;05&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3799&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;                      &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Woman&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------+----------------+--------------------+------------------+------------------------+------------------+--+&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selected&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;312&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seconds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jdbc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hive2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESCRIBE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------------------+-----------------------+-----------------------+--+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;col_name&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;data_type&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;comment&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------------------+-----------------------+-----------------------+--+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int&lt;/span&gt;                   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;                     &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;                &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;birthday&lt;/span&gt;                 &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;salary&lt;/span&gt;                   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;double&lt;/span&gt;                &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;departmentid&lt;/span&gt;             &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int&lt;/span&gt;                   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;                   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;                &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Partition&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Information&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col_name&lt;/span&gt;               &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data_type&lt;/span&gt;             &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;comment&lt;/span&gt;               &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                          &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;                  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;                   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;                &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;                       &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;--------------------------+-----------------------+-----------------------+--+&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;hive&quot;&gt;hive操作&lt;/h3&gt;
+&lt;p&gt;因为前面有个分区表，所以改下需求取各部门工资排名前3名的男员工吧，这样快一些。&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/*+MAPJOIN(B)*/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;departmentid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;salary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ROW_NUMBER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OVER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PARTITION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;departmentid&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;salary&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;employee&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gender&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Man'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;JOIN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;department&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;departmentid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这里因为department是个小表，当然就直接用mapjoin解决联结问题了。ROW_NUMBER() OVER(PARTITION BY departmentid ORDER BY  salary DESC)是hive的窗口函数，首先是按照departmentid分区，单独对这个分区对同一个departmentid 按照工资排序，ROW_NUMBER()实现功能和mysql方案2一致，最后取其前三名就完事了。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 6.3 sec   HDFS Read: 41587 HDFS Write: 687 SUCCESS #分了两个区来处理，比如第一个区处理1，2，3部门，第二个区处理5，4部门
+16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-4: Map: 2   Cumulative CPU: 3.38 sec   HDFS Read: 11577 HDFS Write: 355 SUCCESS #map join操作，只要一个map就好了
+16/09/18 23:02:40 INFO ql.Driver: Total MapReduce CPU Time Spent: 9 seconds 680 msec
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;结果：
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-9-19/23975352.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 18 Sep 2016 00:00:00 +0800</pubDate>
+        <link>https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</guid>
+        
+        <category>算法</category>
+        
+        <category>大数据</category>
+        
+        
+      </item>
     
       <item>
         <title>如何理解特征值</title>
         <description>&lt;h3 id=&quot;section&quot;&gt;定义&lt;/h3&gt;
 &lt;p&gt;从线性空间的角度看，在一个定义了内积的线性空间里，对一个N阶&lt;b&gt;对称&lt;/b&gt;方阵进行特征分解，就是产生了该空间的N个标准正交基，然后把矩阵投影到这N个基上。N个特征向量就是N个标准正交基，而特征值的模则代表矩阵在每个基上的投影长度。&lt;br /&gt;
-特征值越大，说明矩阵在对应的特征向量上的方差越大，功率越大，信息量越多。应用到最优化中，意思就是对于R的二次型，自变量在这个方向上变化的时候，对函数值的影响最大，也就是该方向上的方向导数最大。应用到数据挖掘中，意思就是最大特征值对应的特征向量方向上包含最多的信息量，如果某几个特征值很小，说明这几个方向信息量很小，可以用来降维，也就是删除小特征值对应方向的数据，只保留大特征值方向对应的数据，这样做以后数据量减小，但有用信息量变化不大。&lt;br /&gt;
-### 应用1 二次型最优化问题
-二次型$y=x^{T}Rx$，其中R是已知的二阶矩阵，R=[1，0.5；0.5，1]，$x$是二维列向量，$x=[x_1；x_2]$，求$y$的最小值。求解很简单，讲一下这个问题与特征值的关系。&lt;br /&gt;
+特征值越大，说明矩阵在对应的特征向量上的方差越大，功率越大，信息量越多。应用到最优化中，意思就是对于R的二次型，自变量在这个方向上变化的时候，对函数值的影响最大，也就是该方向上的方向导数最大。应用到数据挖掘中，意思就是最大特征值对应的特征向量方向上包含最多的信息量，如果某几个特征值很小，说明这几个方向信息量很小，可以用来降维，也就是删除小特征值对应方向的数据，只保留大特征值方向对应的数据，这样做以后数据量减小，但有用信息量变化不大。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;应用1 二次型最优化问题&lt;/h3&gt;
+&lt;p&gt;二次型$y=x^{T}Rx$，其中R是已知的二阶矩阵，R=[1，0.5；0.5，1]，$x$是二维列向量，$x=[x_1；x_2]$，求$y$的最小值。求解很简单，讲一下这个问题与特征值的关系。&lt;br /&gt;
 对R特征分解，特征向量是[-0.7071,0.7071]和[0.7071,0.7071]，对应的特征值分别是0.5和1.5。然后把y的等高线图画一下:&lt;br /&gt;
 &lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-9-10/57525802.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 从图中看，函数值变化最快的方向，也就是曲面最陡峭的方向，归一化以后是[0.7071；0.7071]，嗯哼，这恰好是矩阵R的一个特征值，而且它对应的特征向量是最大的。因为这个问题是二阶的，只有两个特征向量，所以另一个特征向量方向就是曲面最平滑的方向。这一点在分析最优化算法收敛性能的时候需要用到。&lt;br /&gt;
-二阶问题比较直观，当R阶数升高时，也是一样的道理。
-### 应用2 数据降维
-机器学习中的分类问题，给出178个葡萄酒样本，每个样本含有13个参数，比如酒精度、酸度、镁含量等，这些样本属于3个不同种类的葡萄酒。任务是提取3种葡萄酒的特征，以便下一次给出一个新的葡萄酒样本的时候，能根据已有数据判断出新样本是哪一种葡萄酒。&lt;br /&gt;
+二阶问题比较直观，当R阶数升高时，也是一样的道理。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;应用2 数据降维&lt;/h3&gt;
+&lt;p&gt;机器学习中的分类问题，给出178个葡萄酒样本，每个样本含有13个参数，比如酒精度、酸度、镁含量等，这些样本属于3个不同种类的葡萄酒。任务是提取3种葡萄酒的特征，以便下一次给出一个新的葡萄酒样本的时候，能根据已有数据判断出新样本是哪一种葡萄酒。&lt;br /&gt;
 &lt;a href=&quot;http://archive.ics.uci.edu/ml/datasets/Wine&quot;&gt;问题详细描述&lt;/a&gt;  &lt;br /&gt;
 &lt;a href=&quot;http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data&quot;&gt;训练样本数据&lt;/a&gt;&lt;br /&gt;
 原数据有13维，但这之中含有冗余，减少数据量最直接的方法就是降维。&lt;br /&gt;
@@ -57,6 +509,298 @@
         <guid isPermaLink="true">https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/</guid>
         
         <category>数学</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>海量大数据处理单机方案</title>
+        <description>&lt;p&gt;所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。&lt;br /&gt;
+现在如果要求单机解决海量数据处理呢？显然只有通过空间换时间，通过把大数据分成小块小块解决，或者通过巧妙的算法和相应的数据结构来各个击破。&lt;/p&gt;
+
+&lt;h2 id=&quot;hash&quot;&gt;1. HASH算法&lt;/h2&gt;
+
+&lt;p&gt;Hash可以通过散列函数将任意长度的输入变成固定长度的输出，也可以将不同的输入映射成为相同的相同的输出，而且这些输出范围也是可控制的，所以起到了很好的压缩映射和等价映射功能。这些特性被应用到了信息安全领域中加密算法，其中等价映射这一特性在海量数据解决方案中起到相当大的作用，特别是在整个MapReduce框架中，下面章节会对这二方面详细说。话说，Hash为什么会有这种压缩映射和等价映射功能，主要是因为Hash函数在实现上都使用到了取模。下面看看几种常用的Hash函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;直接取余法：$f(x)= x \mod p;p$一般是不太接近 $2^t$ 的一个质数。&lt;/li&gt;
+  &lt;li&gt;乘法取整法：$f(x)=(xA-floor(xA))M$该方法包括两个步骤：首先用关键字key乘上某个常数A(0&amp;lt;A&amp;lt;1)，并抽取出key.A的小数部分；然后用m乘以该小数后取整。最大的优点是选取M不再像除余法那样关键。比如，完全可选择它是2的整数次幂。虽然该方法对任何A的值都适用，但对某些值效果会更好。&lt;/li&gt;
+  &lt;li&gt;平方取中法：$f(x)=(x^2 div 1000 ) \mod M)$ 平方后取中间的，每位包含信息比较多,因为一个乘积的中间几位数和乘数的每一位都相关，所以由此产生的散列地址较为均匀.&lt;/li&gt;
+  &lt;li&gt;将关键字分割成位数相同的几个部分（最后一部分位数可以不同），然后取这几个部分的叠加和（舍弃进位）作为哈希地址。关键字位数很多，而且关键字中每一位数字分布大致均匀时，可以采用折叠法。。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;hash-1&quot;&gt;1.1 Hash算法在海量数据处理方案中的应用&lt;/h3&gt;
+
+&lt;p&gt;单机处理海量数据的大体主流思想是和MapReduce框架一样，都是采取分而治之的方法，将海量数据切分为若干小份来进行处理，并且在处理的过程中要兼顾内存的使用情况和处理并发量情况。而更加仔细的处理流程大体上分为几步（对大多数情况都使用，其中少部分情况要根据你自己的实际情况和其他解决方法做比较采用最符合实际的方法）:&lt;/p&gt;
+
+&lt;p&gt;第一步：分而治之。&lt;br /&gt;
+采用Hash取模进行等价映射。采用这种方法可以将巨大的文件进行等价分割（注意：符合一定规律的数据要被分割到同一个小文件）变成若干个小文件再进行处理。这个方法针对数据量巨大，内存受到限制时十分有效。&lt;/p&gt;
+
+&lt;p&gt;第二步：利用hashMap在内存中进行统计。&lt;br /&gt;
+我们通过Hash映射将大文件分割为小文件后，就可以采用HashMap这样的存储结构来对小文件中的关注项进行频率统计。具体的做法是将要进行统计的Item作为HashMap的key，此Item出现的次数作为value。&lt;/p&gt;
+
+&lt;p&gt;第三步：在上一步进行统计完毕之后根据场景需求往往需要对存储在HashMap中的数据根据出现的次数来进行排序。其中排序我们可以采用堆排序、快速排序、归并排序等方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;【案例1】海量日志数据，提取出某日访问百度次数最多的那个IP&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;思路：当看到这样的业务场景，我们脑子里应该立马会想到这些海量网关日志数据量有多大？这些IP有多少中组合情况，最大情况下占多少存储空间？解决这样的问题前我们最重要的先要知道数据的规模，这样才能从大体上制定解决方案。所以现在假设这些这些网关日志量有3T。下面大体按照我们上面的步骤来对解决此场景进行分析：&lt;br /&gt;
+	（1）首先，从这些海量数据中过滤出指定一天访问百度的用户IP,并逐个写到一个大文件中。&lt;br /&gt;
+	（2）采用“分而治之”的思想用Hash映射将大文件进行分割降低数据规模。按照IP地址的Hash(IP)%1024值，把海量IP日志分别存储到1024个小文件中，其中Hash函数得出值为分割后小文件的编号。&lt;br /&gt;
+	（3）逐个读小文件，对于每一个小文件构建一个IP为key，出现次数为value的HashMap。对于怎么利用HashMap记录IP出现的次数这个比较简单，因为我们可以通过程序读小文件将IP放到HashMap中key的之后可以先判断此IP是否已经存在如果不存在直接放进去，其出现次数记录为1，如果此IP已经存储则过得其对应的value值也就是出现的次数然后加1就ok。最后，按照IP出现的次数采用排序算法对HashMap中的数据进行排序，同时记录当前出现次数最多的那个IP地址；&lt;br /&gt;
+	（4）走到这步，我们可以得到1024个小文件中出现次数最多的IP了，再采用常规的排序算法找出总体上出现次数最多的IP就ok了。  &lt;br /&gt;
+	这个我们需要特别地明确知道一下几点内容：&lt;br /&gt;
+	第一：我们通过Hash函数:Hash(IP)%1024将大文件映射分割为了1024个小文件，那么这1024个小文件的大小是否均匀？另外，我们采用HashMap来进行IP频率的统计，内存消耗是否合适？   &lt;br /&gt;
+	 首先是第一个问题，被分割的小文件的大小的均匀程度是取决于我们使用怎么样的Hash函数，对本场景而言就是：Hash(IP)%1024。设计良好的Hash函数可以减少冲突，使数据均匀的分割到1024个小文件中。但是尽管数据映射到了另外一些不同的位置，但数据还是原来的数据，只是代替和表示这些原始数据的形式发生了变化而已。&lt;br /&gt;
+	另外，看看第二个问题：用HashMap统计IP出现频率的内存使用情况。&lt;br /&gt;
+	要想知道HashMap在统计IP出现的频率，那么我们必须对IP组合的情况有所了解。32Bit的IP最多可以有2^32种的组合方式，也就是说去所有IP最多占4G存储空间。在此场景中，我们已经根据IP的hash值将大文件分割出了1024个小文件，也就是说这4G的IP已经被分散到了1024个文件中。那么在Hash函数设计合理最perfect的情况下针对每个小文件的HashMap占的内存大小最多为4G/1024+存储IP对应的次数所占的空间，所以内存绝对够用。&lt;br /&gt;
+	第二：Hash取模是一种等价映射，换句话说通过映射分割之后相同的元素只会分到同一个小文件中去的。就本场景而言，相同的IP通过Hash函数后只会被分割到这1024个小文件中的其中一个文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;【例子2】给定a、b两个文件，各存放50亿个url，每个url各占64字节，内存限制是4G，让你找出a、b文件共同的url？&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;思路:还是老一套，先Hash映射降低数据规模，然后统计排序。&lt;br /&gt;
+具体做法：&lt;/p&gt;
+
+&lt;p&gt;（1）分析现有数据的规模。&lt;br /&gt;
+	   按照每个url64字节来算，每个文件有50亿个url，那么每个文件大小为5G*64=320G。320G远远超出内存限定的4G，所以不能将其全部加载到内存中来进行处理，需要采用分而治之的方法进行处理。&lt;br /&gt;
+	   
+	(2)Hash映射分割文件。逐行读取文件a，采用hash函数：Hash(url)%1000将url分割到1000个小文件中，文件即为$f1&lt;em&gt;1,f1_2,f1_3,…,f1&lt;/em&gt;{1000}$。那么理想情况下每个小文件的大小大约为300m左右。再以相同的方法对大文件b进行相同的操作再得到1000个小文件，记为：$f2&lt;em&gt;1,f2_2,f2_3,…,f2&lt;/em&gt;{1000}$。&lt;/p&gt;
+
+&lt;p&gt;经过一番折腾后我们将大文件进行了分割并且将相同url都分割到了这2组小文件中下标相同的两个文件中,其实我们可以将这2组文件看成一个整体：$f1&lt;em&gt;1 \&amp;amp; f2_1，f1_2\&amp;amp;,f2_2,f1_3\&amp;amp;f2_3,…,f1&lt;/em&gt;{1000} \&amp;amp; f2_{1000}$。那么我们就可以将问题转化成为求这1000对小文件中相同的url就可以了。接下来，求每对小文件中的相同url，首先将每对对小文件中较小的那个的url放到HashSet结构中，然后遍历对应这对小文件中的另一个文件，看其是否存才刚刚构建的HashSet中，如果存在说明是一样的url，将这url直接存到结果文件就ok了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;【例子3】有10个文件，每个文件1G，每个文件的每一行存放的都是用户的query，每个文件的query都可能重复。要求你按照query的频度排序。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;【例子4】有一个1G大小的一个文件，里面每一行是一个词，词的大小不超过16字节，内存限制大小是1M。返回频数最高的100个词。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;像例子3和例子4这些场景都可以用我们的一贯老招数解决：先Hash映射降低数据规模，然后统计加载到内存，最后排序。具体做法可以参考上面2个例子。&lt;/p&gt;
+
+&lt;h3 id=&quot;hashmapreduce&quot;&gt;1.2 Hash算法在Mapreduce中的应用&lt;/h3&gt;
+&lt;p&gt;Hash算法在分布式计算框架MapReduce中起着核心作用。先来看看下面整个mapreduce的运行流程，首先是原始数据经过切片进入到map函数中，经过map函数的数据会在整个环形缓冲区里边进行第一次排序，接着map的输出结果会根据key值(默认情况是这样，另外可以自定义)进行Hash映射将数据量庞大的map输出分割为N份（N为reduce数目）来实现数据的并行处理，这就是Partition阶段，另外MapReduce框架中Partition的实现方式往往能够决定数据的倾斜度，所以在处理数据前最好要对数据的分布情况有所了解。其Partition的实现主要有：HashPartitioner、BinaryPartitioner、KeyFieldBasedPartitioner、TotalOrderPartitioner这几种，其中HashPartitioner是默认的。首先来看看HashPartitioner的核心实现： 
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-9-17/50512419.jpg&quot; alt=&quot;&quot; /&gt;
+	接下来从MapReudce的源码角度来研究一下Partition的实现原理：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;	&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hadoop&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mapreduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;partition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.apache.hadoop.classification.InterfaceAudience&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.apache.hadoop.classification.InterfaceStability&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.apache.hadoop.mapreduce.Partitioner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/** Partition keys by their {@link Object#hashCode()}. */&lt;/span&gt;
+	&lt;span class=&quot;nd&quot;&gt;@InterfaceAudience&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Public&lt;/span&gt;
+	&lt;span class=&quot;nd&quot;&gt;@InterfaceStability&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Stable&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;HashPartitioner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;V&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Partitioner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;V&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/** Use {@link Object#hashCode()} to partition. */&lt;/span&gt;
+	&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getPartition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;K&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;V&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numReduceTasks&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MAX_VALUE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numReduceTasks&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;我们看到第11行，在这里我们有看到了可爱的Hash取模映射方法，这样做的原因大家看到这里都应该已经了然于心了。另外，TotalOrderPartitioner、BinaryPartitioner等几种Partitioner的实现都是基于Hash取模映射方法，只是他们为了实现自己自定义的功能而添加了一些逻辑，例如其中的TotalOrderPartitioner可以实现全排序功能。其他几个Partition的源代码这里就不贴了，有兴趣的可以自己看看。&lt;br /&gt;
+## 2. BitMap
+先看看这样的一个场景：给一台普通PC，2G内存，要求处理一个包含40亿个不重复并且没有排过序的无符号的int整数，给出一个整数，问如果快速地判断这个整数是否在文件40亿个数据当中？&lt;/p&gt;
+
+&lt;p&gt;问题思考：&lt;br /&gt;
+40亿个int占（40亿*4）/1024/1024/1024 大概为14.9G左右，很明显内存只有2G，放不下，因此不可能将这40亿数据放到内存中计算。要快速的解决这个问题最好的方案就是将数据搁内存了，所以现在的问题就在如何在2G内存空间以内存储着40亿整数。一个int整数在java中是占4个字节的即要32bit位，如果能够用一个bit位来标识一个int整数那么存储空间将大大减少，算一下40亿个int需要的内存空间为40亿/8/1024/1024大概为476.83 mb，这样的话我们完全可以将这40亿个int数放到内存中进行处理。
+	   &lt;br /&gt;
+具体思路：&lt;br /&gt;
+1个int占4字节即4*8=32位，那么我们只需要申请一个int数组长度为 int tmp[1+N/32]即可存储完这些数据，其中N代表要进行查找的总数，tmp中的每个元素在内存在占32位可以对应表示十进制数0~31,所以可得到BitMap表:&lt;br /&gt;
+tmp[0]:可表示0~31&lt;br /&gt;
+tmp[1]:可表示32~63&lt;br /&gt;
+tmp[2]可表示64~95&lt;br /&gt;
+…….
+那么接下来就看看十进制数如何转换为对应的bit位：&lt;br /&gt;
+假设这40亿int数据为：6,3,8,32,36,……，那么具体的BitMap表示为： 
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-9-17/19570036.jpg&quot; alt=&quot;&quot; /&gt;
+如何判断int数字在tmp数组的哪个下标，这个其实可以通过直接除以32取整数部分，例如：整数8除以32取整等于0，那么8就在tmp[0]上。另外，我们如何知道了8在tmp[0]中的32个位中的哪个位，这种情况直接mod上32就ok，又如整数8，在tmp[0]中的第8 mod上32等于8，那么整数8就在tmp[0]中的第八个bit位（从右边数起）。
+### 2.1 BitMap算法实现&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BitMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BITWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//int32大小&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SHIFT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//2^5=32&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MASK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//0001 1111   &lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//存放1~10000个数&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;BitMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BITWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;];&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//所需字节数&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	* 将i位设置为1
+	* @param i
+	*/&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SHIFT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]|=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MASK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	* 清空第i位为0
+	* @param i
+	*/&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;clr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SHIFT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&amp;amp;=~(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MASK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	* 返回第i位的状态
+	* @param i
+	* @return 0或2^k,k表示在BitWord单元中的位置
+	*/&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt;&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SHIFT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&amp;amp;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MASK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	* 统计二进制几个1
+	* @param value 待统计的整数
+	*/&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;count_ones_bit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;one&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;one&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;one&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	* 返回bitmap中元素的个数
+	* @return bitmap中元素的个数
+	*/&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+	&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;a:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count_ones_bit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;BitMap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+	&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toBinaryString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)));&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//结果：0b100000&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;clr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//结果:0&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;//结果：2&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;### 2.2 bitmap应用案例
+&lt;strong&gt;案例1 已知某文件中包含一些电话号码，每个号码8位，统计不同号码个数。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;8位数字最大表示99999999，用bitmap解决，每个数字对应一个比特位，就有10^8»3=12M,也就是说3M表示了所有8位数电话，依次读入每个号码，将对应bit置为1，最后统计bit-map中1的个数即可。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;案例2 给40亿个不重复的unsigned int，没顺序，然后问x在不在这堆数中。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;40亿的数据要全部存放到内存是不可能的，但40亿个放入bitmap中还是可以的。unsigned int 32位，共有2^32个数，申请2^29B空间，约512M内存。全部读入并设置相应比特位，查看x对应的bit位是否为1即可。&lt;br /&gt;
+现代计算机至少都有个2G内存，那么对200亿个整数用bitmap计算游刃有余。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;案例3 在2.5亿个整数中查找只出现一次的整数。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;简单的bitmap只能标记存在于不存在，即1和0.要标记存在一次、不存在、存在多次那至少需要2bit的信息量，即用00表示不存在，01表示存在1次，10表示存在多次，11未使用。计算下所需内存2^29*2=1GB。然后同上。&lt;br /&gt;
+当然2.5亿全放入内存中也就差不多1G内存，用HashMap计数的话加上value差不多2GB，单机还是可以算的。但效率相对于前者比较低的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;案例4 寻找中数&lt;/strong&gt;
+一共有N个机器，每个机器上有N个数。每个机器最多存O(N)个数并对它们操作。如何找到N^2个数中的中数？&lt;br /&gt;
+方案1：先大体估计一下这些数的范围，比如这里假设这些数都是32位无符号整数（共有$N^{32}$个，我们把$0 \sim 2^{32}-1$的整数划分为N个范围段，每个段包含$\frac{2^{32}}{N}$个整数，第一段为$0 \sim \frac{2^{32}}{N}-1$,第二段为$\frac{2^{32}}{N} \sim 2\frac{2^{32}}{N}-1$,…,以此类推。然后，扫描每个机器上的N个数，把属于第一个区段的数放到第一个机器上，属于第二个区段的数放到第二个机器上，…，属于第N个区段的数放到第N个机器上。 注意这个过程每个机器上存储的数应该是O(N)的。下面我们依次统计每个机器上数的个数，一次累加，直到找到第k个机器，在该机器上累加的数大于或等于$\frac{N^2}{2}$,而k-1个机器的累加和小于$\frac{N^2}{2}$，
+把这个数记作$x$，那么第k个机器的上只要找第$\frac{N^2}{2}-x$个数即为所求中位数。复杂度$O(N^2)$。&lt;/p&gt;
+
+&lt;h2 id=&quot;trie&quot;&gt;3. Trie树&lt;/h2&gt;
+&lt;p&gt;Trie 树， 又称字典树，单词查找树。它来源于retrieval(检索)中取中间四个字符构成(读音同try)。用于存储大量的字符串以便支持快速模式匹配。主要应用在信息检索领域。Trie 有三种结构： 标准trie (standard trie)、压缩trie、后缀trie(suffix trie) 。简要说下这个standard trie。&lt;/p&gt;
+
+&lt;p&gt;标准Trie树的结构 ：所有含有公共前缀的字符串将挂在树中同一个结点下。实际上trie简明的存储了存在于串集合中的所有公共前缀。 假如有这样一个字符串集合$X{bear,bell,bid,bull,buy,sell,stock,stop}$。它的标准Trie树如下图：
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-9-17/11236094.jpg&quot; alt=&quot;&quot; /&gt;
+上图（蓝色圆形结点为内部结点，红色方形结点为外部结点），我们可以很清楚的看到字符串集合X构造的Trie树结构。其中从根结点到红色方框叶子节点所经历的所有字符组成的串就是字符串集合X中的一个串。&lt;/p&gt;
+
+&lt;p&gt;注意这里有一个问题： 如果X集合中有一个串是另一个串的前缀呢？ 比如，X集合中加入串bi。那么上图的Trie树在绿色箭头所指的内部结点i 就应该也标记成红色方形结点。这样话，一棵树的枝干上将出现两个连续的叶子结点(这是不合常理的)。 &lt;/p&gt;
+
+&lt;p&gt;也就是说字符串集合X中不存在一个串是另外一个串的前缀 。如何满足这个要求呢？我们可以在X中的每个串后面加入一个特殊字符$(这个字符将不会出现在字母表中)。这样，集合$X{bear$、bell$、…. bi$、bid$}$一定会满足这个要求。&lt;/p&gt;
+
+&lt;p&gt;总结：一个存储长度为n，来自大小为d的字母表中s个串的集合X的标准trie具有性质如下：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;树中每个内部结点至多有d个子结点。&lt;/li&gt;
+  &lt;li&gt;树有s个外部结点。&lt;/li&gt;
+  &lt;li&gt;树的高度等于X中最长串的长度。&lt;/li&gt;
+  &lt;li&gt;树中的结点数为O(n)。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;对于英文单词的查找，我们完全可以在内部结点中建立26个元素组成的指针数组。如果要查找a，只需要在内部节点的指针数组中找第0个指针即可(b=第1个指针，随机定位)。时间复杂度为O(1)。&lt;/p&gt;
+
+&lt;p&gt;查找过程：假如我们要在上面那棵Trie中查找字符串bull (b-u-l-l)。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;在root结点中查找第(‘b’-‘a’=1)号孩子指针，发现该指针不为空，则定位到第1号孩子结点处——b结点。&lt;/li&gt;
+  &lt;li&gt;在b结点中查找第(‘u’-‘a’=20)号孩子指针，发现该指针不为空，则定位到第20号孩子结点处——u结点。&lt;/li&gt;
+  &lt;li&gt;一直查找到叶子结点出现特殊字符’$‘位置，表示找到了bull字符串。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;如果在查找过程中终止于内部结点，则表示没有找到待查找字符串。&lt;/p&gt;
+
+&lt;p&gt;效率：对于有n个英文字母的串来说，在内部结点中定位指针所需要花费O(d)时间，d为字母表的大小，英文为26。由于在上面的算法中内部结点指针定位使用了数组随机存储方式，因此时间复杂度降为了O(1)。但是，当查找集合X中所有字符串两两都不共享前缀时，trie中出现最坏情况。除根之外，所有内部结点都自由一个子结点。此时的查找时间复杂度蜕化为$O(d*(n^2))$。&lt;/p&gt;
+
+&lt;p&gt;由于中文的字远比英文的26个字母多的多。因此对于trie树的内部结点，不可能用一个26的数组来存储指针。如果每个结点都开辟几万个中国字的指针空间。估计内存要爆了，就连磁盘也消耗很大。
+	 
+一般我们采取这样种措施：&lt;/p&gt;
+
+&lt;p&gt;(1) 以词语中相同的第一个字为根组成一棵树。这样的话，一个中文词汇的集合就可以构成一片Trie森林。这篇森林都存储在磁盘上。森林的root中的字和root所在磁盘的位置都记录在一张以Unicode码值排序的有序字表中。字表可以存放在内存里。&lt;br /&gt;
+(2) 内部结点的指针用可变长数组存储。&lt;br /&gt;
+特点：由于中文词语很少操作4个字的，因此Trie树的高度不长。查找的时间主要耗费在内部结点指针的查找。因此将这项指向字的指针按照字的Unicode码值排序，然后加载进内存以后通过二分查找能够提高效率。&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;3.1 应用案例&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;案例1.热门查询&lt;/strong&gt;&lt;br /&gt;
+	搜索引擎会通过日志文件把用户每次检索使用的所有检索串都记录下来，每个查询串的长度为1-255字节。假设目前有一千万个记录，这些查询串的 重复读比较高，虽然总数是1千万，但是如果去除重复和，不超过3百万个。一个查询串的重复度越高，说明查询它的用户越多，也就越热门。请你统计最热门的 10个查询串，要求使用的内存不能超过1G。&lt;br /&gt;
+	解决：300万个记录，每个记录不超过2^8B，总共存储的话不超过1G内存。采用trie树，关键字域存该查询串出现的次数，没有出现为0。最后用10个元素的最小推来对出现频率进行排序。&lt;/p&gt;
+
+&lt;h2 id=&quot;bloom-filter&quot;&gt;4.Bloom Filter&lt;/h2&gt;
+&lt;p&gt;像1中例2，用分块hash的方法的确能处理问题，那如果允许少量错误的不分块解决方案呢？
+我们可不可以不存url本身？这样子所需空间就会大大减少了。于是我们想到一个很经典的做法：bitmap。将集合S中的url哈希到bitmap上，给定一个url，只需要将它hash，得到它在bitmap的下标，检查该位置是否为1即可。&lt;/p&gt;
+
+&lt;p&gt;这样做空间是省了，可是也产生了一个问题：由于冲突（碰撞）不同的url可能会hash到同一个位置上，导致错误。如何降低hash冲突呢？Bloom Filter的想法是使用多个独立的哈希函数。
+### 4.1 Standard Bloom Filter
+传统的Bloom Filter中，我们有：集合S：其大小为m。也就是说，集合中有m个不同元素。可用内存B：B被当成位数组bitmap来使用，大小为n。（有n个bit）。哈希函数：有k个独立的、均匀分布的哈希函数。&lt;/p&gt;
+
+&lt;p&gt;Bloom Filter的做法是：初始时，所有比特位都初始化为0。对于集合中的每个元素，利用k个哈希函数，对它哈希得到k个位置，将bitmap中的对应的k个位置置为1。&lt;/p&gt;
+
+&lt;p&gt;给定一个元素e，为了判断它是否是集合中的元素，也利用该k个函数得到k个位置，检查该k个位置是否都为1，如果是，认为$e\in S$，否则认为$e\notin S$.不难看出，如果e∈S
+，那么Bloom Filter肯定会正确判断出$e\in S$
+，但是它还是可能产生false positive。那么，如何分析false positive的概率呢？
+false positive发生时，表示哈希该元素后得到的k个位置都为1。这个概率大概为：&lt;script type=&quot;math/tex&quot;&gt;P≈p_1^k&lt;/script&gt;其中$p_1$代表某位为1的概率，它等于：&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;p_1=1-p_0&lt;/script&gt;&lt;br /&gt;
+对于$p_0$，表示某个特定的比特位为0。什么时候该位才为0呢？也就是说m个元素各自经过k次哈希得到km个对象，没有一个对象定位到了该位置。某个对象定位到该位置的概率为$\frac{1}{n}$，因此我们可以得到：&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;p_0=(1-\frac{1}{n})^{mk}&lt;/script&gt;&lt;br /&gt;
+分析$p_0$。在实际应用中，n一般很大，根据重要极限公式，我们有：&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;p_0=(1-\frac{1}{n})^{mk}=(1-\frac{1}{n})^{-n\frac{mk}{-n}}\approx e^{-\frac{mk}{n}}&lt;/script&gt;&lt;br /&gt;
+代入到最上面的那个式子，我们不难得到：&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;P\approx (1-e^{-\frac{mk}{n}})^k&lt;/script&gt;&lt;br /&gt;
+当k为何值时，P取得最小，false positive possibility最低呢？&lt;br /&gt;
+令$f(k)=P\approx (1-e^{-\frac{mk}{n}})^k$&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;ln(f(k))=kln(1-e^{-\frac{mk}{n}})&lt;/script&gt;&lt;br /&gt;
+求导，得&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\frac{f'(k)}{f(k)}=ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})&lt;/script&gt;&lt;br /&gt;
+令$f’(k)=0$, 我们有(注意到f(k)&amp;gt;0恒成立)：&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})=0&lt;/script&gt;&lt;br /&gt;
+令$\lambda=e^{-\frac{mk}{n}},则k=-\frac{nln\lambda }{m}$,代入上式,得到&lt;br /&gt;
+&lt;script type=&quot;math/tex&quot;&gt;(1-\lambda)ln(1-\lambda)=\lambda ln\lambda&lt;/script&gt;&lt;br /&gt;
+因此，$\lambda=\frac{1}{2},k=\frac{n}{m}ln2$.&lt;br /&gt;
+也就是说，当n和m固定时，选择$k=\frac{n}{m}ln2\approx0.693\frac{n}{m}$
+附近的一个整数，将使false positive possibility最小。注意$\lambda=\frac{1}{2}$表示最后数组中取0的概率占一半，也就是说要想误差率最低，最好让数组一半空着。&lt;br /&gt;
+工程实现时，我们需要k个哈希函数或者哈希函数值。如何构造和获得k个独立的哈希函数呢？&lt;a href=&quot;https://www.eecs.harvard.edu/~michaelm/postscripts/rsa2008.pdf&quot;&gt;这篇论文&lt;/a&gt; 提出，只需要两个独立的哈希函数hf1和hf2即可，也就是通过如下方式获得k个哈希函数值：&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;hash value = hf_1(key) + ihf_2(key)&lt;/script&gt;
+其中$i=0、1、2…k-1$。&lt;/p&gt;
+
+&lt;p&gt;在允许误差$\epsilon$内应该分配n为多大呢？通过一系列计算，可以算出：
+&lt;script type=&quot;math/tex&quot;&gt;n\geq m\frac{-log_2^\epsilon } {ln2}&lt;/script&gt;
+总结一下，Bloom filter将集合中的元素映射到位数组中，用k（k为哈希函数个数）个映射位是否全1表示元素在不在这个集合中。另外Counting bloom filter（CBF）将位数组中的每一位扩展为一个counter，从而支持了元素的删除操作。Spectral Bloom Filter（SBF）将其与集合元素的出现次数关联。SBF采用counter中的最小值来近似表示元素的出现频率。感兴趣可以自己百科。
+总结下，使用bloom filter的场景必然允许false positive。也就是说，发生false positive不应该是致命的。比如说，搜索引擎的爬虫里，如果url不是set的元素，却被bloom filter过滤了，那么顶多就是不抓它而已，没啥特别大的损失。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;4.2 案例应用&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;【案例1】给你A,B两个文件，各存放50亿条URL，每条URL占用64字节，内存限制是4G，让你找出A,B文件共同的URL。如果是三个乃至n个文件呢？&lt;/strong&gt;&lt;br /&gt;
+根据这个问题我们来计算下内存的占用，4G=2^32大概是40亿字节，*8大概是320亿比特，m=50亿，如果按出错率0.01算需要的大概是650亿个bit。现在可用的是480亿，相差并不多，这样可能会使出错率上升些。另外如果这些url与ip是一一对应的，就可以转换成ip，则大大简单了。&lt;/p&gt;
+</description>
+        <pubDate>Fri, 02 Sep 2016 00:00:00 +0800</pubDate>
+        <link>https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</guid>
+        
+        <category>算法</category>
+        
+        <category>大数据</category>
         
         
       </item>
