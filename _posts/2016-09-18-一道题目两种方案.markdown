@@ -65,11 +65,13 @@ CREATE PROCEDURE MakeData(IN N INT,IN id INT)
     END WHILE;
     END//
 DELIMITER ;
+START TRANSACTION;  
 CALL MakeData(20,1);--HR部门共有20个人
 CALL MakeData(1000,2);--IT部门共有1000个人
 CALL MakeData(200,3);
 CALL MakeData(50,4);
 CALL MakeData(500,5);
+COMMIT;
 ```
 
 给部门表填的数据：
