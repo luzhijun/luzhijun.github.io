@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "一道题目两种方案"
-subtitle:   "通过巧妙的算法和相应的数据结构来提供大数据下的单机方案"
+subtitle:   "阿里数据开发工程师一道笔试题，分组统计排名"
 date:       2016-09-18
 author:     "T.L"
 header-img: "img/post-bg-2Case.jpg"
@@ -203,7 +203,8 @@ beeline> !connect jdbc:hive2://node3:10000/default
   --where "Gender=1" \
   --columns "Id,Name,Birthday,Salary,DepartmentId" \
    --hive-import \
-  --hive-partition-key Gender\  --hive-partition-value 'Man' \
+  --hive-partition-key Gender\
+  --hive-partition-value 'Man' \
   --map-column-hive Birthday="DATE" \
   --num-mappers  1 \
   --warehouse-dir  /tmp/sqoop3/
@@ -216,7 +217,8 @@ sqoop import \
   --where "Gender=2" \
   --columns "Id,Name,Birthday,Salary,DepartmentId" \
    --hive-import \
-  --hive-partition-key Gender\  --hive-partition-value 'Woman' \
+  --hive-partition-key Gender\
+  --hive-partition-value 'Woman' \
   --map-column-hive Birthday="DATE" \
   --num-mappers  1 \
   --warehouse-dir  /tmp/sqoop4/
@@ -226,7 +228,8 @@ sqoop import \
 --map-column-hive:日期转换，hive导入的时候会默认转换成字符串，所以这里自定义一下。  
 --where "Gender=2" \  
 --columns "Id,Name,Birthday,Salary,DepartmentId" \  
---hive-partition-key Gender\  --hive-partition-value 'Woman' \  
+--hive-partition-key Gender\  
+--hive-partition-value 'Woman' \  
 以上三部分的目的就是按照性别分区，注意hive物理表中的数据不能包含分区字段，因此导出的列不包含Gender.以上操作是导出女性分区表，男性分区表只要改下  --where "Gender=2" \  --hive-partition-value 'Woman' \即可。  
 
 ```sql
@@ -281,7 +284,9 @@ WHERE A.rank<=3;
 这里因为department是个小表，当然就直接用mapjoin解决联结问题了。ROW_NUMBER() OVER(PARTITION BY departmentid ORDER BY  salary DESC)是hive的窗口函数，首先是按照departmentid分区，单独对这个分区对同一个departmentid 按照工资排序，ROW_NUMBER()实现功能和mysql方案2一致，最后取其前三名就完事了。  
 
 ```
-16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 6.3 sec   HDFS Read: 41587 HDFS Write: 687 SUCCESS #分了两个区来处理，比如第一个区处理1，2，3部门，第二个区处理5，4部门16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-4: Map: 2   Cumulative CPU: 3.38 sec   HDFS Read: 11577 HDFS Write: 355 SUCCESS #map join操作，只要一个map就好了16/09/18 23:02:40 INFO ql.Driver: Total MapReduce CPU Time Spent: 9 seconds 680 msec
+16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 6.3 sec   HDFS Read: 41587 HDFS Write: 687 SUCCESS #分了两个区来处理，比如第一个区处理1，2，3部门，第二个区处理5，4部门
+16/09/18 23:02:40 INFO ql.Driver: Stage-Stage-4: Map: 2   Cumulative CPU: 3.38 sec   HDFS Read: 11577 HDFS Write: 355 SUCCESS #map join操作，只要一个map就好了
+16/09/18 23:02:40 INFO ql.Driver: Total MapReduce CPU Time Spent: 9 seconds 680 msec
 ```
 
 结果：
