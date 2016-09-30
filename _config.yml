@@ -73,7 +73,7 @@ duoshuo_share: true                     # set to false if you want to use Commen
 
 # Analytics settings
 # Baidu Analytics
-ba_track_id: f2fd34a3c5de02cf1e94e7584f314dc6
+ba_track_id: c07b62da6a94126e41877e6b30e15413
 # Google Analytics
 ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
 ga_domain: https://luzhijun.github.io

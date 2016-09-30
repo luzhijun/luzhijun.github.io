@@ -44,7 +44,15 @@
     <![endif]-->
 
     <!-- ga & ba script hoook -->
-    <script></script>
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?c07b62da6a94126e41877e6b30e15413";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
 </head>
 
 
@@ -192,7 +200,7 @@ MathJax.Hub.Config({
 <span class="o">+</span><span class="c1">--------------+-------------------+------+-----+---------+----------------+</span>
 <span class="o">|</span> <span class="n">Id</span>           <span class="o">|</span> <span class="n">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span>  <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span> <span class="n">PRI</span> <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span> <span class="n">auto_increment</span> <span class="o">|</span>
 <span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>        <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
-<span class="o">|</span> <span class="n">Gender</span>       <span class="o">|</span> <span class="n">enum</span><span class="p">(</span><span class="s1">'男'</span><span class="p">,</span><span class="s1">'女'</span><span class="p">)</span> <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Gender</span>       <span class="o">|</span> <span class="n">enum</span><span class="p">(</span><span class="s1">'Man'</span><span class="p">,</span><span class="s1">'Woman'</span><span class="p">)</span> <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
 <span class="o">|</span> <span class="n">Birthday</span>     <span class="o">|</span> <span class="n">date</span>              <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
 <span class="o">|</span> <span class="n">Salary</span>       <span class="o">|</span> <span class="n">decimal</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>      <span class="o">|</span> <span class="n">YES</span>  <span class="o">|</span>     <span class="o">|</span> <span class="mi">0</span><span class="p">.</span><span class="mi">00</span>    <span class="o">|</span>                <span class="o">|</span>
 <span class="o">|</span> <span class="n">DepartmentId</span> <span class="o">|</span> <span class="n">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span>  <span class="o">|</span> <span class="k">NO</span>   <span class="o">|</span> <span class="n">MUL</span> <span class="o">|</span> <span class="k">NULL</span>    <span class="o">|</span>                <span class="o">|</span>
@@ -284,7 +292,7 @@ MathJax.Hub.Config({
       <th style="text-align: left">Name</th>
       <th style="text-align: center">Gender</th>
       <th>Birthday</th>
-      <th>Salart</th>
+      <th>Salary</th>
       <th style="text-align: center">DepartmentId</th>
     </tr>
   </thead>
@@ -757,7 +765,7 @@ mysql... | 楚汐|Trucy Luce Blog " >
                     
                         <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
                     
-                        <li><a href="https://github.com/BaiNingchao">NLP伏草惟存</a></li>
+                        <li><a href="http://www.cnblogs.com/baiboy/">NLP伏草惟存</a></li>
                     
                         <li><a href="http://blog.5long.me/">茶码话桑麻</a></li>
                     
@@ -978,7 +986,7 @@ mysql... | 楚汐|Trucy Luce Blog " >
 
 <script>
     // dynamic User by Hux
-    var _baId = 'f2fd34a3c5de02cf1e94e7584f314dc6';
+    var _baId = 'c07b62da6a94126e41877e6b30e15413';
 
     // Originial
     var _hmt = _hmt || [];

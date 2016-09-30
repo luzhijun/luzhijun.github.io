@@ -24,7 +24,7 @@ mysql> describe Employee;
 +--------------+-------------------+------+-----+---------+----------------+
 | Id           | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
 | Name         | varchar(6)        | NO   |     | NULL    |                |
-| Gender       | enum('男','女') | YES  |     | NULL    |                |
+| Gender       | enum('Man','Woman') | YES  |     | NULL    |                |
 | Birthday     | date              | YES  |     | NULL    |                |
 | Salary       | decimal(7,2)      | YES  |     | 0.00    |                |
 | DepartmentId | int(10) unsigned  | NO   | MUL | NULL    |                |
@@ -87,7 +87,7 @@ COMMIT;
   
 员工表的数据：
 
-|Id    |Name   |Gender|Birthday     |Salart    |DepartmentId  |
+|Id    |Name   |Gender|Birthday     |Salary    |DepartmentId  |
 |:-----|:------|:-----:|------------|-----------|:--------------:|
 |...|...|...|...|...|...|
 | 1259 | d0fa3 | 男    | 1969-07-30 | 10050.65 |            4 |
