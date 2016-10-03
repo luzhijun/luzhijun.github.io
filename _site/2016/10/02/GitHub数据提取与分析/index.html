@@ -673,10 +673,11 @@ Rate limit (4369, 5000)<br />
 luzhijun<br />
 Processed 80 stargazers’ starred repos<br />
 Num nodes/edges in graph 12693 / 17581<br />
-Rate limit (4368, 5000)<br />
-以上操作挺费时间的，结点数由几百个一下子扩充到上万个，可以把MAX_REPOS改小一点，然后去泡杯咖啡吧😁。<br />
-拿到所有项目数据，接下来就是要统计哪个是热点项目，可以查询哪个用户mark了哪些项目，他喜欢用啥程序语言，还有那些加星加到手软的用户也可以查询出来。</p>
+Rate limit (4368, 5000)</p>
 </blockquote>
+
+<p>以上操作挺费时间的，结点数由几百个一下子扩充到上万个，可以把MAX_REPOS改小一点，然后去泡杯咖啡吧😁。<br />
+拿到所有项目数据，接下来就是要统计哪个是热点项目，可以查询哪个用户mark了哪些项目，他喜欢用啥程序语言，还有那些加星加到手软的用户也可以查询出来。</p>
 
 <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c"># 拿到图里面的所有项目构成列表</span>
