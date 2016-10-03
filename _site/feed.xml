@@ -2,12 +2,712 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>T.L Blog</title>
-    <description>我想静静</description>
+    <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 30 Sep 2016 11:28:37 +0800</pubDate>
-    <lastBuildDate>Fri, 30 Sep 2016 11:28:37 +0800</lastBuildDate>
+    <pubDate>Mon, 03 Oct 2016 11:24:57 +0800</pubDate>
+    <lastBuildDate>Mon, 03 Oct 2016 11:24:57 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
+    
+      <item>
+        <title>GitHub数据提取与分析</title>
+        <description>&lt;p&gt;GitHub作为全球最大的代码托管平台，每小时都有成千上万个项目产生，他为开源作出了不可磨灭的贡献。本文使用了NetworkX对GitHub的进行图形分析，通过gitHub的丰富数据，构建可以在各种不同的方式使用数据模型。这里将github用户、代码、仓库构建成&lt;a href=&quot;https://en.wikipedia.org/wiki/Interest_graph&quot;&gt;兴趣图&lt;/a&gt;。本文包含三方面:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;github 开发者平台和对应的api&lt;/li&gt;
+  &lt;li&gt;如何使用NetworkX作图&lt;/li&gt;
+  &lt;li&gt;构建github的兴趣图&lt;/li&gt;
+  &lt;li&gt;图算法&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;githubapi&quot;&gt;了解github的API&lt;/h2&gt;
+&lt;p&gt;同Twitter和Facebook一样，第一步就是获取Git自带的API。地址：https://developer.github.com/v3/&lt;br /&gt;
+其中大部分我们并不需要，我们仅仅关注的是用户和仓库。所有的API访问通过HTTPS，并从https://api.github.com访问。所有发送和接收的数据是JSON。&lt;/p&gt;
+
+&lt;h3 id=&quot;api&quot;&gt;创建API连接&lt;/h3&gt;
+&lt;p&gt;github实现了&lt;a href=&quot;http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html&quot;&gt;OAuth&lt;/a&gt;接口，在拥有github账户后获取API通道的方式有两种。一种叫做personal access token.你可以为你自己的使用或实现的Web流创建一个个人访问令牌，以允许其他用户授权你的应用程序。一种是OAuth application，所有的开发人员在开始之前都需要注册他们的应用程序。注册OAuth应用分配一个唯一的客户ID和客户的密钥。这里简单起见，采用personal access token。点击&lt;a href=&quot;https://github.com/settings/tokens/new&quot;&gt;新建&lt;/a&gt;即可生成有对应权限的token。生成好的token如下所示：&lt;br /&gt;
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-2/9660244.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+向api根目录发送请求，试一试这个token连接情况：&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl https://api.github.com/?access_token&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOKEN&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;current_user_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;current_user_authorizations_html_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://github.com/settings/connections/applications{/client_id}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;authorizations_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/authorizations&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;code_search_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/search/code?q={query}{&amp;amp;page,per_page,sort,order}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;emails_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/emails&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;emojis_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/emojis&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;events_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/events&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;feeds_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/feeds&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;followers_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/followers&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;following_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/following{/target}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;gists_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/gists{/gist_id}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;hub_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/hub&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;issue_search_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/search/issues?q={query}{&amp;amp;page,per_page,sort,order}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;issues_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/issues&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;keys_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/keys&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;notifications_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/notifications&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;organization_repositories_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/orgs/{org}/repos{?type,page,per_page,sort}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;organization_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/orgs/{org}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;public_gists_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/gists/public&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;rate_limit_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/rate_limit&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;repository_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/repos/{owner}/{repo}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;repository_search_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/search/repositories?q={query}{&amp;amp;page,per_page,sort,order}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;current_user_repositories_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/repos{?type,page,per_page,sort}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;starred_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/starred{/owner}{/repo}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;starred_gists_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/gists/starred&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;team_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/teams&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;user_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/users/{user}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;user_organizations_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/user/orgs&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;user_repositories_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/users/{user}/repos{?type,page,per_page,sort}&quot;&lt;/span&gt;,
+  &lt;span class=&quot;s2&quot;&gt;&quot;user_search_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/search/users?q={query}{&amp;amp;page,per_page,sort,order}&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;github 的API符合&lt;a href=&quot;https://en.wikipedia.org/wiki/HATEOAS&quot;&gt;HATEOAS&lt;/a&gt;设计，从上面可以看到，如果想获取当前用户的信息，应该去访问api.github.com/user，然后就得到了下面结果。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;&quot;login&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;luzhijun&quot;&lt;/span&gt;,
+&lt;span class=&quot;s2&quot;&gt;&quot;id&quot;&lt;/span&gt;: 15256911,
+&lt;span class=&quot;s2&quot;&gt;&quot;avatar_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://avatars.githubusercontent.com/u/15256911?v=3&quot;&lt;/span&gt;,
+&lt;span class=&quot;s2&quot;&gt;&quot;gravatar_id&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;,
+&lt;span class=&quot;s2&quot;&gt;&quot;url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://api.github.com/users/luzhijun&quot;&lt;/span&gt;,
+&lt;span class=&quot;s2&quot;&gt;&quot;html_url&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;https://github.com/luzhijun&quot;&lt;/span&gt;,
+...
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;pygithub&quot;&gt;pygithub&lt;/h3&gt;
+&lt;p&gt;ok，这里介绍一个方便python使用的包，&lt;a href=&quot;http://pygithub.github.io/PyGithub/v1/introduction.html&quot;&gt;pygithub&lt;/a&gt;,你可以通过它方便地用python脚本管理github。其API与github&lt;a href=&quot;http://pygithub.github.io/PyGithub/v1/apis.html&quot;&gt;对应&lt;/a&gt;。 
+举个例子，拿到指定用户的所有仓库:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;github&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Github&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Specify your own access token here&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ACCESS_TOKEN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;''&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;USER&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'luzhijun'&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Github&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ACCESS_TOKEN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;REPOS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_repos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REPOS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;[Repository(full_name=”luzhijun/huxblog-boilerplate”), Repository(full_name=”luzhijun/leecode”), Repository(full_name=”luzhijun/luzhijun.github.io”), Repository(full_name=”luzhijun/Optimization”), Repository(full_name=”luzhijun/SVDRecommenderSystem”)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;networkx&quot;&gt;如何使用NetworkX作图&lt;/h2&gt;
+&lt;p&gt;### 了解NetworkX
+NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。&lt;br /&gt;
+下面创建一个有向图x-&amp;gt;y:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;networkx&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;nx&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 创建有向图&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DiGraph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 加条边x-&amp;gt;y&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印图的相关数据信息&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Nodes:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Edges:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 节点属性&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;X props:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Y props:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 边属性&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;X=&amp;gt;Y props:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 更新节点信息&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'prop1'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'value1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;X props:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 更新边信息&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'label'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'label1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;X=&amp;gt;Y props:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Name: &lt;br /&gt;
+Type: DiGraph  #无向图表示为Graph
+Number of nodes: 2&lt;br /&gt;
+Number of edges: 1&lt;br /&gt;
+Average in degree:   0.5000&lt;br /&gt;
+Average out degree:   0.5000&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Nodes: [‘Y’, ‘X’]&lt;br /&gt;
+Edges: [(‘X’, ‘Y’)]&lt;br /&gt;
+X props: {}&lt;br /&gt;
+Y props: {}&lt;br /&gt;
+X=&amp;gt;Y props: {}&lt;br /&gt;
+X props: {‘prop1’: ‘value1’}&lt;br /&gt;
+X=&amp;gt;Y props: {‘label’: ‘label1’}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;有向图和无向图都可以给边赋予权重，用到的方法是add_weighted_edges_from，它接受1个或多个三元组[u,v,w]作为参数，其中u是起点，v是终点，w是权重。例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_weighted_edges_from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;10.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_edge_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'X'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;{‘weight’: 10.0, ‘label’: ‘label1’}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;NetworkX提供了常用的图论经典算法，例如DFS、BFS、最短路、最小生成树、最大流等等，非常丰富，如果不做复杂网络，只作图论方面的工作，也可以应用NetworkX作为基本的开发包，更多用法参照&lt;a href=&quot;http://networkx.github.io&quot;&gt;networkx&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;networkx-1&quot;&gt;使用NetworkX构建兴趣图&lt;/h3&gt;
+
+&lt;p&gt;兴趣图和社交网络图是有区别的，最大的不同就是兴趣图节点代表的不一定是同一类的东西。有个&lt;a href=&quot;https://github.com/minrk/findspark&quot;&gt;项目&lt;/a&gt;是我加星的，那么这个兴趣图就是：&lt;br /&gt;
+我–(gazes)–&amp;gt;项目&lt;br /&gt;
+那么还有其他很多人也关注了这个项目，我们把加星的人都找出来。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;github&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Github&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;networkx&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;nx&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ACCESS_TOKEN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;''&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'minrk'&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;REPO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark'&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Github&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ACCESS_TOKEN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_repo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REPO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_stargazers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;#加星的用户集合&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DiGraph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'repo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;language&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;owner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'user'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'gazes'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印图的基本属性   &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印项目和用户点的基本属性&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印这条边属性&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印起点为XXX的信息&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印用户的出入度信息&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 打印项目的出入度信息&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Name: &lt;br /&gt;
+Type: DiGraph&lt;br /&gt;
+Number of nodes: 81&lt;br /&gt;
+Number of edges: 80&lt;br /&gt;
+Average in degree:   0.9877   # 80/81
+Average out degree:   0.9877  # 80/81&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;{‘lang’: ‘Python’, ‘type’: ‘repo’, ‘owner’: ‘minrk’}&lt;br /&gt;
+{‘type’: ‘user’}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;{‘type’: ‘gazes’}&lt;br /&gt;
+{‘findspark(repo)’: {‘type’: ‘gazes’}}&lt;br /&gt;
+{}&lt;br /&gt;
+[]&lt;br /&gt;
+[(‘luzhijun(user)’, ‘findspark(repo)’)]&lt;br /&gt;
+[(‘lendenmc(user)’, ‘findspark(repo)’), (‘nehalecky(user)’, ‘findspark(repo)’), (‘charsmith(user)’, ‘findspark(repo)’), (‘cwharland(user)’, ‘findspark(repo)’), (‘d3borah(user)’, ‘findspark(repo)’), (‘cimox(user)’, ‘findspark(repo)’), (‘dirmeier(user)’, ‘findspark(repo)’), (‘paulochf(user)’, ‘findspark(repo)’), (‘qingniufly(user)’, ‘findspark(repo)’), (‘hmourit(user)’, ‘findspark(repo)’), (‘ryan-williams(user)’, ‘findspark(repo)’), (‘rholder(user)’, ‘findspark(repo)’), (‘xysmas(user)’, ‘findspark(repo)’), (‘linkTDP(user)’, ‘findspark(repo)’), (‘minimaxir(user)’, ‘findspark(repo)’), (‘KLXN(user)’, ‘findspark(repo)’), (‘quadnix(user)’, ‘findspark(repo)’), (‘luzhijun(user)’, ‘findspark(repo)’), (‘chrinide(user)’, ‘findspark(repo)’), (‘jaredmichaelsmith(user)’, ‘findspark(repo)’), (‘rgbkrk(user)’, ‘findspark(repo)’), (‘jiamo(user)’, ‘findspark(repo)’), (‘drizham(user)’, ‘findspark(repo)’), (‘assumednormal(user)’, ‘findspark(repo)’), (‘cvincent00(user)’, ‘findspark(repo)’), (‘xiaohan2012(user)’, ‘findspark(repo)’), (‘dapurv5(user)’, ‘findspark(repo)’), (‘pchalasani(user)’, ‘findspark(repo)’), (‘benetka(user)’, ‘findspark(repo)’), (‘rohithreddy(user)’, ‘findspark(repo)’), (‘seanjensengrey(user)’, ‘findspark(repo)’), (‘opikalo(user)’, ‘findspark(repo)’), (‘amontalenti(user)’, ‘findspark(repo)’), (‘Bekterra(user)’, ‘findspark(repo)’), (‘Grillz(user)’, ‘findspark(repo)’), (‘nchammas(user)’, ‘findspark(repo)’), (‘markbarks(user)’, ‘findspark(repo)’), (‘jesusjsc(user)’, ‘findspark(repo)’), (‘d2207197(user)’, ‘findspark(repo)’), (‘Erstwild(user)’, ‘findspark(repo)’), (‘henridf(user)’, ‘findspark(repo)’), (‘ranjankumar-gh(user)’, ‘findspark(repo)’), (‘locojay(user)’, ‘findspark(repo)’), (‘WilliamQLiu(user)’, ‘findspark(repo)’), (‘szinya(user)’, ‘findspark(repo)’), (‘seanjh(user)’, ‘findspark(repo)’), (‘vherasme(user)’, ‘findspark(repo)’), (‘stared(user)’, ‘findspark(repo)’), (‘freeman-lab(user)’, ‘findspark(repo)’), (‘wy36101299(user)’, ‘findspark(repo)’), (‘esafak(user)’, ‘findspark(repo)’), (‘napjon(user)’, ‘findspark(repo)’), (‘richardskim111(user)’, ‘findspark(repo)’), (‘SimonArnu(user)’, ‘findspark(repo)’), (‘lmillefiori(user)’, ‘findspark(repo)’), (‘binhe22(user)’, ‘findspark(repo)’), (‘robcowie(user)’, ‘findspark(repo)’), (‘jazzwang(user)’, ‘findspark(repo)’), (‘Dumbris(user)’, ‘findspark(repo)’), (‘giulioungaretti(user)’, ‘findspark(repo)’), (‘cbouey(user)’, ‘findspark(repo)’), (‘andrewiiird(user)’, ‘findspark(repo)’), (‘DaniGate(user)’, ‘findspark(repo)’), (‘rdhyee(user)’, ‘findspark(repo)’), (‘lgautier(user)’, ‘findspark(repo)’), (‘sandysnunes(user)’, ‘findspark(repo)’), (‘willcline(user)’, ‘findspark(repo)’), (‘aliciatb(user)’, ‘findspark(repo)’), (‘d18s(user)’, ‘findspark(repo)’), (‘he0x(user)’, ‘findspark(repo)’), (‘liulixiang1988(user)’, ‘findspark(repo)’), (‘alexandercbooth(user)’, ‘findspark(repo)’), (‘branning(user)’, ‘findspark(repo)’), (‘bguOIQ(user)’, ‘findspark(repo)’), (‘coder-chenzhi(user)’, ‘findspark(repo)’), (‘mdbishop(user)’, ‘findspark(repo)’), (‘Hguimaraes(user)’, ‘findspark(repo)’), (‘ocanbascil(user)’, ‘findspark(repo)’), (‘fish2000(user)’, ‘findspark(repo)’), (‘stzonis(user)’, ‘findspark(repo)’)]&lt;br /&gt;
+[]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;networkx-2&quot;&gt;NetWorkX部分统计指标&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;度中心性（Degree Centrality)
+    &lt;ul&gt;
+      &lt;li&gt;是在网络分析中刻画节点中心性（Centrality）的最直接度量指标。一个节点的节点度越大就意味着这个节点的度中心性越高，该节点在网络中就越重要。某点的度中心性$C_d(i)=\frac{d(i)}{n-1}$，范围为[0,1]。
+      - degree_centrality(G)     Compute the degree centrality for nodes.
+    - in_degree_centrality(G)     Compute the in-degree centrality for nodes.
+    - out_degree_centrality(G)     Compute the out-degree centrality for nodes.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;中介中心性/中间中心性(Between Centrality) 。
+    &lt;ul&gt;
+      &lt;li&gt;以经过某个节点的最短路径数目来刻画节点重要性的指标。如果两个不相邻的参与者k和j想要与对方互动而参与者i处在它们的路径上，那么i可能对它们之间的互动拥有一定的控制力。中介性用来度量i对于其他结点的控制能力。即如果i处在非常多结点的交互路径上，那么i就是一个重要的参与者。
+        &lt;ul&gt;
+          &lt;li&gt;betweenness_centrality(G[, normalized, …])     Compute betweenness centrality for nodes.&lt;/li&gt;
+          &lt;li&gt;edge_betweenness_centrality(G[, normalized, …])     Compute betweenness centrality for edges.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;接近中心性（Closeness Centrality）
+    &lt;ul&gt;
+      &lt;li&gt;反映在网络中某一节点与其他节点之间的接近程度。这种中心性的观察视角主要基于接近度或者距离。它的基本思想是如果一个参与者能很容易的与所有其他参与者进行互动，那么它就是中心的。即它到其他所以参与者的距离要足够短。于是，我们就可以使用最短距离来计算这个数值。假设参与者i和参与者j之间的最短距离记为$d(i,j)$（由最短路径上的链接数目度量）。$C_c(i)=\frac{n-1}{\sum_{j=1}^{n}d(i,j)}$
+        &lt;ul&gt;
+          &lt;li&gt;closeness_centrality(G[, v, weighted_edges])     Compute closeness centrality for nodes.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;作为学习，我们使用&lt;a href=&quot;http://mathworld.wolfram.com/KrackhardtKite.html&quot;&gt;Krackhardt kite graph&lt;/a&gt;来研究，之所以称之为风筝图，因为长得像风筝。。。(废话)&lt;br /&gt;
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-2/93702051.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;kkg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;generators&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;small&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;krackhardt_kite_graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Degree Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;degree_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kkg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+             &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Betweenness Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;betweenness_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kkg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+             &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Closeness Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;closeness_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kkg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+             &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Degree Centrality
+[(3, 0.6666666666666666), (5, 0.5555555555555556), (6, 0.5555555555555556), (0, 0.4444444444444444), (1, 0.4444444444444444), (2, 0.3333333333333333), (4, 0.3333333333333333), (7, 0.3333333333333333), (8, 0.2222222222222222), (9, 0.1111111111111111)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Betweenness Centrality
+[(7, 0.38888888888888884), (5, 0.23148148148148148), (6, 0.23148148148148148), (8, 0.2222222222222222), (3, 0.10185185185185183), (0, 0.023148148148148143), (1, 0.023148148148148143), (2, 0.0), (4, 0.0), (9, 0.0)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Closeness Centrality
+[(5, 0.6428571428571429), (6, 0.6428571428571429), (3, 0.6), (7, 0.6), (0, 0.5294117647058824), (1, 0.5294117647058824), (2, 0.5), (4, 0.5), (8, 0.42857142857142855), (9, 0.3103448275862069)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;github&quot;&gt;构建github的兴趣图&lt;/h2&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;找出大神&lt;/h3&gt;
+&lt;p&gt;大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对&lt;a href=&quot;#networkx-1&quot;&gt;前面&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   &lt;br /&gt;
+由于API每小时限制使用5000个请求，打印下剩余请求数看有没有耗尽，耗尽的话抛出异常。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;   
+    &lt;span class=&quot;c&quot;&gt;# 增加关注联系，如果有关注者的话&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;follower&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_followers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;follower&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;follower&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                           &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'follows'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;except&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Exception&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#ssl.SSLError&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stderr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Encountered an error fetching followers for&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; \
+                             &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Skipping.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Processed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot; stargazers. Num nodes/edges in graph&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; \
+          &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number_of_nodes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number_of_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rate limit remaining&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rate_limiting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;rocessed 1  stargazers. Num nodes/edges in graph 81 / 80&lt;br /&gt;
+Rate limit remaining (4999, 5000)&lt;br /&gt;
+Processed 2  stargazers. Num nodes/edges in graph 81 / 83&lt;br /&gt;
+Rate limit remaining (4987, 5000)&lt;br /&gt;
+Processed 3  stargazers. Num nodes/edges in graph 81 / 84&lt;br /&gt;
+Rate limit remaining (4985, 5000)&lt;br /&gt;
+Processed 4  stargazers. Num nodes/edges in graph 81 / 85&lt;br /&gt;
+Rate limit remaining (4983, 5000)&lt;br /&gt;
+Processed 5  stargazers. Num nodes/edges in graph 81 / 86&lt;br /&gt;
+Rate limit remaining (4981, 5000)&lt;br /&gt;
+Processed 6  stargazers. Num nodes/edges in graph 81 / 90&lt;br /&gt;
+Rate limit remaining (4968, 5000)&lt;br /&gt;
+…&lt;br /&gt;
+Rate limit remaining (4857, 5000)&lt;br /&gt;
+Processed 78  stargazers. Num nodes/edges in graph 81 / 95&lt;br /&gt;
+Rate limit remaining (4856, 5000)&lt;br /&gt;
+Processed 79  stargazers. Num nodes/edges in graph 81 / 95&lt;br /&gt;
+Rate limit remaining (4855, 5000)&lt;br /&gt;
+Processed 80  stargazers. Num nodes/edges in graph 81 / 95&lt;br /&gt;
+Rate limit remaining (4854, 5000)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;接下来，对关联关系统计。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;collections&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 看下更新的图信息&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 每个打星用户的关注者数量不同&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'follows'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 查看某个打星用户有多少关注者&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; 
+           &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+               &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'follows'&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'freeman-lab(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;# 打印度最多的前10个结点&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;degree_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;# 对每个打星用户的关注者数目计数&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'follows'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;popular_users&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;most_common&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Number of popular users&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;popular_users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Top popular users:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;popular_users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Name: 
+Type: DiGraph
+Number of nodes: 81
+Number of edges: 95
+Average in degree:   1.1728
+Average out degree:   1.1728&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;15&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;4&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;[(‘findspark(repo)’, 80), (‘rgbkrk(user)’, 6), (‘freeman-lab(user)’, 5), (‘esafak(user)’, 4), (‘andrewiiird(user)’, 4), (‘minimaxir(user)’, 3), (‘nchammas(user)’, 3), (‘rholder(user)’, 2), (‘chrinide(user)’, 2), (‘dapurv5(user)’, 2)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Number of popular users 9
+Top popular users: [(‘freeman-lab(user)’, 4), (‘rgbkrk(user)’, 3), (‘minimaxir(user)’, 2), (‘rholder(user)’, 1), (‘amontalenti(user)’, 1), (‘rdhyee(user)’, 1), (‘stared(user)’, 1), (‘esafak(user)’, 1), (‘nchammas(user)’, 1)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;(‘freeman-lab(user)’, 4)指freeman-lab在findspark项目中的加星者中还有4个关注者，为了更清楚挖掘图信息，用上面介绍的几个图算法来看一下这个图，由于’仓库’结点有大量的度，其他结点相比来说度都很小，因此先删掉’仓库’结点再计算。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 移除中心结点&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;remove_node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'findspark(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;dc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;degree_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Degree Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;betweenness_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Betweenness Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Closeness Centrality&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;closeness_centrality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Degree Centrality&lt;br /&gt;
+[(‘rgbkrk(user)’, 0.06329113924050633), &lt;br /&gt;
+(‘freeman-lab(user)’, 0.05063291139240506),&lt;br /&gt;
+ (‘esafak(user)’, 0.0379746835443038), &lt;br /&gt;
+ (‘andrewiiird(user)’, 0.0379746835443038), &lt;br /&gt;
+ (‘minimaxir(user)’, 0.02531645569620253), &lt;br /&gt;
+ (‘nchammas(user)’, 0.02531645569620253), &lt;br /&gt;
+ (‘rholder(user)’, 0.012658227848101266), &lt;br /&gt;
+ (‘chrinide(user)’, 0.012658227848101266), &lt;br /&gt;
+ (‘dapurv5(user)’, 0.012658227848101266), &lt;br /&gt;
+ (‘amontalenti(user)’, 0.012658227848101266)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Betweenness Centrality&lt;br /&gt;
+[(‘rgbkrk(user)’, 0.0009737098344693282), &lt;br /&gt;
+(‘esafak(user)’, 0.0006491398896462187), &lt;br /&gt;
+(‘nchammas(user)’, 0.0001622849724115547), &lt;br /&gt;
+(‘linkTDP(user)’, 0.0), &lt;br /&gt;
+(‘nehalecky(user)’, 0.0), &lt;br /&gt;
+(‘charsmith(user)’, 0.0), &lt;br /&gt;
+(‘cwharland(user)’, 0.0), &lt;br /&gt;
+(‘d3borah(user)’, 0.0), &lt;br /&gt;
+(‘cimox(user)’, 0.0), &lt;br /&gt;
+(‘dirmeier(user)’, 0.0)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Closeness Centrality&lt;br /&gt;
+[(‘andrewiiird(user)’, 0.04050632911392405), &lt;br /&gt;
+(‘esafak(user)’, 0.03375527426160337), &lt;br /&gt;
+(‘chrinide(user)’, 0.028768699654775604), &lt;br /&gt;
+(‘rgbkrk(user)’, 0.02531645569620253), &lt;br /&gt;
+(‘alexandercbooth(user)’, 0.02278481012658228), &lt;br /&gt;
+(‘dapurv5(user)’, 0.012658227848101266), &lt;br /&gt;
+(‘Bekterra(user)’, 0.012658227848101266), &lt;br /&gt;
+(‘nchammas(user)’, 0.012658227848101266), &lt;br /&gt;
+(‘he0x(user)’, 0.012658227848101266), &lt;br /&gt;
+(‘Hguimaraes(user)’, 0.012658227848101266)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;来，我们来见见两位大神，一位是数据显示度中心性和中介中心性最大的rgbkrk。
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-2/39580747.jpg&quot; alt=&quot;&quot; /&gt;
+Kyle Kelley来自硅谷，是jupyter、ipython、cloudpipe等大项目的开发组员，影响力很大。&lt;br /&gt;
+另一位是接近中心性最大的andrewiiird。
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-2/66840395.jpg&quot; alt=&quot;&quot; /&gt;
+andrew来自香港，关注与被关注比率几乎有两个数量级的差别，而Kyle Kelley这个比值接近一比一，也正说明了andrew的“互动性”很强的。(大部分时间关注别人而自己隐藏在暗处，😜)&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;找出活跃项目&lt;/h3&gt;
+&lt;p&gt;现在图中只有一个项目，其余结点都是用户。为了找出活跃项目，对每个用户，遍历找其加星的项目添加到图中，扩充图的项目结点。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;MAX_REPOS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;starred&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_starred&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()[:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MAX_REPOS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Slice to avoid supernodes&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;starred&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'repo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;starred&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;language&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; \
+                       &lt;span class=&quot;n&quot;&gt;owner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;starred&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;owner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;starred&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'(repo)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'gazes'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;except&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Exception&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#ssl.SSLError:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Encountered an error fetching starred repos for&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Skipping.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Processed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;stargazers' starred repos&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Num nodes/edges in graph&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number_of_nodes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number_of_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rate limit&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rate_limiting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;pchalasani&lt;br /&gt;
+Processed 1 stargazers’ starred repos&lt;br /&gt;
+Num nodes/edges in graph 176 / 190&lt;br /&gt;
+Rate limit (4996, 5000)&lt;br /&gt;
+rgbkrk&lt;br /&gt;
+Encountered an error fetching starred repos for rgbkrk Skipping.&lt;br /&gt;
+Processed 2 stargazers’ starred repos&lt;br /&gt;
+Num nodes/edges in graph 266 / 280&lt;br /&gt;
+Rate limit (4993, 5000)&lt;br /&gt;
+napjon&lt;br /&gt;
+Processed 79 stargazers’ starred repos&lt;br /&gt;
+Num nodes/edges in graph 12692 / 17579&lt;br /&gt;
+Rate limit (4369, 5000)&lt;br /&gt;
+luzhijun&lt;br /&gt;
+Processed 80 stargazers’ starred repos&lt;br /&gt;
+Num nodes/edges in graph 12693 / 17581&lt;br /&gt;
+Rate limit (4368, 5000)&lt;br /&gt;
+以上操作挺费时间的，结点数由几百个一下子扩充到上万个，可以把MAX_REPOS改小一点，然后去泡杯咖啡吧😁。&lt;br /&gt;
+拿到所有项目数据，接下来就是要统计哪个是热点项目，可以查询哪个用户mark了哪些项目，他喜欢用啥程序语言，还有那些加星加到手软的用户也可以查询出来。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 拿到图里面的所有项目构成列表&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;repos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'repo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 关注最多的前10个项目&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Popular repositories&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+              &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_degree_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+                  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'repo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; \
+             &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Respositories that luzhijun has bookmarked&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; 
+       &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; 
+           &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'gazes'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 用户喜爱的程序语言&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Programming languages luzhijun is interested in&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; 
+                &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; 
+                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'luzhijun(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'gazes'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#查看关注项目最多的用户(超过MAX_REPOS)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Supernode candidates&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt; 
+              &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+                  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'user'&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAX_REPOS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; \
+             &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Name: &lt;br /&gt;
+Type: DiGraph&lt;br /&gt;
+Number of nodes: 12693&lt;br /&gt;
+Number of edges: 17581&lt;br /&gt;
+Average in degree:   1.3851&lt;br /&gt;
+Average out degree:   1.3851&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Popular repositories&lt;br /&gt;
+[(‘findspark(repo)’, 80), (‘spark(repo)’, 27), (‘tensorflow(repo)’, 24), (‘luigi(repo)’, 21),  (‘ipython(repo)’, 21), (‘data-science-ipython-notebooks(repo)’, 20), (‘awesome-public-datasets(repo)’,   20), (‘spark-notebook(repo)’, 19), (‘docker(repo)’, 18), (‘Probabilistic-Programming-and-Bayesian-Methods-for-Hackers(repo)’, 17)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Respositories that ocanbascil has bookmarked&lt;br /&gt;
+[(‘til(repo)’, ‘VimL’), (‘react-joyride(repo)’, ‘JavaScript’), (‘django(repo)’, ‘Python’), (‘peewee(repo)’, ‘Python’), (‘select2(repo)’, ‘JavaScript’), (‘requests(repo)’, ‘Python’), (‘benfords-law(repo)’, ‘JavaScript’), (‘daterangepicker(repo)’, ‘JavaScript’), (‘django-zappa(repo)’, ‘Python’), (‘layered(repo)’, ‘Python’), (‘coffeescript(repo)’, ‘CoffeeScript’), (‘awesome-jekyll(repo)’, None), (‘lektor(repo)’, ‘Python’), (‘aetycoon(repo)’, ‘Python’), (‘computer-science(repo)’, None), (‘PerformanceEngine(repo)’, ‘Python’), (‘pattern_classification(repo)’, ‘Jupyter Notebook’), (‘node-v0.x-archive(repo)’, None), (‘django-crispy-forms(repo)’, ‘Python’), (‘hug(repo)’, ‘Python’), (‘euler-coffeescript(repo)’, ‘CoffeeScript’), (‘pandas(repo)’, ‘Python’), (‘pachyderm(repo)’, ‘Go’), (‘eulerclash(repo)’, None), (‘Pipe(repo)’, ‘Python’), (‘data-science-ipython-notebooks(repo)’, ‘Python’), (‘TweetHit(repo)’, ‘Python’), (‘captionmash(repo)’, None), (‘django-tinymce(repo)’, ‘Python’), (‘dataset(repo)’, ‘Python’), (‘shepherd(repo)’, ‘CSS’), (‘data-science-from-scratch(repo)’, ‘Python’), (‘spark(repo)’, ‘Scala’), (‘data-science-blogs(repo)’, ‘Python’), (‘specter(repo)’, ‘Clojure’), (‘tensorflow(repo)’, ‘R’), (‘findspark(repo)’, ‘Python’), (‘localtunnel(repo)’, ‘JavaScript’)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Programming languages ocanbascil is interested in&lt;br /&gt;
+[‘CSS’, ‘VimL’, ‘Python’, ‘JavaScript’, ‘Clojure’, None, ‘CoffeeScript’, ‘R’, ‘Jupyter Notebook’, ‘Scala’, ‘Go’]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Supernode candidates
+[(‘he0x(user)’, 501), (‘esafak(user)’, 501)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;从结果可看出，关注findspark项目的人大约三分之一也关注了spark和tensorflow，TensorFlow是谷歌基于DistBelief进行研发的第二代人工智能学习系统，机器学习果真这么火热。大约四分之一的人关注了Luigi，查了下其主要目的是为了解决需要长期运行的流式批处理任务的管理，可以链接很多个任务，使它们自动化，并进行故障管理，这个做spark任务的人估计也需要，，后面几个看名字都知道和spark密不可分的。&lt;br /&gt;
+除此之外，这个图还可以查询到某个用户所关注的项目以及这个项目中最多的语言。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;找出热门语言&lt;/h3&gt;
+&lt;p&gt;现在问题来了，怎么查询当前图中所有项目最热门的语言？我们可以查找每个项目然后抽取语言放入到counter计数器里面统计，这个看起来也不费事，但如果要查询有多少用户以某种语言编程呢？这就要扫描每个项目的入度用户，最后统计求和，时间复杂度挺大的。这个时候一种好的思路就是扩充图，将语言单独作为一个节点，最终图的逻辑图如下： &lt;br /&gt;
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-2/13761577.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;repos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; 
+         &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+             &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'repo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;repos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# 消除None,有些空项目语言为None&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;(lang)&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# 加星于repo的用户&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; 
+                  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+                     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'gazes'&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stargazers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'programs'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_edge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;repo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'implements'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;接下来看下对语言的统计信息&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 看下图里有什么语言&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; 
+       &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+           &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 某个用户使用的语言&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; 
+       &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'ocanbascil(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; 
+           &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'ocanbascil(user)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'programs'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 查询最热门的语言&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Most popular languages&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_degree&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+ &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; 
+     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemgetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 查询用某种语言的有多少人&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;python_programmers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; 
+                      &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Python(lang)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+                          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'user'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Number of Python programmers:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;python_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;javascript_programmers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; 
+                          &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_edges_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'JavaScript(lang)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+                              &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'user'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Number of JavaScript programmers:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;javascript_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 两个语言都用的人&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Number of programmers who use JavaScript and Python&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;python_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;intersection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;javascript_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 只用python不用js的人&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Number of programmers who use JavaScript but not Python&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;javascript_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;difference&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;python_programmers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# XXX: Can you determine who is the most polyglot programmer?&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Name: 
+Type: DiGraph
+Number of nodes: 12807
+Number of edges: 31824
+Average in degree:   2.4849
+Average out degree:   2.4849&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;[‘LiveScript(lang)’, ‘APL(lang)’, ‘Swift(lang)’, ‘Java(lang)’, ‘Nix(lang)’, ‘Erlang(lang)’, ‘Common Lisp(lang)’, ‘Python(lang)’, ‘GCC Machine Description(lang)’, ‘Prolog(lang)’, ‘PigLatin(lang)’, ‘Vala(lang)’, ‘SAS(lang)’, ‘FORTRAN(lang)’, ‘Cuda(lang)’, ‘Matlab(lang)’, ‘HCL(lang)’, ‘F#(lang)’, ‘Verilog(lang)’, ‘Emacs Lisp(lang)’, ‘Inno Setup(lang)’, ‘Vue(lang)’, ‘TeX(lang)’, ‘DTrace(lang)’, ‘Processing(lang)’, ‘Hack(lang)’, ‘Lua(lang)’, ‘Assembly(lang)’, ‘Parrot(lang)’, ‘Shell(lang)’, ‘Arduino(lang)’, ‘R(lang)’, ‘C#(lang)’, ‘Rust(lang)’, ‘Standard ML(lang)’, ‘Puppet(lang)’, ‘Gosu(lang)’, ‘C(lang)’, ‘PHP(lang)’, ‘Scala(lang)’, ‘Gnuplot(lang)’, ‘Crystal(lang)’, ‘Objective-J(lang)’, ‘COBOL(lang)’, ‘Cucumber(lang)’, ‘ApacheConf(lang)’, ‘Brainfuck(lang)’, ‘Kotlin(lang)’, ‘Pascal(lang)’, ‘Pike(lang)’, ‘RAML(lang)’, ‘Lean(lang)’, ‘Logos(lang)’, ‘Elixir(lang)’, ‘Dart(lang)’, ‘C++(lang)’, ‘CMake(lang)’, ‘Clojure(lang)’, ‘D(lang)’, ‘Batchfile(lang)’, ‘OpenSCAD(lang)’, ‘Coq(lang)’, ‘PowerShell(lang)’, ‘Visual Basic(lang)’, ‘VimL(lang)’, ‘NetLogo(lang)’, ‘OCaml(lang)’, ‘VHDL(lang)’, ‘Ruby(lang)’, ‘Go(lang)’, ‘Metal(lang)’, ‘Jupyter Notebook(lang)’, ‘KiCad(lang)’, ‘Smarty(lang)’, ‘Tcl(lang)’, ‘CoffeeScript(lang)’, ‘QML(lang)’, ‘(lang)’, ‘Scheme(lang)’, ‘HTML(lang)’, ‘Makefile(lang)’, ‘CartoCSS(lang)’, ‘DIGITAL Command Language(lang)’, ‘AppleScript(lang)’, ‘Perl6(lang)’, ‘Protocol Buffer(lang)’, ‘Julia(lang)’, ‘Awk(lang)’, ‘Elm(lang)’, ‘Haskell(lang)’, ‘TLA(lang)’, ‘Nimrod(lang)’, ‘JavaScript(lang)’, ‘Max(lang)’, ‘TypeScript(lang)’, ‘GAP(lang)’, ‘Scilab(lang)’, ‘Web Ontology Language(lang)’, ‘XSLT(lang)’, ‘Objective-C++(lang)’, ‘Perl(lang)’, ‘PLSQL(lang)’, ‘PureScript(lang)’, ‘PLpgSQL(lang)’, ‘Eagle(lang)’, ‘Objective-C(lang)’, ‘Racket(lang)’, ‘OpenEdge ABL(lang)’, ‘Groovy(lang)’, ‘Groff(lang)’, ‘Frege(lang)’, ‘NSIS(lang)’, ‘Mathematica(lang)’, ‘CSS(lang)’]&lt;/p&gt;
+
+  &lt;p&gt;[‘JavaScript(lang)’, ‘R(lang)’, ‘Python(lang)’, ‘Jupyter Notebook(lang)’, ‘VimL(lang)’, ‘Scala(lang)’, ‘Clojure(lang)’, ‘CoffeeScript(lang)’, ‘Go(lang)’, ‘(lang)’, ‘CSS(lang)’]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Most popular languages&lt;br /&gt;
+[(‘Python(lang)’, 80), (‘(lang)’, 74), (‘JavaScript(lang)’, 74), (‘Jupyter Notebook(lang)’, 69), (‘Java(lang)’, 67), (‘HTML(lang)’, 67), (‘C++(lang)’, 66), (‘Scala(lang)’, 65), (‘Shell(lang)’, 62), (‘C(lang)’, 62)]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Number of Python programmers: 80&lt;br /&gt;
+Number of JavaScript programmers: 74&lt;br /&gt;
+Number of programmers who use JavaScript and Python&lt;br /&gt;
+74&lt;br /&gt;
+Number of programmers who use JavaScript but not Python&lt;br /&gt;
+0&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;从结果看出，github上喜欢的语言排行榜中js、r、python等脚本语言占据主流，虽然参与统计的项目只有一万多条，但这也应着了一句老话“github是前端的天下”😁。这里Scala的关注度也很靠前，主要因为“项目之源”是findspark，go这里也很火，java死哪去了。。。，估计挖个hadoop的相关项目就有他了。。。&lt;br /&gt;
+另一个有趣的现象是，玩python的程序员必会玩js，玩js的人不一定会玩python（80-74=6个人不会玩python)，正符合现在IT界的现状啊，这个差别不明显，换个国内的项目估计就明显了。。。，估计还有多少人不知道github，这里就统计不了。&lt;/p&gt;
+
+&lt;p&gt;以上数据规模并不算大，如果有兴趣可以访问&lt;a href=&quot;https://www.githubarchive.org&quot;&gt;GitHub Archive&lt;/a&gt;,GitHub Archive 提供海量全局层面的数据，调可以使用一些推荐的“大数据”工具来探索它。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;可视化&lt;/h2&gt;
+&lt;p&gt;依靠Networkx的导出能力，可以通过JSON的JavaScript工具包&lt;a href=&quot;https://d3js.org&quot;&gt;D3&lt;/a&gt;使用，但也有许多其他的工具包，你可以考虑当可视化图。&lt;a href=&quot;http://www.graphviz.org&quot;&gt;Graphviz&lt;/a&gt;是高度可配置的经典工具，可以设计出非常复杂的图形和位图图像。传统上在终端上运行，但现在也有支持大多数平台的用户界面。另一个流行的开源项目是&lt;a href=&quot;https://gephi.org&quot;&gt;Gephi&lt;/a&gt;，其在交互上做的很好，在过去的几年中Gephi已经迅速流行，非常值得推荐。
+这里由于有上万个项目结点，一张图乌漆嘛黑都看不到，并且很卡。所以下面只截取用户点和语言点的可视化。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;os&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;json&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;IPython.display&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IFrame&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;IPython.core.display&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;display&lt;/span&gt; 
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;networkx.readwrite&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json_graph&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Stats on the full graph&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 只提取用户和语言结点&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mtsw_users&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'user'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'lang'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subgraph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mtsw_users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Stats on the extracted subgraph&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# json导出&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json_graph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node_link_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dump&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'force.json'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'w'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;viz_file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'files/force.html'&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# D3可视化&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viz_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'100&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'900px'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;iframe src=&quot;/html/force.html&quot; width=&quot;900&quot; height=&quot;900&quot; frameborder=&quot;no&quot; border=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot; allowtransparency=&quot;yes&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;如果要分析语言之间的关联，其实也可以从一个项目中拿到多个语言，比如是a,b,c,然后做无向图，标记a-b-c 权重为1，当在其他项目中还有a,b同时出现时,a-b 权重为2，以此类推，最后直接放mjwillson的成品:&lt;br /&gt;
+&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-3/65135584.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ref&quot;&gt;ref&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;https://en.wikipedia.org/wiki/Centrality&lt;/li&gt;
+  &lt;li&gt;https://github.com/mjwillson/ProgLangVisualise&lt;/li&gt;
+  &lt;li&gt;https://developer.github.com/v3/&lt;/li&gt;
+  &lt;li&gt;http://networkx.github.io&lt;/li&gt;
+  &lt;li&gt;https://github.com/PyGithub/PyGithub&lt;/li&gt;
+  &lt;li&gt;Russell, Matthew A. Mining the Social Web: Data Mining Facebook, Twitter, LinkedIn, Google+, GitHub, and More. O’Reilly Media, Inc. 2013.&lt;/li&gt;
+  &lt;li&gt;Csardi, Gabor. “Eigenvalues and eigenvectors of the adjacency matrix of a graph.”.&lt;/li&gt;
+  &lt;li&gt;Barthélemy, M. “Betweenness centrality in large complex networks.” Physics 38.2(2004):163-168.&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Sun, 02 Oct 2016 00:00:00 +0800</pubDate>
+        <link>https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</guid>
+        
+        <category>社交网站数据分析</category>
+        
+        <category>社会计算</category>
+        
+        
+      </item>
     
       <item>
         <title>一道题目两种方案</title>
@@ -1479,6 +2179,131 @@ $公式$
       </item>
     
       <item>
+        <title>计算社会初探</title>
+        <description>&lt;p&gt;“计算社会科学”的学科概念已提出四年多,但国内信息科学界的很多学者认为计算社会科学基本等同于社会计算 ,或者干脆将计算社会科学看作社会计算的一部分，我认为为计算社会科学与社会计算之间确有交叉 ,但两者同时也有不同的侧重面向。社会计算关注的重点有两个:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;其一是关注信息技术在社会活动中的应用 ,关注在信息技术中如何嵌入人文知识使之更好地服务于社会活动;&lt;/li&gt;
+  &lt;li&gt;其二是为社会科学领域研究提供研究工具,重点关注信息技术的使用和发展。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;计算社会科学关注的重点主要是使用信息存储、分析技术研究社会科学领域中的各种问题，&lt;strong&gt;发现社会运行规律&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;计算社会在发现社会规律过程中的处理流程如下：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;数据&lt;/li&gt;
+  &lt;li&gt;处理
+    &lt;ul&gt;
+      &lt;li&gt;社会网络分析&lt;/li&gt;
+      &lt;li&gt;社会建模&lt;/li&gt;
+      &lt;li&gt;数据挖掘&lt;/li&gt;
+      &lt;li&gt;机器学习&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;统计知识，验证知识&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;数据&lt;/h3&gt;
+&lt;p&gt;计算社会科学以计算机等现代计算科学技术工具获取和分析海量社会化数据,数据形式主要包括文本 、图像 、视频和音频等,其大部分来源于Web网络信息，还有一部分来源于传感设备。&lt;br /&gt;
+传统的关系型数据库并不能够支持海量数据，要获取海量大数据，肯定是从网页数据的获取：各种爬虫
+&lt;img src=&quot;http://img.blog.csdn.net/20160805111706675&quot; alt=&quot;爬虫&quot; /&gt;
+例如： 
+在R软件中有很多包可以方便爬取，比如RCurl拿网页，xmlParse对标准XML文件解析，XPath匹配想要的内容，如抓取财经数据&lt;a href=&quot;http://vip.stock.finance.sina.com.cn/q/go.php/vIR_CustomSearch/index.phtml&quot;&gt;http://vip.stock.finance.sina.com.cn/q/go.php/vIR_CustomSearch/index.phtml&lt;/a&gt;
+这里很容易能够拿到表格里的内容：
+&lt;img src=&quot;http://img.blog.csdn.net/20160805112743776&quot; alt=&quot;财经数据&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;实例分析&lt;/h3&gt;
+&lt;p&gt;计算社会科学领域研究者眼中的社会网络分析对象，主要包括对虚拟社会网络下的人物节点分析 、社群挖掘和社会图关系分析。
+#### 人物节点
+个体网络行为分析市根据具体网络行为来分析人物个体，比如2015年首届天池大数据大赛的题目&lt;a href=&quot;https://tianchi.shuju.aliyun.com/competition/introduction.htm?spm=5176.100066.333.5.bZoqLZ&amp;amp;raceId=1&quot;&gt;“阿里移动推荐算法”&lt;/a&gt;。
+根据前一个月的用户行为数据来预测一个月后的行为，这就是社会挖掘，相关方法可以参见前五名的ppt&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。
+此外&lt;a href=&quot;https://tianchi.shuju.aliyun.com/competition/index.htm?spm=5176.100170.1234.3.iKoqeh&quot;&gt;https://tianchi.shuju.aliyun.com/competition/index.htm?spm=5176.100170.1234.3.iKoqeh&lt;/a&gt;中的淘宝穿衣搭配算法、新浪互动微博算法也是对个体节点进行社会挖掘的实例。
+#### 社群挖掘
+社群挖掘是社会网络分析的另一研究重点,社群通常由性质相似或功能相近的人物节点构成, 在一定程度上反映了个体自发、无序行为背后的局部弱规则性和全局有序性口因此,发现虚拟网络中有意义的 、相对稳定的社群对网络信息的搜索与挖掘 、信息的推荐以及网络演化与扩散的预测具有重要价值 。
+实例：&lt;a href=&quot;https://tianchi.shuju.aliyun.com/competition/introduction.htm?spm=5176.100066.333.14.uZdYKE&amp;amp;raceId=231514&quot;&gt;广东公共交通大数据竞赛&lt;/a&gt;
+主要面向人群：各种分类的通勤人群
+#### 社交网络图分析/计算
+&lt;img src=&quot;http://img.blog.csdn.net/20160805114647502&quot; alt=&quot;社交图&quot; /&gt;
+如上社交网络图在计算机存储的方式使用传统的关系型数据库的话会产生性能问题。比如要查询Richard指向谁，直接通过索引查询就可以找到其他人；但要查找谁指向Richard,就会引发数据库的全表扫描。但从图中明显只要判别下入度就可以了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Neo4J&lt;/strong&gt;&lt;br /&gt;
+Neo4J是当前主流的图数据库产品,其社交网络图表示如下:
+&lt;img src=&quot;http://img.blog.csdn.net/20160805115358286&quot; alt=&quot;Neo4J&quot; /&gt;
+简单分析图数据库，有几个特点：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;图在节点上记录数据(节点的属性,property)&lt;/li&gt;
+  &lt;li&gt;节点由关系组织成图,关系也具有属性&lt;/li&gt;
+  &lt;li&gt;寻路(Traversal,另一意思是遍历)在图上定位由节点组成的路径&lt;/li&gt;
+  &lt;li&gt;索引(index)将属性映射到节点或关系&lt;/li&gt;
+  &lt;li&gt;图数据库管理系统管理图其上的索引&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;GraphX&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://spark.apache.org/graphx/&quot;&gt;GraphX&lt;/a&gt;是 Spark中用于图(e.g., Web-Graphs and Social Networks)和图并行计算(e.g., PageRank and Collaborative Filtering)的API,可以认为是GraphLab(图像处理模型的开源图计算框架)和Pregel(google图算法引擎)在Spark(Scala)上的重写及优化，跟其他分布式图计算框架相比，GraphX最大的贡献是，在Spark之上提供一栈式数据解决方案，可以方便且高效地完成图计算的一整套流水作业。GraphX最先是伯克利AMPLAB的一个分布式图计算框架项目，后来整合到Spark中成为一个核心组件。
+Graphx是Spark生态中的非常重要的组件，融合了图并行以及数据并行的优势，虽然在单纯的计算机段的性能相比不如GraphLab等计算框架，但是如果从整个图处理流水线的视角（图构建，图合并，最终结果的查询）看，那么性能就非常具有竞争性了。 
+&lt;img src=&quot;http://img.blog.csdn.net/20160805115806850&quot; alt=&quot;GrahpX&quot; /&gt;
+其中GraphLab是图算法库，图中使用的是PageRank算法，可以参见：
+&lt;img src=&quot;http://img.blog.csdn.net/20160805115946335&quot; alt=&quot;PageRank&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;PageRank可以被用来挖掘意见领袖，除此之外，目前GraphLab最新版本已支持
+PageRank、数三角形、最大连通图和最短路径等
+6种经典的图算法。这些算法的代码实现，目的和重点在于通用性。如果要获得最佳性能，可以参考其实现进行修改和扩展满足业务需求。&lt;/p&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;社会建模&lt;/h4&gt;
+&lt;p&gt;社会建模技术由信息科学家和数学家提出并发展完善起来,是指对社会空间中个体或群体的心理和行为交互模式人际关系、社群结构等复杂社 会性问题 ,进行抽象描述并建立仿真模型。通 过仿真模型 ,研究者可以模拟社会演化进程、社会现象 的发展 、人类社会行为及其变化过程 ,可进 一 步结合实验分析或为现实提供决策支持。&lt;/p&gt;
+
+&lt;p&gt;目前 ,在社会科学领域应用最广泛的仿真模型是基于智能主体的社会仿真模型(agent—based models,ABMs),ABMs模型可以很好地模拟信息传 播 、社会规范的出现、集群行为等人类现象。&lt;/p&gt;
+
+&lt;p&gt;基于ABMs模 型 ,研究人员发展出在计算机上建立“人工社会 (artificialsociety)”的构想 。人类社会是由大量真实社会个体构成的复杂系统 ,人工社会则是在计算机上模拟出的由大量虚拟社会个体模 型构成的复杂系统。其研究思路是在计算机中建立多个Agent模型 ,对不同特性的Agent设定不同的运行规则，让这些Agent相互作用并遵循一定规则运行，最后通过观察大量Agent相互作用的涌现属性，找到人工社会的规律 ,并用这些规律理解和解释现实人类社会中的宏观现象。
+关于Agent的概念和特征可以参见下图
+&lt;img src=&quot;http://img.blog.csdn.net/20160805120341212&quot; alt=&quot;Agent&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;每个Agent都有简单的规则，这里拿鸟群飞行模拟为例：一个鸟群各个体初始位置杂乱无章，但每个个体都有如下三个规则：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Cohesion: each agent steers toward the average 
+position of its nearby “flockmates,”&lt;/li&gt;
+  &lt;li&gt;Separation: each agent steers to avoid crowding 
+local flockmates, and&lt;/li&gt;
+  &lt;li&gt;Alignment: each agent steers towards the average 
+heading of local flockmates.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;初始位置和500次迭代后的位置如图：
+&lt;img src=&quot;http://img.blog.csdn.net/20160805120705604&quot; alt=&quot;flymate&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;初始的混沌状态按照几个简单的规则就能让整个系统处于稳定状态&lt;sup id=&quot;fnref:5&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;，通过这个模型对系统的影响，可以判别规则的合理性和可行性。&lt;/p&gt;
+
+&lt;p&gt;复杂人类社会模型目前还不存在，有的只是对单一现象的研究模型，这里推荐一款游戏《模拟城市》，虽然是利用已知规律来建模，但其设计思想和画面风格很适合将来投身于社会建模的人群。
+&lt;img src=&quot;http://img.blog.csdn.net/20160805121832588&quot; alt=&quot;SC1&quot; /&gt;
+&lt;img src=&quot;http://img.blog.csdn.net/20160805121929668&quot; alt=&quot;SC2&quot; /&gt;
+&lt;img src=&quot;http://img.blog.csdn.net/20160805122026982&quot; alt=&quot;SC3&quot; /&gt;
+&lt;img src=&quot;http://img.blog.csdn.net/20160805122152862&quot; alt=&quot;SC4&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:4&quot;&gt;
+      &lt;p&gt;这里搜集了前五名的ppt，这五位都利用用了深度学习、数据分析、统计的方法来挖掘数据。详见&lt;a href=&quot;http://download.csdn.net/detail/bob601450868/9092635&quot;&gt;阿里移动推荐算法大赛冠军答辩PPT&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:5&quot;&gt;
+      &lt;p&gt;类似动力系统中的元胞自动机，元胞自动机用于研究经济危机的形成与爆发过程、个人行为的社会性，流行现象，如服装流行色的形成等。在生物学中，元胞自动机的设计思想本身就来源于生物学自繁殖的思想，因而它在生物学上的应用更为自然而广泛。例如元胞自动机用于肿瘤细胞的增长机理和过程模拟、人类大脑的机理探索(Victor.Jonathan.D.，1990)、艾滋病病毒HIV的感染过程(Sieburg，H.B.. 1990)、自组织、自繁殖等生命现象的研究以及最新流行的克隆 (Clone)技术的研究等 (ErmentroutG。B。，1993)。 &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Fri, 05 Aug 2016 00:00:00 +0800</pubDate>
+        <link>https://luzhijun.github.io/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/</guid>
+        
+        <category>社会计算</category>
+        
+        
+      </item>
+    
+      <item>
         <title>ES5, ES6, ES2016</title>
         <description>&lt;p&gt;JavaScript 有着很奇怪的命名史。&lt;/p&gt;
 
@@ -1550,341 +2375,6 @@ $公式$
         <category>JavaScript</category>
         
         <category>翻译</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Example Post using Keynote Layout</title>
-        <description>&lt;blockquote&gt;
-  &lt;p&gt;下滑这里查看更多内容&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;7月9日，我在公司内部进行了名为「JavaScript 模块化七日谈」分享，并将该 Slides 分享到了微博上。出乎意料地，这篇微博先后被 @JS小组 @尤小右 @寸志 等近 200 人转发，阅读达到 10w，获得了还不错的评价。&lt;/p&gt;
-
-&lt;p&gt;于是，我决定将它重新发到我的博客上，并为它专门制作了适用于 Keynote 展示文稿的新布局。它能自动根据屏幕大小/旋转以一定比例填充屏幕，你也可以直接点击下方链接在新页面打开，来获得更好的、沉浸式的全屏体验&lt;/p&gt;
-
-&lt;h3 id=&quot;watch-slides-httphuangxuanmejs-module-7day&quot;&gt;&lt;a href=&quot;http://huangxuan.me/js-module-7day&quot;&gt;Watch Slides →&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://huangxuan.me/js-module-7day/attach/qrcode.png&quot; width=&quot;350&quot; height=&quot;350&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;small class=&quot;img-hint&quot;&gt;你也可以通过扫描二维码在手机上观看&lt;/small&gt;&lt;/p&gt;
-
-&lt;p&gt;这个 Web Slides 开源在&lt;a href=&quot;https://github.com/Huxpro/js-module-7day&quot;&gt;我的 Github 上&lt;/a&gt;，欢迎你帮助我完善这个展示文稿，你可以给我提 issue，可以 fork &amp;amp; pull request。如果它能帮助到你了，希望你还能不吝啬 star 一下这个项目&lt;/p&gt;
-
-&lt;h3 id=&quot;catalog&quot;&gt;Catalog&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;第一日 上古时期 &lt;strong&gt;&lt;em&gt;Module?&lt;/em&gt;&lt;/strong&gt; 从设计模式说起&lt;/li&gt;
-  &lt;li&gt;第二日 石器时代 &lt;strong&gt;&lt;em&gt;Script Loader&lt;/em&gt;&lt;/strong&gt; 只有封装性可不够，我们还需要加载&lt;/li&gt;
-  &lt;li&gt;第三日 蒸汽朋克 &lt;strong&gt;&lt;em&gt;Module Loader&lt;/em&gt;&lt;/strong&gt; 模块化架构的工业革命&lt;/li&gt;
-  &lt;li&gt;第四日 号角吹响 &lt;strong&gt;&lt;em&gt;CommonJS&lt;/em&gt;&lt;/strong&gt; 征服世界的第一步是跳出浏览器&lt;/li&gt;
-  &lt;li&gt;第五日 双塔奇兵 &lt;strong&gt;&lt;em&gt;AMD/CMD&lt;/em&gt;&lt;/strong&gt; 浏览器环境模块化方案&lt;/li&gt;
-  &lt;li&gt;第六日 精灵宝钻 &lt;strong&gt;&lt;em&gt;Browserify/Webpack&lt;/em&gt;&lt;/strong&gt; 大势所趋，去掉这层包裹！&lt;/li&gt;
-  &lt;li&gt;第七日 王者归来 &lt;strong&gt;&lt;em&gt;ES6 Module&lt;/em&gt;&lt;/strong&gt; 最后的战役&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;thanks&quot;&gt;Thanks&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://lab.hakim.se/reveal-js&quot;&gt;Reveal.js&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Thu, 09 Jul 2015 00:00:00 +0800</pubDate>
-        <link>https://luzhijun.github.io/2015/07/09/js-module-7day/</link>
-        <guid isPermaLink="true">https://luzhijun.github.io/2015/07/09/js-module-7day/</guid>
-        
-        <category>前端开发</category>
-        
-        <category>JavaScript</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>unix-note</title>
-        <description>&lt;blockquote&gt;
-  &lt;p&gt;This document is not completed and will be updated anytime.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;catagory&quot;&gt;Catagory&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href=&quot;#unix&quot;&gt;Unix&lt;/a&gt;
-    &lt;ol&gt;
-      &lt;li&gt;&lt;a href=&quot;#bell-labs&quot;&gt;Bell Labs&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#xenix&quot;&gt;Xenix&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#bsd&quot;&gt;BSD&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#freebsd--apple&quot;&gt;FreeBSD &amp;amp; Apple&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#nextstep&quot;&gt;NeXTStep&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#darwin&quot;&gt;Darwin&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#posix&quot;&gt;POSIX&lt;/a&gt;&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#unix-like&quot;&gt;Unix-like&lt;/a&gt;
-    &lt;ol&gt;
-      &lt;li&gt;&lt;a href=&quot;#single-unix-specification&quot;&gt;Single Unix Specification&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#apple-ios&quot;&gt;Apple iOS&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#xnu-kernel&quot;&gt;XNU Kernel&lt;/a&gt;&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#linux&quot;&gt;Linux&lt;/a&gt;
-    &lt;ol&gt;
-      &lt;li&gt;&lt;a href=&quot;#linux-kernel&quot;&gt;Linux Kernel&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#gnu-project&quot;&gt;GNU Project&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#android&quot;&gt;Android&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#android-kernel&quot;&gt;Android Kernel&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#android-rom&quot;&gt;Android ROM&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#chrome-os&quot;&gt;Chrome OS&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#chromium-os&quot;&gt;Chromium OS&lt;/a&gt;&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&quot;unix&quot;&gt;Unix&lt;/h2&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Unix is a &lt;strong&gt;family&lt;/strong&gt; of multitasking, multiuser computer OS.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Derive from the original &lt;strong&gt;AT&amp;amp;T Unix&lt;/strong&gt;, Developed in the 1970s at &lt;strong&gt;Bell Labs&lt;/strong&gt; (贝尔实验室), initially intended for use inside the &lt;strong&gt;Bell System&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;bell-labs&quot;&gt;Bell Labs&lt;/h4&gt;
-    &lt;p&gt;Bell 和 AT&amp;amp;A 在那时已经是一家了，可以看到那时的通信公司真是一线 IT 公司呢。
-&lt;strong&gt;C 语言也是 Bell Labs 的产物&lt;/strong&gt;，从一开始就是为了用于 Unix 而设计出来的。所以 Unix （在 73 年用 C 重写）在高校流行后，C 语言也获得了广泛支持。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;AT&amp;amp;T licensed Unix to outside parties(第三方) from the late 1970s, leading to a variety of both &lt;strong&gt;academic&lt;/strong&gt; (最有有名的 BSD ) and &lt;strong&gt;commercial&lt;/strong&gt; (Microsoft Xenix, IBM AIX, SunOS Solaris)&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;xenix&quot;&gt;Xenix&lt;/h4&gt;
-    &lt;p&gt;微软 1979 年从 AT&amp;amp;A 授权来的 Unix OS，配合着 x86 成为当时最受欢迎的 Unix 发行版。后来 M$ 和 IBM 合作开发 OS/2 操作系统后放弃，后来最终转向 &lt;strong&gt;Windows NT&lt;/strong&gt;。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;bsd&quot;&gt;BSD&lt;/h4&gt;
-    &lt;p&gt;&lt;strong&gt;Barkeley Software Distribution&lt;/strong&gt;, also called Berkeley Unix. Today the term “BSD” is used to refer to any of the BSD descendants(后代) which together form a branch of the family of Unix-like OS.(共同组成了一个分支)&lt;/p&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;BSD 最大的贡献是在 BSD 中率先增加了虚拟存储器和 Internet 协议&lt;/strong&gt;，其 TCP/IP(IPv4 only) 代码仍然在现代 OS 上使用（ Microsoft Windows and most of the foundation of Apple’s OS X and iOS ）&lt;/li&gt;
-      &lt;li&gt;BSD 后来发展出了众多开源后代，包括 FreeBSD, OpenBSD, NetBSD 等等……很多闭源的 vendor Unix 也都从 BSD 衍生而来。&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;freebsd--apple&quot;&gt;FreeBSD &amp;amp; Apple&lt;/h4&gt;
-    &lt;p&gt;FreeBSD 不但是 Open Source BSD 中占有率最高的，还直接影响了 Apple Inc : NeXT Computer 的团队在 FreeBSD 上衍生出了 NeXTSTEP 操作系统，这货后来在 Apple 时期演化成了 &lt;strong&gt;Darwin&lt;/strong&gt; ，这个“达尔文”居然还是个开源系统，而且是 the Core of &lt;strong&gt;Mac OS X&lt;/strong&gt; and &lt;strong&gt;iOS&lt;/strong&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;nextstep&quot;&gt;NeXTSTEP&lt;/h4&gt;
-    &lt;p&gt;An &lt;strong&gt;object-oriented&lt;/strong&gt;, multitasking OS. Low-level C but High-level OC language and runtime the first time, combined with an &lt;strong&gt;OO aplication layer&lt;/strong&gt; and including several “kits”.  &lt;br /&gt;
-大家都知道 NeXT 是 Steve Jobs 被 forced out of Apple 后和 a few of his coworkers 创办的，所以 &lt;strong&gt;NeXTSTEP 绝对是证明 Jobs 实力的作品。&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;darwin&quot;&gt;Darwin&lt;/h4&gt;
-    &lt;p&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Darwin_(operating_system\)&quot;&gt;Darwin&lt;/a&gt;, the core set of components upon which Mac OS X and iOS based, mostly POSIX compatible, but has never, by itself, been certified as being compatible with any version of &lt;strong&gt;POSIX&lt;/strong&gt;. (OS X, since Leopard, has been certified as compatible with the Single UNIX Specification version 3)&lt;br /&gt;
-&lt;strong&gt;所以说 Mac OS X 算是很正统 Unix 的了&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;h4 id=&quot;posix&quot;&gt;POSIX&lt;/h4&gt;
-    &lt;p&gt;可移植操作系统接口, Portable Operating System Interface, is a family of standards specified by the IEEE from maintaining compatibility between OS, defines the API along with Command Line Shells and utility interfaces, for software comaptibility with variants of Unix and other OS.&lt;/p&gt;
-    &lt;ul&gt;
-      &lt;li&gt;Fully POSIX compliant:
-        &lt;ul&gt;
-          &lt;li&gt;OS X&lt;/li&gt;
-          &lt;li&gt;QNX OS (BlackBerry)&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;Mostly complicant:
-        &lt;ul&gt;
-          &lt;li&gt;Linux&lt;/li&gt;
-          &lt;li&gt;OpenBSD/FreeBSD&lt;/li&gt;
-          &lt;li&gt;Darwin (Core of &lt;strong&gt;iOS&lt;/strong&gt; &amp;amp; OS X)&lt;/li&gt;
-          &lt;li&gt;&lt;strong&gt;Android&lt;/strong&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;Complicant via compatibility feature （通过兼容功能实现兼容）
-        &lt;ul&gt;
-          &lt;li&gt;Windows NT Kernel
-            &lt;ul&gt;
-              &lt;li&gt;Windows Server 2000, 2003, 2008, 2008 R2, 2012&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-          &lt;li&gt;Symbian OS (with PIPS)
-            &lt;ul&gt;
-              &lt;li&gt;Symbian was a closed-source OS.&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&quot;unix-like&quot;&gt;Unix-like&lt;/h2&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A Unix-like (sometimes referred to as UN*X or *nix) operating system is one that behaves in a manner similar to a Unix system, while not necessarily conforming to or being certified to any version of the &lt;strong&gt;Single UNIX Specification&lt;/strong&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;There is no standard for defining the term.&lt;br /&gt;
-其实 Unix-like 是个相对模糊的概念：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;最狭义的 Unix 单指 Bell Labs’s Unix&lt;/li&gt;
-  &lt;li&gt;稍广义的 Unix 指代所有 Licensed Unix, 即通过了 SUS 的 Unix-like ，比如 OS X&lt;/li&gt;
-  &lt;li&gt;最广义的 Unix 即所有 Unix-like 系统，无论它是否通过过任何 SUS，包括 Linux，BSD Family 等&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;single-unix-specification&quot;&gt;Single UNIX Specification&lt;/h4&gt;
-&lt;p&gt;The Single UNIX Specification (SUS) is the collective name of a family of standards for computer OS, compliance with which is required to &lt;strong&gt;qualify for the name “Unix”&lt;/strong&gt;, like &lt;strong&gt;POSIX&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h4 id=&quot;apple-ios&quot;&gt;Apple iOS&lt;/h4&gt;
-&lt;p&gt;iOS is a &lt;strong&gt;Unix-like OS based on Darwin(BSD)&lt;/strong&gt; and OS X, which share some frameworks including Core Foundation, Founadtion and the Darwin foundation with OS X, but, Unix-like shell access is not avaliable for users and restricted for apps, &lt;strong&gt;making iOS not fully Unix-compatible either.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The iOS kernal is &lt;strong&gt;XNU&lt;/strong&gt;, the kernal of Darwin.&lt;/p&gt;
-
-&lt;h4 id=&quot;xnu-kernel&quot;&gt;XNU Kernel&lt;/h4&gt;
-&lt;p&gt;XNU, the acronym(首字母缩写) for &lt;strong&gt;&lt;em&gt;X is Not Unix&lt;/em&gt;&lt;/strong&gt;, which is the &lt;strong&gt;Computer OS Kernel&lt;/strong&gt; developed at Apple Inc since Dec 1996 for use in the Mac OS X and released as free open source software as part of Darwin.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&quot;linux&quot;&gt;Linux&lt;/h2&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Linux is a Unix-like and mostly POSIX-compliant computer OS.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Unix_timeline.en.svg/800px-Unix_timeline.en.svg.png&quot; alt=&quot;Unix_timeline&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;linux-kernel&quot;&gt;Linux Kernel&lt;/h4&gt;
-
-&lt;p&gt;严格来讲，术语 Linux 只表示 &lt;a href=&quot;http://en.wikipedia.org/wiki/Linux_kernel&quot;&gt;Linux Kernel&lt;/a&gt; 操作系统内核本身，比如说 Android is Based on Linux (Kernel). Linus 编写的也只是这一部分，一个免费的 Unix-like Kernel，并不属于 GNU Project 的一部分。&lt;/p&gt;
-
-&lt;p&gt;但通常把 Linux 作为 Linux Kernel 与大量配合使用的 GNU Project Software Kit (包括 Bash, Lib, Compiler, 以及后期的 GUI etc) 所组合成的 OS 的统称。（包括各类 Distribution 发行版）&lt;/p&gt;
-
-&lt;p&gt;这类操作系统也被称为 &lt;strong&gt;GNU/Linux&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;gnu-project&quot;&gt;GNU Project&lt;/h4&gt;
-
-&lt;p&gt;The GNU Project is a &lt;strong&gt;free software, mass collaboration&lt;/strong&gt; project, which based on the following freedom rights:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Users are free to run the software, share (copy, distribute), study and modify it.&lt;/li&gt;
-  &lt;li&gt;GNU software guarantees these freedom-rights legally (via its license).&lt;/li&gt;
-  &lt;li&gt;So it is not only FREE but, more important, FREEDOM.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In order to ensure that the &lt;em&gt;entire&lt;/em&gt; software of a computer grants its users all freedom rights (use, share, study, modify), even the most fundamental and important part, &lt;strong&gt;the operating system&lt;/strong&gt;, needed to be written.&lt;/p&gt;
-
-&lt;p&gt;This OS is decided to called &lt;strong&gt;GNU (a recursive acronym meaning “GNU is not Unix”)&lt;/strong&gt;. By 1992, the GNU Project had completed all of the major OS components except for their kernel, &lt;em&gt;GNU Hurd&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;With the release of the third-party &lt;strong&gt;Linux Kernel&lt;/strong&gt;, started independently by &lt;em&gt;Linus Torvalds&lt;/em&gt; in 1991 and released under the GPLv0.12 in 1992, for the first time it was possible to run an OS &lt;strong&gt;composed completely of free software&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;Though the Linux kernel is not part of the GNU project, it was developed using GCC and other GNU programming tools and was released as free software under the GPL.&lt;/p&gt;
-
-&lt;p&gt;Anyway, there eventually comes to the &lt;strong&gt;GNU/Linux&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;GPL&lt;/strong&gt;: GNU General Public License&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;GCC&lt;/strong&gt;: GNU Compiler Collection&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;其他与 GPL 相关的自由/开源软件公共许可证：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Mozilla_Public_License&quot;&gt;Mozilla Public License&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/MIT_License&quot;&gt;MIT License&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/BSD_licenses&quot;&gt;BSD Public License&lt;/a&gt;
-    &lt;ul&gt;
-      &lt;li&gt;GPL 强制后续版本必须是自由软件，而 BSD 的后续可以选择继续开源或者封闭&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Apache_License&quot;&gt;Apache License&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://dl2.iteye.com/upload/attachment/0047/4142/d770c85a-49b7-3c7f-8ae2-cbb6451e00d8.png&quot; alt=&quot;Public License&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;android&quot;&gt;Android&lt;/h4&gt;
-
-&lt;p&gt;Android is a mobile OS based on &lt;strong&gt;Linux Kernel&lt;/strong&gt;, so it’s definitely &lt;strong&gt;Unix-like&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Linux is under GPL so Android has to be open source&lt;/strong&gt;.
-Android’s source code is released by Google under open source licenses, although most Android devices ultimately ship with a combination of open source and proprietary software, including proprietary software developed and licensed by Google &lt;em&gt;(GMS are all proprietary)&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;android-kernel&quot;&gt;Android Kernel&lt;/h4&gt;
-
-&lt;p&gt;Android’s kernel is based on one of the Linux kernel’s long-term support (LTS) branches.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Android’s variant of the Linux kernel&lt;/strong&gt; has further architectural changes that are implemented by Google outside the typical Linux kernel development cycle, and, certain features that Google contributed back to the Linux kernel. Google maintains a public code repo that contains their experimental work to re-base Android off the latest stable Linux versions.&lt;/p&gt;
-
-&lt;p&gt;Android Kernel 大概是 Linux Kernel 最得意的分支了，Android 也是 Linux 最流行的发行版。不过，也有一些 Google 工程师认为 Android is not Linux in the traditional Unix-like Linux distribution sense. 总之这类东西就算有各种协议也还是很难说清楚，在我理解里 Android Kernel 大概就是 fork Linux Kernel 之后改动和定制比较深的例子。&lt;/p&gt;
-
-&lt;h4 id=&quot;android-rom&quot;&gt;Android ROM&lt;/h4&gt;
-
-&lt;p&gt;既然提到 Android 就不得不提提 Android ROM&lt;/p&gt;
-
-&lt;p&gt;ROM 的本义实际上是只读内存：&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Read-only memory&lt;/strong&gt; (ROM) is a class of storage medium used in computers and other electronic devices. Data stored in ROM can only be modified slowly, with difficulty, or not at all, so it is &lt;strong&gt;mainly used to distribute firmware (固件)&lt;/strong&gt; (software that is very closely tied to specific hardware, and unlikely to need frequent updates).&lt;/p&gt;
-
-&lt;p&gt;ROM 在发展的过程中不断进化，从只读演变成了可编程可擦除，并最终演化成了 Flash&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;PROM (Programmable read-only memory)&lt;/li&gt;
-  &lt;li&gt;EPROM (Erasable programmable read-only memory)&lt;/li&gt;
-  &lt;li&gt;EEPROM (Electrically erasable programmable read-only memory)
-    &lt;ul&gt;
-      &lt;li&gt;Flash memory (闪存)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Flash 的出现是历史性的，它不但可以作为 ROM 使用，又因其极高的读写速度和稳定性，先后发展成为U盘（USB flash drives）、移动设备主要内置存储，和虐机械硬盘几条街的固态硬盘（SSD），可以说这货基本统一了高端存储市场的技术规格。&lt;/p&gt;
-
-&lt;p&gt;所以我们平时习惯说的 ROM 其实还是来源于老单片机时代，那时的 ROM 真的是写了就很难（需要上电复位）、甚至无法修改，所以那时往 ROM 里烧下去的程序就被称作 firmware ，固件。久而久之，虽然技术发展了，固件仍然指代那些不常需要更新的软件，而 ROM 这个词也就这么沿用下来了。&lt;/p&gt;
-
-&lt;p&gt;所以在 wiki 里是没有 Android ROM 这个词条的，只有 &lt;a href=&quot;http://en.wikipedia.org/wiki/List_of_custom_Android_firmwares&quot;&gt;List of custom Android firmwares&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A custom firmware, also known as a custom ROM, ROM, or custom OS, is an aftermarket distribution of the Android operating system. They are based on the Android Open Source Project (AOSP), hence most are open-sourced releases, unlike proprietary modifications by device manufacturers.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;各类 Android ROM 在 Android 词类下也都是属于 &lt;strong&gt;Forks and distributions&lt;/strong&gt; 一类的。&lt;/p&gt;
-
-&lt;p&gt;所以我说，其实各类 Android ROM 也好，fork Android 之流的 YunOS、FireOS 也好，改了多少东西，碰到多深的 codebase ……&lt;strong&gt;其实 ROM 和 Distribution OS 的界限是很模糊的&lt;/strong&gt;，为什么 Android 就不可以是移动时代的 Linux ，为什么 Devlik/ART 就不能是移动时代的 GCC 呢？&lt;/p&gt;
-
-&lt;h4 id=&quot;chrome-os&quot;&gt;Chrome OS&lt;/h4&gt;
-
-&lt;p&gt;Chrome OS is an operating system based on the &lt;strong&gt;Linux kernel&lt;/strong&gt; and designed by Google to work with web applications and installed applications.&lt;/p&gt;
-
-&lt;p&gt;虽然目前只是个 Web Thin Client OS ，但是 RoadMap 非常酷……&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Chrome Packaged Application&lt;/strong&gt; (Support working offline and installed)&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Android App Runtime&lt;/strong&gt; (run Android applications natively…fxxking awesome)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;平复一下激动的心情，还是回到正题来：&lt;/p&gt;
-
-&lt;h4 id=&quot;chromium-os&quot;&gt;Chromium OS&lt;/h4&gt;
-
-&lt;p&gt;Chrome OS is based on Chromium OS, which is the open-source development version of Chrome OS, which is a &lt;strong&gt;Linux distribution&lt;/strong&gt; designed by Google.&lt;/p&gt;
-
-&lt;p&gt;For Detail, Chromium OS based on &lt;a href=&quot;http://en.wikipedia.org/wiki/Gentoo_Linux&quot;&gt;Gentoo Linux&lt;/a&gt;, emm…&lt;/p&gt;
-</description>
-        <pubDate>Tue, 14 Apr 2015 00:00:00 +0800</pubDate>
-        <link>https://luzhijun.github.io/2015/04/14/unix-linux-note/</link>
-        <guid isPermaLink="true">https://luzhijun.github.io/2015/04/14/unix-linux-note/</guid>
-        
-        <category>OS</category>
-        
-        <category>Unix</category>
-        
-        <category>Linux</category>
         
         
       </item>

@@ -11,9 +11,9 @@
     <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>YAML 初体验 - 楚汐|Trucy Luce Blog</title>
+    <title>计算社会初探 - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/2016/08/10/YAML%E5%88%9D%E4%BD%93%E9%AA%8C/">
+    <link rel="canonical" href="https://luzhijun.github.io/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -134,12 +134,12 @@
 
     <!-- Image to hack wechat -->
 <!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
-<!-- <img src="/img/post-bg-js-apple.jpg" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-socialcompute.jpg" width="0" height="0"> -->
 
 <!-- Post Header -->
 <style type="text/css">
     header.intro-header{
-        background-image: url('/img/post-bg-js-apple.jpg')
+        background-image: url('/img/post-bg-socialcompute.jpg')
     }
 </style>
 <header class="intro-header" >
@@ -149,15 +149,15 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/#语言" title="语言">语言</a>
+                        <a class="tag" href="/tags/#社会计算" title="社会计算">社会计算</a>
                         
                     </div>
-                    <h1>YAML 初体验</h1>
+                    <h1>计算社会初探</h1>
                     
                     
-                    <h2 class="subheading">YAML从标记语言阵营走出并应以为傲，宣称JSON是自己小弟</h2>
+                    <h2 class="subheading">计算社会科学关注的重点主要是使用信息存储、分析技术研究社会科学领域中的各种问题，发现社会运行规律</h2>
                     
-                    <span class="meta">Posted by T.L on August 10, 2016</span>
+                    <span class="meta">Posted by T.L on August 5, 2016</span>
                 </div>
             </div>
         </div>
@@ -186,38 +186,119 @@ MathJax.Hub.Config({
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<p><strong>YAML is a human friendly data serialization standard for all programming languages.——official site</strong></p>
+				<p>“计算社会科学”的学科概念已提出四年多,但国内信息科学界的很多学者认为计算社会科学基本等同于社会计算 ,或者干脆将计算社会科学看作社会计算的一部分，我认为为计算社会科学与社会计算之间确有交叉 ,但两者同时也有不同的侧重面向。社会计算关注的重点有两个:</p>
 
-<ul id="markdown-toc">
-  <li><a href="#yaml-vs-json" id="markdown-toc-yaml-vs-json">YAML vs JSON</a></li>
-  <li><a href="#section" id="markdown-toc-section">数据结构</a></li>
-  <li><a href="#python-yaml" id="markdown-toc-python-yaml">python 运行YAML案例</a></li>
+<ul>
+  <li>其一是关注信息技术在社会活动中的应用 ,关注在信息技术中如何嵌入人文知识使之更好地服务于社会活动;</li>
+  <li>其二是为社会科学领域研究提供研究工具,重点关注信息技术的使用和发展。</li>
 </ul>
 
-<p>赞一下这个名字，YAML（YAML Ain’t Markup Language） （/ˈjæməl/ ），戏谑得不行，本身就是递归的写法，起初他还是叫”Yet Another Markup Language”（另外一种置标语言）。但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名，YAML的官方定义很简单，即
-<strong>一种人性化的数据格式定义语言</strong>
-，其主要功能用途类似于XML或JSON，YAML使用空白字符和分行来分隔数据，且巧妙避开各种封闭符号，如：引号、括号等，以避免这些符号在复杂层次结构中变得难以辨认。因此语法规则与空格有很大关系，他用缩进表示层级关系，缩进时不允许使用Tab键，只允许使用空格，而且缩进的空格数目不重要，只要相同层级的元素左侧对齐即可。</p>
+<p>计算社会科学关注的重点主要是使用信息存储、分析技术研究社会科学领域中的各种问题，<strong>发现社会运行规律</strong>。</p>
 
-<h3 id="yaml-vs-json">YAML vs JSON</h3>
-<p>JSON的语法其实是YAML的子集，大部分的JSON文件都可以被YAML的剖析器剖析。虽然大部分的数据分层形式也可以使用类似JSON的格式，不过YAML并不建议这样使用，除非这样编写能让文件可读性增加，更重要的是，YAML的许多扩展在JSON是找不到的，如：<em>进阶资料形态</em>、<em>关系锚点</em>、<em>字串不需要引号</em>、<em>映射资料形态会储存键值的顺序</em>等。</p>
+<p>计算社会在发现社会规律过程中的处理流程如下：</p>
 
-<h3 id="section">数据结构</h3>
+<ol>
+  <li>数据</li>
+  <li>处理
+    <ul>
+      <li>社会网络分析</li>
+      <li>社会建模</li>
+      <li>数据挖掘</li>
+      <li>机器学习</li>
+    </ul>
+  </li>
+  <li>统计知识，验证知识</li>
+</ol>
 
-<p>YAML 支持的数据结构有三种。</p>
+<h3 id="section">数据</h3>
+<p>计算社会科学以计算机等现代计算科学技术工具获取和分析海量社会化数据,数据形式主要包括文本 、图像 、视频和音频等,其大部分来源于Web网络信息，还有一部分来源于传感设备。<br />
+传统的关系型数据库并不能够支持海量数据，要获取海量大数据，肯定是从网页数据的获取：各种爬虫
+<img src="http://img.blog.csdn.net/20160805111706675" alt="爬虫" />
+例如： 
+在R软件中有很多包可以方便爬取，比如RCurl拿网页，xmlParse对标准XML文件解析，XPath匹配想要的内容，如抓取财经数据<a href="http://vip.stock.finance.sina.com.cn/q/go.php/vIR_CustomSearch/index.phtml">http://vip.stock.finance.sina.com.cn/q/go.php/vIR_CustomSearch/index.phtml</a>
+这里很容易能够拿到表格里的内容：
+<img src="http://img.blog.csdn.net/20160805112743776" alt="财经数据" /></p>
 
-<blockquote>
+<h3 id="section-1">实例分析</h3>
+<p>计算社会科学领域研究者眼中的社会网络分析对象，主要包括对虚拟社会网络下的人物节点分析 、社群挖掘和社会图关系分析。
+#### 人物节点
+个体网络行为分析市根据具体网络行为来分析人物个体，比如2015年首届天池大数据大赛的题目<a href="https://tianchi.shuju.aliyun.com/competition/introduction.htm?spm=5176.100066.333.5.bZoqLZ&amp;raceId=1">“阿里移动推荐算法”</a>。
+根据前一个月的用户行为数据来预测一个月后的行为，这就是社会挖掘，相关方法可以参见前五名的ppt<sup id="fnref:4"><a href="#fn:4" class="footnote">1</a></sup>。
+此外<a href="https://tianchi.shuju.aliyun.com/competition/index.htm?spm=5176.100170.1234.3.iKoqeh">https://tianchi.shuju.aliyun.com/competition/index.htm?spm=5176.100170.1234.3.iKoqeh</a>中的淘宝穿衣搭配算法、新浪互动微博算法也是对个体节点进行社会挖掘的实例。
+#### 社群挖掘
+社群挖掘是社会网络分析的另一研究重点,社群通常由性质相似或功能相近的人物节点构成, 在一定程度上反映了个体自发、无序行为背后的局部弱规则性和全局有序性口因此,发现虚拟网络中有意义的 、相对稳定的社群对网络信息的搜索与挖掘 、信息的推荐以及网络演化与扩散的预测具有重要价值 。
+实例：<a href="https://tianchi.shuju.aliyun.com/competition/introduction.htm?spm=5176.100066.333.14.uZdYKE&amp;raceId=231514">广东公共交通大数据竞赛</a>
+主要面向人群：各种分类的通勤人群
+#### 社交网络图分析/计算
+<img src="http://img.blog.csdn.net/20160805114647502" alt="社交图" />
+如上社交网络图在计算机存储的方式使用传统的关系型数据库的话会产生性能问题。比如要查询Richard指向谁，直接通过索引查询就可以找到其他人；但要查找谁指向Richard,就会引发数据库的全表扫描。但从图中明显只要判别下入度就可以了。</p>
 
-  <ul>
-    <li>对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）</li>
-    <li>数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）</li>
-    <li>纯量（scalars）：单个的、不可再分的值</li>
-  </ul>
-</blockquote>
+<p><strong>Neo4J</strong><br />
+Neo4J是当前主流的图数据库产品,其社交网络图表示如下:
+<img src="http://img.blog.csdn.net/20160805115358286" alt="Neo4J" />
+简单分析图数据库，有几个特点：</p>
 
-<h3 id="python-yaml">python 运行YAML案例</h3>
-<p>这里以python版本的YAML作为示例:<a href="https://pypi.python.org/pypi/ruamel.yaml">ruamel.yaml</a>以下为在jupyter运行内容。
-<a href="/html/YAML.html">点击查看</a></p>
+<ol>
+  <li>图在节点上记录数据(节点的属性,property)</li>
+  <li>节点由关系组织成图,关系也具有属性</li>
+  <li>寻路(Traversal,另一意思是遍历)在图上定位由节点组成的路径</li>
+  <li>索引(index)将属性映射到节点或关系</li>
+  <li>图数据库管理系统管理图其上的索引</li>
+</ol>
 
+<p><strong>GraphX</strong></p>
+
+<p><a href="http://spark.apache.org/graphx/">GraphX</a>是 Spark中用于图(e.g., Web-Graphs and Social Networks)和图并行计算(e.g., PageRank and Collaborative Filtering)的API,可以认为是GraphLab(图像处理模型的开源图计算框架)和Pregel(google图算法引擎)在Spark(Scala)上的重写及优化，跟其他分布式图计算框架相比，GraphX最大的贡献是，在Spark之上提供一栈式数据解决方案，可以方便且高效地完成图计算的一整套流水作业。GraphX最先是伯克利AMPLAB的一个分布式图计算框架项目，后来整合到Spark中成为一个核心组件。
+Graphx是Spark生态中的非常重要的组件，融合了图并行以及数据并行的优势，虽然在单纯的计算机段的性能相比不如GraphLab等计算框架，但是如果从整个图处理流水线的视角（图构建，图合并，最终结果的查询）看，那么性能就非常具有竞争性了。 
+<img src="http://img.blog.csdn.net/20160805115806850" alt="GrahpX" />
+其中GraphLab是图算法库，图中使用的是PageRank算法，可以参见：
+<img src="http://img.blog.csdn.net/20160805115946335" alt="PageRank" /></p>
+
+<p>PageRank可以被用来挖掘意见领袖，除此之外，目前GraphLab最新版本已支持
+PageRank、数三角形、最大连通图和最短路径等
+6种经典的图算法。这些算法的代码实现，目的和重点在于通用性。如果要获得最佳性能，可以参考其实现进行修改和扩展满足业务需求。</p>
+
+<h4 id="section-2">社会建模</h4>
+<p>社会建模技术由信息科学家和数学家提出并发展完善起来,是指对社会空间中个体或群体的心理和行为交互模式人际关系、社群结构等复杂社 会性问题 ,进行抽象描述并建立仿真模型。通 过仿真模型 ,研究者可以模拟社会演化进程、社会现象 的发展 、人类社会行为及其变化过程 ,可进 一 步结合实验分析或为现实提供决策支持。</p>
+
+<p>目前 ,在社会科学领域应用最广泛的仿真模型是基于智能主体的社会仿真模型(agent—based models,ABMs),ABMs模型可以很好地模拟信息传 播 、社会规范的出现、集群行为等人类现象。</p>
+
+<p>基于ABMs模 型 ,研究人员发展出在计算机上建立“人工社会 (artificialsociety)”的构想 。人类社会是由大量真实社会个体构成的复杂系统 ,人工社会则是在计算机上模拟出的由大量虚拟社会个体模 型构成的复杂系统。其研究思路是在计算机中建立多个Agent模型 ,对不同特性的Agent设定不同的运行规则，让这些Agent相互作用并遵循一定规则运行，最后通过观察大量Agent相互作用的涌现属性，找到人工社会的规律 ,并用这些规律理解和解释现实人类社会中的宏观现象。
+关于Agent的概念和特征可以参见下图
+<img src="http://img.blog.csdn.net/20160805120341212" alt="Agent" /></p>
+
+<p>每个Agent都有简单的规则，这里拿鸟群飞行模拟为例：一个鸟群各个体初始位置杂乱无章，但每个个体都有如下三个规则：</p>
+
+<ol>
+  <li>Cohesion: each agent steers toward the average 
+position of its nearby “flockmates,”</li>
+  <li>Separation: each agent steers to avoid crowding 
+local flockmates, and</li>
+  <li>Alignment: each agent steers towards the average 
+heading of local flockmates.</li>
+</ol>
+
+<p>初始位置和500次迭代后的位置如图：
+<img src="http://img.blog.csdn.net/20160805120705604" alt="flymate" /></p>
+
+<p>初始的混沌状态按照几个简单的规则就能让整个系统处于稳定状态<sup id="fnref:5"><a href="#fn:5" class="footnote">2</a></sup>，通过这个模型对系统的影响，可以判别规则的合理性和可行性。</p>
+
+<p>复杂人类社会模型目前还不存在，有的只是对单一现象的研究模型，这里推荐一款游戏《模拟城市》，虽然是利用已知规律来建模，但其设计思想和画面风格很适合将来投身于社会建模的人群。
+<img src="http://img.blog.csdn.net/20160805121832588" alt="SC1" />
+<img src="http://img.blog.csdn.net/20160805121929668" alt="SC2" />
+<img src="http://img.blog.csdn.net/20160805122026982" alt="SC3" />
+<img src="http://img.blog.csdn.net/20160805122152862" alt="SC4" /></p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:4">
+      <p>这里搜集了前五名的ppt，这五位都利用用了深度学习、数据分析、统计的方法来挖掘数据。详见<a href="http://download.csdn.net/detail/bob601450868/9092635">阿里移动推荐算法大赛冠军答辩PPT</a> <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:5">
+      <p>类似动力系统中的元胞自动机，元胞自动机用于研究经济危机的形成与爆发过程、个人行为的社会性，流行现象，如服装流行色的形成等。在生物学中，元胞自动机的设计思想本身就来源于生物学自繁殖的思想，因而它在生物学上的应用更为自然而广泛。例如元胞自动机用于肿瘤细胞的增长机理和过程模拟、人类大脑的机理探索(Victor.Jonathan.D.，1990)、艾滋病病毒HIV的感染过程(Sieburg，H.B.. 1990)、自组织、自繁殖等生命现象的研究以及最新流行的克隆 (Clone)技术的研究等 (ErmentroutG。B。，1993)。 <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
 
                 <hr>
@@ -227,11 +308,11 @@ MathJax.Hub.Config({
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="/2016/08/10/YAML初体验"
-                    data-title="YAML 初体验"
-                    data-url="https://luzhijun.github.io/2016/08/10/YAML%E5%88%9D%E4%BD%93%E9%AA%8C/"
-                    data-images="https://luzhijun.github.io/img/post-bg-js-apple.jpg"
-                    data-content="YAML is a human friendly data serialization standard for all programming lang... | 楚汐|Trucy Luce Blog " >
+                    data-thread-key="/2016/08/05/计算社会初探"
+                    data-title="计算社会初探"
+                    data-url="https://luzhijun.github.io/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/"
+                    data-images="https://luzhijun.github.io/img/post-bg-socialcompute.jpg"
+                    data-content="“计算社会科学”的学科概念已提出四年多,但国内信息科学界的很多学者认为计算社会科学基本等同于社会计算 ,或者干脆将计算社会科学看作社会计算的一部分，我认为... | 楚汐|Trucy Luce Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -251,12 +332,12 @@ MathJax.Hub.Config({
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/" data-toggle="tooltip" data-placement="top" title="计算社会初探">&larr; Previous Post</a>
+                        <a href="/2015/09/22/js-version/" data-toggle="tooltip" data-placement="top" title="ES5, ES6, ES2016">&larr; Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/" data-toggle="tooltip" data-placement="top" title="博客新特性更新">Next Post &rarr;</a>
+                        <a href="/2016/08/10/YAML%E5%88%9D%E4%BD%93%E9%AA%8C/" data-toggle="tooltip" data-placement="top" title="YAML 初体验">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -266,9 +347,9 @@ MathJax.Hub.Config({
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="/2016/08/10/YAML初体验"
-                        data-title="YAML 初体验"
-                        data-url="https://luzhijun.github.io/2016/08/10/YAML%E5%88%9D%E4%BD%93%E9%AA%8C/" >
+                        data-thread-key="/2016/08/05/计算社会初探"
+                        data-title="计算社会初探"
+                        data-url="https://luzhijun.github.io/2016/08/05/%E8%AE%A1%E7%AE%97%E7%A4%BE%E4%BC%9A%E5%88%9D%E6%8E%A2/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->

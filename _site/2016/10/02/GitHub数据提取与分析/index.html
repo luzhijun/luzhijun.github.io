@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="iCQLNHIUn9" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>GitHub数据提取与分析 - 楚汐|Trucy Luce Blog</title>
+
+    <link rel="canonical" href="https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?c07b62da6a94126e41877e6b30e15413";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">T.L Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-github.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-github.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#社交网站数据分析" title="社交网站数据分析">社交网站数据分析</a>
+                        
+                        <a class="tag" href="/tags/#社会计算" title="社会计算">社会计算</a>
+                        
+                    </div>
+                    <h1>GitHub数据提取与分析</h1>
+                    
+                    
+                    <h2 class="subheading">谁是你关注领域的大牛，哪个是你领域内的最火项目，当前Hot Language是什么</h2>
+                    
+                    <span class="meta">Posted by T.L on October 2, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<p>GitHub作为全球最大的代码托管平台，每小时都有成千上万个项目产生，他为开源作出了不可磨灭的贡献。本文使用了NetworkX对GitHub的进行图形分析，通过gitHub的丰富数据，构建可以在各种不同的方式使用数据模型。这里将github用户、代码、仓库构建成<a href="https://en.wikipedia.org/wiki/Interest_graph">兴趣图</a>。本文包含三方面:</p>
+
+<ul>
+  <li>github 开发者平台和对应的api</li>
+  <li>如何使用NetworkX作图</li>
+  <li>构建github的兴趣图</li>
+  <li>图算法</li>
+</ul>
+
+<h2 id="githubapi">了解github的API</h2>
+<p>同Twitter和Facebook一样，第一步就是获取Git自带的API。地址：https://developer.github.com/v3/<br />
+其中大部分我们并不需要，我们仅仅关注的是用户和仓库。所有的API访问通过HTTPS，并从https://api.github.com访问。所有发送和接收的数据是JSON。</p>
+
+<h3 id="api">创建API连接</h3>
+<p>github实现了<a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html">OAuth</a>接口，在拥有github账户后获取API通道的方式有两种。一种叫做personal access token.你可以为你自己的使用或实现的Web流创建一个个人访问令牌，以允许其他用户授权你的应用程序。一种是OAuth application，所有的开发人员在开始之前都需要注册他们的应用程序。注册OAuth应用分配一个唯一的客户ID和客户的密钥。这里简单起见，采用personal access token。点击<a href="https://github.com/settings/tokens/new">新建</a>即可生成有对应权限的token。生成好的token如下所示：<br />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/9660244.jpg" alt="" /><br />
+向api根目录发送请求，试一试这个token连接情况：</p>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl https://api.github.com/?access_token<span class="o">=</span><span class="nv">$TOKEN</span>
+<span class="o">{</span>
+  <span class="s2">"current_user_url"</span>: <span class="s2">"https://api.github.com/user"</span>,
+  <span class="s2">"current_user_authorizations_html_url"</span>: <span class="s2">"https://github.com/settings/connections/applications{/client_id}"</span>,
+  <span class="s2">"authorizations_url"</span>: <span class="s2">"https://api.github.com/authorizations"</span>,
+  <span class="s2">"code_search_url"</span>: <span class="s2">"https://api.github.com/search/code?q={query}{&amp;page,per_page,sort,order}"</span>,
+  <span class="s2">"emails_url"</span>: <span class="s2">"https://api.github.com/user/emails"</span>,
+  <span class="s2">"emojis_url"</span>: <span class="s2">"https://api.github.com/emojis"</span>,
+  <span class="s2">"events_url"</span>: <span class="s2">"https://api.github.com/events"</span>,
+  <span class="s2">"feeds_url"</span>: <span class="s2">"https://api.github.com/feeds"</span>,
+  <span class="s2">"followers_url"</span>: <span class="s2">"https://api.github.com/user/followers"</span>,
+  <span class="s2">"following_url"</span>: <span class="s2">"https://api.github.com/user/following{/target}"</span>,
+  <span class="s2">"gists_url"</span>: <span class="s2">"https://api.github.com/gists{/gist_id}"</span>,
+  <span class="s2">"hub_url"</span>: <span class="s2">"https://api.github.com/hub"</span>,
+  <span class="s2">"issue_search_url"</span>: <span class="s2">"https://api.github.com/search/issues?q={query}{&amp;page,per_page,sort,order}"</span>,
+  <span class="s2">"issues_url"</span>: <span class="s2">"https://api.github.com/issues"</span>,
+  <span class="s2">"keys_url"</span>: <span class="s2">"https://api.github.com/user/keys"</span>,
+  <span class="s2">"notifications_url"</span>: <span class="s2">"https://api.github.com/notifications"</span>,
+  <span class="s2">"organization_repositories_url"</span>: <span class="s2">"https://api.github.com/orgs/{org}/repos{?type,page,per_page,sort}"</span>,
+  <span class="s2">"organization_url"</span>: <span class="s2">"https://api.github.com/orgs/{org}"</span>,
+  <span class="s2">"public_gists_url"</span>: <span class="s2">"https://api.github.com/gists/public"</span>,
+  <span class="s2">"rate_limit_url"</span>: <span class="s2">"https://api.github.com/rate_limit"</span>,
+  <span class="s2">"repository_url"</span>: <span class="s2">"https://api.github.com/repos/{owner}/{repo}"</span>,
+  <span class="s2">"repository_search_url"</span>: <span class="s2">"https://api.github.com/search/repositories?q={query}{&amp;page,per_page,sort,order}"</span>,
+  <span class="s2">"current_user_repositories_url"</span>: <span class="s2">"https://api.github.com/user/repos{?type,page,per_page,sort}"</span>,
+  <span class="s2">"starred_url"</span>: <span class="s2">"https://api.github.com/user/starred{/owner}{/repo}"</span>,
+  <span class="s2">"starred_gists_url"</span>: <span class="s2">"https://api.github.com/gists/starred"</span>,
+  <span class="s2">"team_url"</span>: <span class="s2">"https://api.github.com/teams"</span>,
+  <span class="s2">"user_url"</span>: <span class="s2">"https://api.github.com/users/{user}"</span>,
+  <span class="s2">"user_organizations_url"</span>: <span class="s2">"https://api.github.com/user/orgs"</span>,
+  <span class="s2">"user_repositories_url"</span>: <span class="s2">"https://api.github.com/users/{user}/repos{?type,page,per_page,sort}"</span>,
+  <span class="s2">"user_search_url"</span>: <span class="s2">"https://api.github.com/search/users?q={query}{&amp;page,per_page,sort,order}"</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>github 的API符合<a href="https://en.wikipedia.org/wiki/HATEOAS">HATEOAS</a>设计，从上面可以看到，如果想获取当前用户的信息，应该去访问api.github.com/user，然后就得到了下面结果。</p>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="o">{</span>
+<span class="s2">"login"</span>: <span class="s2">"luzhijun"</span>,
+<span class="s2">"id"</span>: 15256911,
+<span class="s2">"avatar_url"</span>: <span class="s2">"https://avatars.githubusercontent.com/u/15256911?v=3"</span>,
+<span class="s2">"gravatar_id"</span>: <span class="s2">""</span>,
+<span class="s2">"url"</span>: <span class="s2">"https://api.github.com/users/luzhijun"</span>,
+<span class="s2">"html_url"</span>: <span class="s2">"https://github.com/luzhijun"</span>,
+...
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="pygithub">pygithub</h3>
+<p>ok，这里介绍一个方便python使用的包，<a href="http://pygithub.github.io/PyGithub/v1/introduction.html">pygithub</a>,你可以通过它方便地用python脚本管理github。其API与github<a href="http://pygithub.github.io/PyGithub/v1/apis.html">对应</a>。 
+举个例子，拿到指定用户的所有仓库:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+<span class="c"># Specify your own access token here</span>
+<span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="s">''</span>
+<span class="n">USER</span> <span class="o">=</span> <span class="s">'luzhijun'</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">ACCESS_TOKEN</span><span class="p">)</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
+<span class="n">REPOS</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">REPOS</span><span class="p">))</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>[Repository(full_name=”luzhijun/huxblog-boilerplate”), Repository(full_name=”luzhijun/leecode”), Repository(full_name=”luzhijun/luzhijun.github.io”), Repository(full_name=”luzhijun/Optimization”), Repository(full_name=”luzhijun/SVDRecommenderSystem”)]</p>
+</blockquote>
+
+<h2 id="networkx">如何使用NetworkX作图</h2>
+<p>### 了解NetworkX
+NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。<br />
+下面创建一个有向图x-&gt;y:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+
+<span class="c"># 创建有向图</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="c"># 加条边x-&gt;y</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span> <span class="s">'Y'</span><span class="p">)</span>
+<span class="c"># 打印图的相关数据信息</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">"Nodes:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Edges:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+<span class="c"># 节点属性</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'Y'</span><span class="p">])</span>
+<span class="c"># 边属性</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"X=&gt;Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">])</span>
+<span class="c"># 更新节点信息</span>
+<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">'prop1'</span> <span class="p">:</span> <span class="s">'value1'</span><span class="p">})</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
+<span class="c"># 更新边信息</span>
+<span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">'label'</span> <span class="p">:</span> <span class="s">'label1'</span><span class="p">})</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"X=&gt;Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">])</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Name: <br />
+Type: DiGraph  #无向图表示为Graph
+Number of nodes: 2<br />
+Number of edges: 1<br />
+Average in degree:   0.5000<br />
+Average out degree:   0.5000</p>
+</blockquote>
+
+<blockquote>
+  <p>Nodes: [‘Y’, ‘X’]<br />
+Edges: [(‘X’, ‘Y’)]<br />
+X props: {}<br />
+Y props: {}<br />
+X=&gt;Y props: {}<br />
+X props: {‘prop1’: ‘value1’}<br />
+X=&gt;Y props: {‘label’: ‘label1’}</p>
+</blockquote>
+
+<p>有向图和无向图都可以给边赋予权重，用到的方法是add_weighted_edges_from，它接受1个或多个三元组[u,v,w]作为参数，其中u是起点，v是终点，w是权重。例如：</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">g</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)])</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">))</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>{‘weight’: 10.0, ‘label’: ‘label1’}</p>
+</blockquote>
+
+<p>NetworkX提供了常用的图论经典算法，例如DFS、BFS、最短路、最小生成树、最大流等等，非常丰富，如果不做复杂网络，只作图论方面的工作，也可以应用NetworkX作为基本的开发包，更多用法参照<a href="http://networkx.github.io">networkx</a>。</p>
+
+<h3 id="networkx-1">使用NetworkX构建兴趣图</h3>
+
+<p>兴趣图和社交网络图是有区别的，最大的不同就是兴趣图节点代表的不一定是同一类的东西。有个<a href="https://github.com/minrk/findspark">项目</a>是我加星的，那么这个兴趣图就是：<br />
+我–(gazes)–&gt;项目<br />
+那么还有其他很多人也关注了这个项目，我们把加星的人都找出来。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+
+<span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="s">''</span>
+<span class="n">USER</span><span class="o">=</span><span class="s">'minrk'</span>
+<span class="n">REPO</span><span class="o">=</span><span class="s">'findspark'</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">ACCESS_TOKEN</span><span class="p">)</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
+<span class="n">repo</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+<span class="n">stargazers</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">get_stargazers</span><span class="p">())</span><span class="c">#加星的用户集合</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">stargazers</span><span class="p">:</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'user'</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
+<span class="c"># 打印图的基本属性   </span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c"># 打印项目和用户点的基本属性</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c"># 打印这条边属性</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
+<span class="c"># 打印起点为XXX的信息</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">])</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
+<span class="c"># 打印用户的出入度信息</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
+<span class="c"># 打印项目的出入度信息</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Name: <br />
+Type: DiGraph<br />
+Number of nodes: 81<br />
+Number of edges: 80<br />
+Average in degree:   0.9877   # 80/81
+Average out degree:   0.9877  # 80/81</p>
+</blockquote>
+
+<blockquote>
+  <p>{‘lang’: ‘Python’, ‘type’: ‘repo’, ‘owner’: ‘minrk’}<br />
+{‘type’: ‘user’}</p>
+</blockquote>
+
+<blockquote>
+  <p>{‘type’: ‘gazes’}<br />
+{‘findspark(repo)’: {‘type’: ‘gazes’}}<br />
+{}<br />
+[]<br />
+[(‘luzhijun(user)’, ‘findspark(repo)’)]<br />
+[(‘lendenmc(user)’, ‘findspark(repo)’), (‘nehalecky(user)’, ‘findspark(repo)’), (‘charsmith(user)’, ‘findspark(repo)’), (‘cwharland(user)’, ‘findspark(repo)’), (‘d3borah(user)’, ‘findspark(repo)’), (‘cimox(user)’, ‘findspark(repo)’), (‘dirmeier(user)’, ‘findspark(repo)’), (‘paulochf(user)’, ‘findspark(repo)’), (‘qingniufly(user)’, ‘findspark(repo)’), (‘hmourit(user)’, ‘findspark(repo)’), (‘ryan-williams(user)’, ‘findspark(repo)’), (‘rholder(user)’, ‘findspark(repo)’), (‘xysmas(user)’, ‘findspark(repo)’), (‘linkTDP(user)’, ‘findspark(repo)’), (‘minimaxir(user)’, ‘findspark(repo)’), (‘KLXN(user)’, ‘findspark(repo)’), (‘quadnix(user)’, ‘findspark(repo)’), (‘luzhijun(user)’, ‘findspark(repo)’), (‘chrinide(user)’, ‘findspark(repo)’), (‘jaredmichaelsmith(user)’, ‘findspark(repo)’), (‘rgbkrk(user)’, ‘findspark(repo)’), (‘jiamo(user)’, ‘findspark(repo)’), (‘drizham(user)’, ‘findspark(repo)’), (‘assumednormal(user)’, ‘findspark(repo)’), (‘cvincent00(user)’, ‘findspark(repo)’), (‘xiaohan2012(user)’, ‘findspark(repo)’), (‘dapurv5(user)’, ‘findspark(repo)’), (‘pchalasani(user)’, ‘findspark(repo)’), (‘benetka(user)’, ‘findspark(repo)’), (‘rohithreddy(user)’, ‘findspark(repo)’), (‘seanjensengrey(user)’, ‘findspark(repo)’), (‘opikalo(user)’, ‘findspark(repo)’), (‘amontalenti(user)’, ‘findspark(repo)’), (‘Bekterra(user)’, ‘findspark(repo)’), (‘Grillz(user)’, ‘findspark(repo)’), (‘nchammas(user)’, ‘findspark(repo)’), (‘markbarks(user)’, ‘findspark(repo)’), (‘jesusjsc(user)’, ‘findspark(repo)’), (‘d2207197(user)’, ‘findspark(repo)’), (‘Erstwild(user)’, ‘findspark(repo)’), (‘henridf(user)’, ‘findspark(repo)’), (‘ranjankumar-gh(user)’, ‘findspark(repo)’), (‘locojay(user)’, ‘findspark(repo)’), (‘WilliamQLiu(user)’, ‘findspark(repo)’), (‘szinya(user)’, ‘findspark(repo)’), (‘seanjh(user)’, ‘findspark(repo)’), (‘vherasme(user)’, ‘findspark(repo)’), (‘stared(user)’, ‘findspark(repo)’), (‘freeman-lab(user)’, ‘findspark(repo)’), (‘wy36101299(user)’, ‘findspark(repo)’), (‘esafak(user)’, ‘findspark(repo)’), (‘napjon(user)’, ‘findspark(repo)’), (‘richardskim111(user)’, ‘findspark(repo)’), (‘SimonArnu(user)’, ‘findspark(repo)’), (‘lmillefiori(user)’, ‘findspark(repo)’), (‘binhe22(user)’, ‘findspark(repo)’), (‘robcowie(user)’, ‘findspark(repo)’), (‘jazzwang(user)’, ‘findspark(repo)’), (‘Dumbris(user)’, ‘findspark(repo)’), (‘giulioungaretti(user)’, ‘findspark(repo)’), (‘cbouey(user)’, ‘findspark(repo)’), (‘andrewiiird(user)’, ‘findspark(repo)’), (‘DaniGate(user)’, ‘findspark(repo)’), (‘rdhyee(user)’, ‘findspark(repo)’), (‘lgautier(user)’, ‘findspark(repo)’), (‘sandysnunes(user)’, ‘findspark(repo)’), (‘willcline(user)’, ‘findspark(repo)’), (‘aliciatb(user)’, ‘findspark(repo)’), (‘d18s(user)’, ‘findspark(repo)’), (‘he0x(user)’, ‘findspark(repo)’), (‘liulixiang1988(user)’, ‘findspark(repo)’), (‘alexandercbooth(user)’, ‘findspark(repo)’), (‘branning(user)’, ‘findspark(repo)’), (‘bguOIQ(user)’, ‘findspark(repo)’), (‘coder-chenzhi(user)’, ‘findspark(repo)’), (‘mdbishop(user)’, ‘findspark(repo)’), (‘Hguimaraes(user)’, ‘findspark(repo)’), (‘ocanbascil(user)’, ‘findspark(repo)’), (‘fish2000(user)’, ‘findspark(repo)’), (‘stzonis(user)’, ‘findspark(repo)’)]<br />
+[]</p>
+</blockquote>
+
+<h3 id="networkx-2">NetWorkX部分统计指标</h3>
+<ul>
+  <li>度中心性（Degree Centrality)
+    <ul>
+      <li>是在网络分析中刻画节点中心性（Centrality）的最直接度量指标。一个节点的节点度越大就意味着这个节点的度中心性越高，该节点在网络中就越重要。某点的度中心性$C_d(i)=\frac{d(i)}{n-1}$，范围为[0,1]。
+      - degree_centrality(G)     Compute the degree centrality for nodes.
+    - in_degree_centrality(G)     Compute the in-degree centrality for nodes.
+    - out_degree_centrality(G)     Compute the out-degree centrality for nodes.</li>
+    </ul>
+  </li>
+  <li>中介中心性/中间中心性(Between Centrality) 。
+    <ul>
+      <li>以经过某个节点的最短路径数目来刻画节点重要性的指标。如果两个不相邻的参与者k和j想要与对方互动而参与者i处在它们的路径上，那么i可能对它们之间的互动拥有一定的控制力。中介性用来度量i对于其他结点的控制能力。即如果i处在非常多结点的交互路径上，那么i就是一个重要的参与者。
+        <ul>
+          <li>betweenness_centrality(G[, normalized, …])     Compute betweenness centrality for nodes.</li>
+          <li>edge_betweenness_centrality(G[, normalized, …])     Compute betweenness centrality for edges.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>接近中心性（Closeness Centrality）
+    <ul>
+      <li>反映在网络中某一节点与其他节点之间的接近程度。这种中心性的观察视角主要基于接近度或者距离。它的基本思想是如果一个参与者能很容易的与所有其他参与者进行互动，那么它就是中心的。即它到其他所以参与者的距离要足够短。于是，我们就可以使用最短距离来计算这个数值。假设参与者i和参与者j之间的最短距离记为$d(i,j)$（由最短路径上的链接数目度量）。$C_c(i)=\frac{n-1}{\sum_{j=1}^{n}d(i,j)}$
+        <ul>
+          <li>closeness_centrality(G[, v, weighted_edges])     Compute closeness centrality for nodes.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>作为学习，我们使用<a href="http://mathworld.wolfram.com/KrackhardtKite.html">Krackhardt kite graph</a>来研究，之所以称之为风筝图，因为长得像风筝。。。(废话)<br />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/93702051.jpg" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="n">kkg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">small</span><span class="o">.</span><span class="n">krackhardt_kite_graph</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Degree Centrality"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Betweenness Centrality"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Closeness Centrality"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Degree Centrality
+[(3, 0.6666666666666666), (5, 0.5555555555555556), (6, 0.5555555555555556), (0, 0.4444444444444444), (1, 0.4444444444444444), (2, 0.3333333333333333), (4, 0.3333333333333333), (7, 0.3333333333333333), (8, 0.2222222222222222), (9, 0.1111111111111111)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Betweenness Centrality
+[(7, 0.38888888888888884), (5, 0.23148148148148148), (6, 0.23148148148148148), (8, 0.2222222222222222), (3, 0.10185185185185183), (0, 0.023148148148148143), (1, 0.023148148148148143), (2, 0.0), (4, 0.0), (9, 0.0)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Closeness Centrality
+[(5, 0.6428571428571429), (6, 0.6428571428571429), (3, 0.6), (7, 0.6), (0, 0.5294117647058824), (1, 0.5294117647058824), (2, 0.5), (4, 0.5), (8, 0.42857142857142855), (9, 0.3103448275862069)]</p>
+</blockquote>
+
+<h2 id="github">构建github的兴趣图</h2>
+
+<h3 id="section">找出大神</h3>
+<p>大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对<a href="#networkx-1">前面</a></p>
+
+<p>扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   <br />
+由于API每小时限制使用5000个请求，打印下剩余请求数看有没有耗尽，耗尽的话抛出异常。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stargazers</span><span class="p">):</span>   
+    <span class="c"># 增加关注联系，如果有关注者的话</span>
+        <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">follower</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_followers</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">follower</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">follower</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> 
+                           <span class="nb">type</span><span class="o">=</span><span class="s">'follows'</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c">#ssl.SSLError</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="s">"Encountered an error fetching followers for"</span><span class="p">,</span> \
+                             <span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Processed"</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">" stargazers. Num nodes/edges in graph"</span><span class="p">,</span> \
+          <span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit remaining"</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">rate_limiting</span><span class="p">)</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>rocessed 1  stargazers. Num nodes/edges in graph 81 / 80<br />
+Rate limit remaining (4999, 5000)<br />
+Processed 2  stargazers. Num nodes/edges in graph 81 / 83<br />
+Rate limit remaining (4987, 5000)<br />
+Processed 3  stargazers. Num nodes/edges in graph 81 / 84<br />
+Rate limit remaining (4985, 5000)<br />
+Processed 4  stargazers. Num nodes/edges in graph 81 / 85<br />
+Rate limit remaining (4983, 5000)<br />
+Processed 5  stargazers. Num nodes/edges in graph 81 / 86<br />
+Rate limit remaining (4981, 5000)<br />
+Processed 6  stargazers. Num nodes/edges in graph 81 / 90<br />
+Rate limit remaining (4968, 5000)<br />
+…<br />
+Rate limit remaining (4857, 5000)<br />
+Processed 78  stargazers. Num nodes/edges in graph 81 / 95<br />
+Rate limit remaining (4856, 5000)<br />
+Processed 79  stargazers. Num nodes/edges in graph 81 / 95<br />
+Rate limit remaining (4855, 5000)<br />
+Processed 80  stargazers. Num nodes/edges in graph 81 / 95<br />
+Rate limit remaining (4854, 5000)</p>
+</blockquote>
+
+<p>接下来，对关联关系统计。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="c"># 看下更新的图信息</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+<span class="c"># 每个打星用户的关注者数量不同</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+<span class="c"># 查看某个打星用户有多少关注者</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> 
+           <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+               <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span> <span class="ow">and</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">'freeman-lab(user)'</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+
+<span class="c"># 打印度最多的前10个结点</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">degree_iter</span><span class="p">()],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+
+<span class="c"># 对每个打星用户的关注者数目计数</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">])</span>
+<span class="n">popular_users</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Number of popular users"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">popular_users</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Top popular users:"</span><span class="p">,</span> <span class="n">popular_users</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Name: 
+Type: DiGraph
+Number of nodes: 81
+Number of edges: 95
+Average in degree:   1.1728
+Average out degree:   1.1728</p>
+</blockquote>
+
+<blockquote>
+  <p>15</p>
+</blockquote>
+
+<blockquote>
+  <p>4</p>
+</blockquote>
+
+<blockquote>
+  <p>[(‘findspark(repo)’, 80), (‘rgbkrk(user)’, 6), (‘freeman-lab(user)’, 5), (‘esafak(user)’, 4), (‘andrewiiird(user)’, 4), (‘minimaxir(user)’, 3), (‘nchammas(user)’, 3), (‘rholder(user)’, 2), (‘chrinide(user)’, 2), (‘dapurv5(user)’, 2)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Number of popular users 9
+Top popular users: [(‘freeman-lab(user)’, 4), (‘rgbkrk(user)’, 3), (‘minimaxir(user)’, 2), (‘rholder(user)’, 1), (‘amontalenti(user)’, 1), (‘rdhyee(user)’, 1), (‘stared(user)’, 1), (‘esafak(user)’, 1), (‘nchammas(user)’, 1)]</p>
+</blockquote>
+
+<p>(‘freeman-lab(user)’, 4)指freeman-lab在findspark项目中的加星者中还有4个关注者，为了更清楚挖掘图信息，用上面介绍的几个图算法来看一下这个图，由于’仓库’结点有大量的度，其他结点相比来说度都很小，因此先删掉’仓库’结点再计算。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c"># 移除中心结点</span>
+<span class="n">h</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="s">'findspark(repo)'</span><span class="p">)</span>
+
+<span class="n">dc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+            <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">"Degree Centrality"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">dc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+            <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">"Betweenness Centrality"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">bc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">"Closeness Centrality"</span><span class="p">)</span>
+<span class="n">cc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+            <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">cc</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Degree Centrality<br />
+[(‘rgbkrk(user)’, 0.06329113924050633), <br />
+(‘freeman-lab(user)’, 0.05063291139240506),<br />
+ (‘esafak(user)’, 0.0379746835443038), <br />
+ (‘andrewiiird(user)’, 0.0379746835443038), <br />
+ (‘minimaxir(user)’, 0.02531645569620253), <br />
+ (‘nchammas(user)’, 0.02531645569620253), <br />
+ (‘rholder(user)’, 0.012658227848101266), <br />
+ (‘chrinide(user)’, 0.012658227848101266), <br />
+ (‘dapurv5(user)’, 0.012658227848101266), <br />
+ (‘amontalenti(user)’, 0.012658227848101266)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Betweenness Centrality<br />
+[(‘rgbkrk(user)’, 0.0009737098344693282), <br />
+(‘esafak(user)’, 0.0006491398896462187), <br />
+(‘nchammas(user)’, 0.0001622849724115547), <br />
+(‘linkTDP(user)’, 0.0), <br />
+(‘nehalecky(user)’, 0.0), <br />
+(‘charsmith(user)’, 0.0), <br />
+(‘cwharland(user)’, 0.0), <br />
+(‘d3borah(user)’, 0.0), <br />
+(‘cimox(user)’, 0.0), <br />
+(‘dirmeier(user)’, 0.0)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Closeness Centrality<br />
+[(‘andrewiiird(user)’, 0.04050632911392405), <br />
+(‘esafak(user)’, 0.03375527426160337), <br />
+(‘chrinide(user)’, 0.028768699654775604), <br />
+(‘rgbkrk(user)’, 0.02531645569620253), <br />
+(‘alexandercbooth(user)’, 0.02278481012658228), <br />
+(‘dapurv5(user)’, 0.012658227848101266), <br />
+(‘Bekterra(user)’, 0.012658227848101266), <br />
+(‘nchammas(user)’, 0.012658227848101266), <br />
+(‘he0x(user)’, 0.012658227848101266), <br />
+(‘Hguimaraes(user)’, 0.012658227848101266)]</p>
+</blockquote>
+
+<p>来，我们来见见两位大神，一位是数据显示度中心性和中介中心性最大的rgbkrk。
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/39580747.jpg" alt="" />
+Kyle Kelley来自硅谷，是jupyter、ipython、cloudpipe等大项目的开发组员，影响力很大。<br />
+另一位是接近中心性最大的andrewiiird。
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/66840395.jpg" alt="" />
+andrew来自香港，关注与被关注比率几乎有两个数量级的差别，而Kyle Kelley这个比值接近一比一，也正说明了andrew的“互动性”很强的。(大部分时间关注别人而自己隐藏在暗处，😜)</p>
+
+<h3 id="section-1">找出活跃项目</h3>
+<p>现在图中只有一个项目，其余结点都是用户。为了找出活跃项目，对每个用户，遍历找其加星的项目添加到图中，扩充图的项目结点。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">MAX_REPOS</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stargazers</span><span class="p">):</span>
+    <span class="k">print</span> <span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">starred</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_starred</span><span class="p">()[:</span><span class="n">MAX_REPOS</span><span class="p">]:</span> <span class="c"># Slice to avoid supernodes</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">starred</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">starred</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> \
+                       <span class="n">owner</span><span class="o">=</span><span class="n">starred</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">starred</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c">#ssl.SSLError:</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">"Encountered an error fetching starred repos for"</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Processed"</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">"stargazers' starred repos"</span><span class="p">)</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Num nodes/edges in graph"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit"</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">rate_limiting</span><span class="p">)</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>pchalasani<br />
+Processed 1 stargazers’ starred repos<br />
+Num nodes/edges in graph 176 / 190<br />
+Rate limit (4996, 5000)<br />
+rgbkrk<br />
+Encountered an error fetching starred repos for rgbkrk Skipping.<br />
+Processed 2 stargazers’ starred repos<br />
+Num nodes/edges in graph 266 / 280<br />
+Rate limit (4993, 5000)<br />
+napjon<br />
+Processed 79 stargazers’ starred repos<br />
+Num nodes/edges in graph 12692 / 17579<br />
+Rate limit (4369, 5000)<br />
+luzhijun<br />
+Processed 80 stargazers’ starred repos<br />
+Num nodes/edges in graph 12693 / 17581<br />
+Rate limit (4368, 5000)<br />
+以上操作挺费时间的，结点数由几百个一下子扩充到上万个，可以把MAX_REPOS改小一点，然后去泡杯咖啡吧😁。<br />
+拿到所有项目数据，接下来就是要统计哪个是热点项目，可以查询哪个用户mark了哪些项目，他喜欢用啥程序语言，还有那些加星加到手软的用户也可以查询出来。</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c"># 拿到图里面的所有项目构成列表</span>
+<span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
+
+<span class="c"># 关注最多的前10个项目</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Popular repositories"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> 
+              <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree_iter</span><span class="p">()</span> 
+                  <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">],</span> \
+             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
+
+<span class="k">print</span> <span class="s">"Respositories that luzhijun has bookmarked"</span>
+<span class="k">print</span> <span class="p">([(</span><span class="n">n</span><span class="p">,</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">])</span> 
+       <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">]</span> 
+           <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span><span class="p">])</span>
+
+<span class="c"># 用户喜爱的程序语言</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">"Programming languages luzhijun is interested in"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> 
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">]</span> 
+                    <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span><span class="p">])))</span>
+<span class="c">#查看关注项目最多的用户(超过MAX_REPOS)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Supernode candidates"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> 
+              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+                  <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">MAX_REPOS</span><span class="p">],</span> \
+             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Name: <br />
+Type: DiGraph<br />
+Number of nodes: 12693<br />
+Number of edges: 17581<br />
+Average in degree:   1.3851<br />
+Average out degree:   1.3851</p>
+</blockquote>
+
+<blockquote>
+  <p>Popular repositories<br />
+[(‘findspark(repo)’, 80), (‘spark(repo)’, 27), (‘tensorflow(repo)’, 24), (‘luigi(repo)’, 21),  (‘ipython(repo)’, 21), (‘data-science-ipython-notebooks(repo)’, 20), (‘awesome-public-datasets(repo)’,   20), (‘spark-notebook(repo)’, 19), (‘docker(repo)’, 18), (‘Probabilistic-Programming-and-Bayesian-Methods-for-Hackers(repo)’, 17)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Respositories that ocanbascil has bookmarked<br />
+[(‘til(repo)’, ‘VimL’), (‘react-joyride(repo)’, ‘JavaScript’), (‘django(repo)’, ‘Python’), (‘peewee(repo)’, ‘Python’), (‘select2(repo)’, ‘JavaScript’), (‘requests(repo)’, ‘Python’), (‘benfords-law(repo)’, ‘JavaScript’), (‘daterangepicker(repo)’, ‘JavaScript’), (‘django-zappa(repo)’, ‘Python’), (‘layered(repo)’, ‘Python’), (‘coffeescript(repo)’, ‘CoffeeScript’), (‘awesome-jekyll(repo)’, None), (‘lektor(repo)’, ‘Python’), (‘aetycoon(repo)’, ‘Python’), (‘computer-science(repo)’, None), (‘PerformanceEngine(repo)’, ‘Python’), (‘pattern_classification(repo)’, ‘Jupyter Notebook’), (‘node-v0.x-archive(repo)’, None), (‘django-crispy-forms(repo)’, ‘Python’), (‘hug(repo)’, ‘Python’), (‘euler-coffeescript(repo)’, ‘CoffeeScript’), (‘pandas(repo)’, ‘Python’), (‘pachyderm(repo)’, ‘Go’), (‘eulerclash(repo)’, None), (‘Pipe(repo)’, ‘Python’), (‘data-science-ipython-notebooks(repo)’, ‘Python’), (‘TweetHit(repo)’, ‘Python’), (‘captionmash(repo)’, None), (‘django-tinymce(repo)’, ‘Python’), (‘dataset(repo)’, ‘Python’), (‘shepherd(repo)’, ‘CSS’), (‘data-science-from-scratch(repo)’, ‘Python’), (‘spark(repo)’, ‘Scala’), (‘data-science-blogs(repo)’, ‘Python’), (‘specter(repo)’, ‘Clojure’), (‘tensorflow(repo)’, ‘R’), (‘findspark(repo)’, ‘Python’), (‘localtunnel(repo)’, ‘JavaScript’)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Programming languages ocanbascil is interested in<br />
+[‘CSS’, ‘VimL’, ‘Python’, ‘JavaScript’, ‘Clojure’, None, ‘CoffeeScript’, ‘R’, ‘Jupyter Notebook’, ‘Scala’, ‘Go’]</p>
+</blockquote>
+
+<blockquote>
+  <p>Supernode candidates
+[(‘he0x(user)’, 501), (‘esafak(user)’, 501)]</p>
+</blockquote>
+
+<p>从结果可看出，关注findspark项目的人大约三分之一也关注了spark和tensorflow，TensorFlow是谷歌基于DistBelief进行研发的第二代人工智能学习系统，机器学习果真这么火热。大约四分之一的人关注了Luigi，查了下其主要目的是为了解决需要长期运行的流式批处理任务的管理，可以链接很多个任务，使它们自动化，并进行故障管理，这个做spark任务的人估计也需要，，后面几个看名字都知道和spark密不可分的。<br />
+除此之外，这个图还可以查询到某个用户所关注的项目以及这个项目中最多的语言。</p>
+
+<h3 id="section-2">找出热门语言</h3>
+<p>现在问题来了，怎么查询当前图中所有项目最热门的语言？我们可以查找每个项目然后抽取语言放入到counter计数器里面统计，这个看起来也不费事，但如果要查询有多少用户以某种语言编程呢？这就要扫描每个项目的入度用户，最后统计求和，时间复杂度挺大的。这个时候一种好的思路就是扩充图，将语言单独作为一个节点，最终图的逻辑图如下： <br />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/13761577.jpg" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> 
+         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+             <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+    <span class="c"># 消除None,有些空项目语言为None</span>
+    <span class="n">lang</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">repo</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> <span class="ow">or</span> <span class="s">""</span><span class="p">)</span> <span class="o">+</span> <span class="s">"(lang)"</span>
+    <span class="c"># 加星于repo的用户</span>
+    <span class="n">stargazers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
+                  <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+                     <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span>
+                 <span class="p">]</span>
+    <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">stargazers</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'lang'</span><span class="p">)</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'programs'</span><span class="p">)</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'implements'</span><span class="p">)</span>   
+</code></pre>
+</div>
+
+<p>接下来看下对语言的统计信息</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c"># 看下图里有什么语言</span>
+<span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
+       <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+           <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">])</span>
+<span class="c"># 某个用户使用的语言</span>
+<span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
+       <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'ocanbascil(user)'</span><span class="p">]</span> 
+           <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'ocanbascil(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'programs'</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c"># 查询最热门的语言</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Most popular languages"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+ <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+     <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="c"># 查询用某种语言的有多少人</span>
+<span class="n">python_programmers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
+                      <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'Python(lang)'</span><span class="p">)</span> 
+                          <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Number of Python programmers:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">))</span>
+
+<span class="n">javascript_programmers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> 
+                          <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'JavaScript(lang)'</span><span class="p">)</span> 
+                              <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Number of JavaScript programmers:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">))</span>
+
+<span class="c"># 两个语言都用的人</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript and Python"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">))))</span>
+
+<span class="c"># 只用python不用js的人</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript but not Python"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">))))</span>
+
+<span class="c"># XXX: Can you determine who is the most polyglot programmer?</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>Name: 
+Type: DiGraph
+Number of nodes: 12807
+Number of edges: 31824
+Average in degree:   2.4849
+Average out degree:   2.4849</p>
+</blockquote>
+
+<blockquote>
+  <p>[‘LiveScript(lang)’, ‘APL(lang)’, ‘Swift(lang)’, ‘Java(lang)’, ‘Nix(lang)’, ‘Erlang(lang)’, ‘Common Lisp(lang)’, ‘Python(lang)’, ‘GCC Machine Description(lang)’, ‘Prolog(lang)’, ‘PigLatin(lang)’, ‘Vala(lang)’, ‘SAS(lang)’, ‘FORTRAN(lang)’, ‘Cuda(lang)’, ‘Matlab(lang)’, ‘HCL(lang)’, ‘F#(lang)’, ‘Verilog(lang)’, ‘Emacs Lisp(lang)’, ‘Inno Setup(lang)’, ‘Vue(lang)’, ‘TeX(lang)’, ‘DTrace(lang)’, ‘Processing(lang)’, ‘Hack(lang)’, ‘Lua(lang)’, ‘Assembly(lang)’, ‘Parrot(lang)’, ‘Shell(lang)’, ‘Arduino(lang)’, ‘R(lang)’, ‘C#(lang)’, ‘Rust(lang)’, ‘Standard ML(lang)’, ‘Puppet(lang)’, ‘Gosu(lang)’, ‘C(lang)’, ‘PHP(lang)’, ‘Scala(lang)’, ‘Gnuplot(lang)’, ‘Crystal(lang)’, ‘Objective-J(lang)’, ‘COBOL(lang)’, ‘Cucumber(lang)’, ‘ApacheConf(lang)’, ‘Brainfuck(lang)’, ‘Kotlin(lang)’, ‘Pascal(lang)’, ‘Pike(lang)’, ‘RAML(lang)’, ‘Lean(lang)’, ‘Logos(lang)’, ‘Elixir(lang)’, ‘Dart(lang)’, ‘C++(lang)’, ‘CMake(lang)’, ‘Clojure(lang)’, ‘D(lang)’, ‘Batchfile(lang)’, ‘OpenSCAD(lang)’, ‘Coq(lang)’, ‘PowerShell(lang)’, ‘Visual Basic(lang)’, ‘VimL(lang)’, ‘NetLogo(lang)’, ‘OCaml(lang)’, ‘VHDL(lang)’, ‘Ruby(lang)’, ‘Go(lang)’, ‘Metal(lang)’, ‘Jupyter Notebook(lang)’, ‘KiCad(lang)’, ‘Smarty(lang)’, ‘Tcl(lang)’, ‘CoffeeScript(lang)’, ‘QML(lang)’, ‘(lang)’, ‘Scheme(lang)’, ‘HTML(lang)’, ‘Makefile(lang)’, ‘CartoCSS(lang)’, ‘DIGITAL Command Language(lang)’, ‘AppleScript(lang)’, ‘Perl6(lang)’, ‘Protocol Buffer(lang)’, ‘Julia(lang)’, ‘Awk(lang)’, ‘Elm(lang)’, ‘Haskell(lang)’, ‘TLA(lang)’, ‘Nimrod(lang)’, ‘JavaScript(lang)’, ‘Max(lang)’, ‘TypeScript(lang)’, ‘GAP(lang)’, ‘Scilab(lang)’, ‘Web Ontology Language(lang)’, ‘XSLT(lang)’, ‘Objective-C++(lang)’, ‘Perl(lang)’, ‘PLSQL(lang)’, ‘PureScript(lang)’, ‘PLpgSQL(lang)’, ‘Eagle(lang)’, ‘Objective-C(lang)’, ‘Racket(lang)’, ‘OpenEdge ABL(lang)’, ‘Groovy(lang)’, ‘Groff(lang)’, ‘Frege(lang)’, ‘NSIS(lang)’, ‘Mathematica(lang)’, ‘CSS(lang)’]</p>
+
+  <p>[‘JavaScript(lang)’, ‘R(lang)’, ‘Python(lang)’, ‘Jupyter Notebook(lang)’, ‘VimL(lang)’, ‘Scala(lang)’, ‘Clojure(lang)’, ‘CoffeeScript(lang)’, ‘Go(lang)’, ‘(lang)’, ‘CSS(lang)’]</p>
+</blockquote>
+
+<blockquote>
+  <p>Most popular languages<br />
+[(‘Python(lang)’, 80), (‘(lang)’, 74), (‘JavaScript(lang)’, 74), (‘Jupyter Notebook(lang)’, 69), (‘Java(lang)’, 67), (‘HTML(lang)’, 67), (‘C++(lang)’, 66), (‘Scala(lang)’, 65), (‘Shell(lang)’, 62), (‘C(lang)’, 62)]</p>
+</blockquote>
+
+<blockquote>
+  <p>Number of Python programmers: 80<br />
+Number of JavaScript programmers: 74<br />
+Number of programmers who use JavaScript and Python<br />
+74<br />
+Number of programmers who use JavaScript but not Python<br />
+0</p>
+</blockquote>
+
+<p>从结果看出，github上喜欢的语言排行榜中js、r、python等脚本语言占据主流，虽然参与统计的项目只有一万多条，但这也应着了一句老话“github是前端的天下”😁。这里Scala的关注度也很靠前，主要因为“项目之源”是findspark，go这里也很火，java死哪去了。。。，估计挖个hadoop的相关项目就有他了。。。<br />
+另一个有趣的现象是，玩python的程序员必会玩js，玩js的人不一定会玩python（80-74=6个人不会玩python)，正符合现在IT界的现状啊，这个差别不明显，换个国内的项目估计就明显了。。。，估计还有多少人不知道github，这里就统计不了。</p>
+
+<p>以上数据规模并不算大，如果有兴趣可以访问<a href="https://www.githubarchive.org">GitHub Archive</a>,GitHub Archive 提供海量全局层面的数据，调可以使用一些推荐的“大数据”工具来探索它。</p>
+
+<h2 id="section-3">可视化</h2>
+<p>依靠Networkx的导出能力，可以通过JSON的JavaScript工具包<a href="https://d3js.org">D3</a>使用，但也有许多其他的工具包，你可以考虑当可视化图。<a href="http://www.graphviz.org">Graphviz</a>是高度可配置的经典工具，可以设计出非常复杂的图形和位图图像。传统上在终端上运行，但现在也有支持大多数平台的用户界面。另一个流行的开源项目是<a href="https://gephi.org">Gephi</a>，其在交互上做的很好，在过去的几年中Gephi已经迅速流行，非常值得推荐。
+这里由于有上万个项目结点，一张图乌漆嘛黑都看不到，并且很卡。所以下面只截取用户点和语言点的可视化。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">IFrame</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span> 
+<span class="kn">from</span> <span class="nn">networkx.readwrite</span> <span class="kn">import</span> <span class="n">json_graph</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Stats on the full graph"</span> <span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="c"># 只提取用户和语言结点</span>
+<span class="n">mtsw_users</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span> <span class="o">+</span><span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">]</span> 
+<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mtsw_users</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Stats on the extracted subgraph"</span> <span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+<span class="c"># json导出</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">json_graph</span><span class="o">.</span><span class="n">node_link_data</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">'force.json'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">))</span>
+<span class="n">viz_file</span> <span class="o">=</span> <span class="s">'files/force.html'</span>
+<span class="c"># D3可视化</span>
+<span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">viz_file</span><span class="p">,</span> <span class="s">'100</span><span class="si">%</span><span class="s">'</span><span class="p">,</span> <span class="s">'900px'</span><span class="p">))</span>
+</code></pre>
+</div>
+<iframe src="/html/force.html" width="900" height="900" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+
+<p>如果要分析语言之间的关联，其实也可以从一个项目中拿到多个语言，比如是a,b,c,然后做无向图，标记a-b-c 权重为1，当在其他项目中还有a,b同时出现时,a-b 权重为2，以此类推，最后直接放mjwillson的成品:<br />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-3/65135584.jpg" alt="" /></p>
+
+<h2 id="ref">ref</h2>
+<ul>
+  <li>https://en.wikipedia.org/wiki/Centrality</li>
+  <li>https://github.com/mjwillson/ProgLangVisualise</li>
+  <li>https://developer.github.com/v3/</li>
+  <li>http://networkx.github.io</li>
+  <li>https://github.com/PyGithub/PyGithub</li>
+  <li>Russell, Matthew A. Mining the Social Web: Data Mining Facebook, Twitter, LinkedIn, Google+, GitHub, and More. O’Reilly Media, Inc. 2013.</li>
+  <li>Csardi, Gabor. “Eigenvalues and eigenvectors of the adjacency matrix of a graph.”.</li>
+  <li>Barthélemy, M. “Betweenness centrality in large complex networks.” Physics 38.2(2004):163-168.</li>
+</ul>
+
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/10/02/GitHub数据提取与分析"
+                    data-title="GitHub数据提取与分析"
+                    data-url="https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/"
+                    data-images="https://luzhijun.github.io/img/post-bg-github.jpg"
+                    data-content="GitHub作为全球最大的代码托管平台，每小时都有成千上万个项目产生，他为开源作出了不可磨灭的贡献。本文使用了NetworkX对GitHub的进行图形分析... | 楚汐|Trucy Luce Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/" data-toggle="tooltip" data-placement="top" title="一道题目两种方案">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/10/02/GitHub数据提取与分析"
+                        data-title="GitHub数据提取与分析"
+                        data-url="https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
+                                    前端开发
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                                    JavaScript
+                                </a>
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#社会计算" title="社会计算" rel="2">
+                                    社会计算
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#算法" title="算法" rel="2">
+                                    算法
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#大数据" title="大数据" rel="2">
+                                    大数据
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://blog.csdn.net/trucyluce">Trucy CSDN Blog</a></li>
+                    
+                        <li><a href="http://echoma.github.io/text_sequence_diagram/">在线时序图</a></li>
+                    
+                        <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/baiboy/">NLP伏草惟存</a></li>
+                    
+                        <li><a href="http://blog.5long.me/">茶码话桑麻</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'TrucyLuce';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/luzhijun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; T.L Blog 2016
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-83947622-1';
+    var _gaDomain = 'https://luzhijun.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c07b62da6a94126e41877e6b30e15413';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<!-- 代码行号-->
+<script type="text/javascript">
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(\w+)\b/i,t=0,n=_self.Prism={util:{encode:function(e){return e instanceof a?new a(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e){var t=n.util.type(e);switch(t){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=n.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return n.util.clone(e)})}return e}},languages:{extend:function(e,t){var a=n.util.clone(n.languages[e]);for(var r in t)a[r]=t[r];return a},insertBefore:function(e,t,a,r){r=r||n.languages;var l=r[e];if(2==arguments.length){a=arguments[1];for(var i in a)a.hasOwnProperty(i)&&(l[i]=a[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in a)a.hasOwnProperty(i)&&(o[i]=a[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,t,a,r){r=r||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],a||l),"Object"!==n.util.type(e[l])||r[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||r[n.util.objId(e[l])]||(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,r)):(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,r)))}},plugins:{},highlightAll:function(e,t){var a={callback:t,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var r,l=a.elements||document.querySelectorAll(a.selector),i=0;r=l[i++];)n.highlightElement(r,e===!0,a.callback)},highlightElement:function(t,a,r){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1],i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(!s||!i)return n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),a&&_self.Worker){var c=new Worker(n.filename);c.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},c.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,r){var l=n.tokenize(e,t);return a.stringify(n.util.encode(l),r)},tokenize:function(e,t){var a=n.Token,r=[e],l=t.rest;if(l){for(var i in l)t[i]=l[i];delete t.rest}e:for(var i in t)if(t.hasOwnProperty(i)&&t[i]){var o=t[i];o="Array"===n.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],c=u.inside,g=!!u.lookbehind,h=!!u.greedy,f=0,d=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var m=r[p];if(r.length>e.length)break e;if(!(m instanceof a)){u.lastIndex=0;var y=u.exec(m),v=1;if(!y&&h&&p!=r.length-1){var b=r[p+1].matchedStr||r[p+1],k=m+b;if(p<r.length-2&&(k+=r[p+2].matchedStr||r[p+2]),u.lastIndex=0,y=u.exec(k),!y)continue;var w=y.index+(g?y[1].length:0);if(w>=m.length)continue;var _=y.index+y[0].length,P=m.length+b.length;if(v=3,P>=_){if(r[p+1].greedy)continue;v=2,k=k.slice(0,P)}m=k}if(y){g&&(f=y[1].length);var w=y.index+f,y=y[0].slice(f),_=w+y.length,S=m.slice(0,w),O=m.slice(_),j=[p,v];S&&j.push(S);var A=new a(i,c?n.tokenize(y,c):y,d,y,h);j.push(A),O&&j.push(O),Array.prototype.splice.apply(r,j)}}}}}return r},hooks:{all:{},add:function(e,t){var a=n.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=n.hooks.all[e];if(a&&a.length)for(var r,l=0;r=a[l++];)r(t)}}},a=n.Token=function(e,t,n,a,r){this.type=e,this.content=t,this.alias=n,this.matchedStr=a||null,this.greedy=!!r};if(a.stringify=function(e,t,r){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return a.stringify(n,t,e)}).join("");var l={type:e.type,content:a.stringify(e.content,t,r),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:r};if("comment"==l.type&&(l.attributes.spellcheck="true"),e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o="";for(var s in l.attributes)o+=(o?" ":"")+s+'="'+(l.attributes[s]||"")+'"';return"<"+l.tag+' class="'+l.classes.join(" ")+'" '+o+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,r=t.code,l=t.immediateClose;_self.postMessage(n.highlight(r,n.languages[a],a)),l&&_self.close()},!1),_self.Prism):_self.Prism;var r=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return r&&(n.filename=r.src,document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",n.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+</script>
+<script >
+!function(){"undefined"!=typeof self&&self.Prism&&self.document&&Prism.hooks.add("complete",function(e){if(e.code){var t=e.element.parentNode,s=/\s*\bhighlight\b\s*/;if(t&&/pre/i.test(t.nodeName)&&(s.test(t.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s,"")),s.test(t.className)||(t.className+="highlight");var n,a=e.code.match(/\n(?!$)/g),l=a?a.length+1:1,m=new Array(l+1);m=m.join("<span></span>"),n=document.createElement("span"),n.className="line-numbers-rows",n.innerHTML=m,t.hasAttribute("data-start")&&(t.style.counterReset="linenumber "+(parseInt(t.getAttribute("data-start"),10)-1)),e.element.appendChild(n)}}})}();
+</script>
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
