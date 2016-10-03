@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 03 Oct 2016 11:24:57 +0800</pubDate>
-    <lastBuildDate>Mon, 03 Oct 2016 11:24:57 +0800</lastBuildDate>
+    <pubDate>Mon, 03 Oct 2016 11:33:05 +0800</pubDate>
+    <lastBuildDate>Mon, 03 Oct 2016 11:33:05 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -97,8 +97,9 @@
 &lt;/blockquote&gt;
 
 &lt;h2 id=&quot;networkx&quot;&gt;如何使用NetworkX作图&lt;/h2&gt;
-&lt;p&gt;### 了解NetworkX
-NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。&lt;br /&gt;
+
+&lt;h3 id=&quot;networkx-1&quot;&gt;了解NetworkX&lt;/h3&gt;
+&lt;p&gt;NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。&lt;br /&gt;
 下面创建一个有向图x-&amp;gt;y:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;networkx&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;nx&lt;/span&gt;
@@ -156,7 +157,7 @@ X=&amp;gt;Y props: {‘label’: ‘label1’}&lt;/p&gt;
 
 &lt;p&gt;NetworkX提供了常用的图论经典算法，例如DFS、BFS、最短路、最小生成树、最大流等等，非常丰富，如果不做复杂网络，只作图论方面的工作，也可以应用NetworkX作为基本的开发包，更多用法参照&lt;a href=&quot;http://networkx.github.io&quot;&gt;networkx&lt;/a&gt;。&lt;/p&gt;
 
-&lt;h3 id=&quot;networkx-1&quot;&gt;使用NetworkX构建兴趣图&lt;/h3&gt;
+&lt;h3 id=&quot;networkx-2&quot;&gt;使用NetworkX构建兴趣图&lt;/h3&gt;
 
 &lt;p&gt;兴趣图和社交网络图是有区别的，最大的不同就是兴趣图节点代表的不一定是同一类的东西。有个&lt;a href=&quot;https://github.com/minrk/findspark&quot;&gt;项目&lt;/a&gt;是我加星的，那么这个兴趣图就是：&lt;br /&gt;
 我–(gazes)–&amp;gt;项目&lt;br /&gt;
@@ -221,7 +222,7 @@ Average out degree:   0.9877  # 80/81&lt;/p&gt;
 []&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&quot;networkx-2&quot;&gt;NetWorkX部分统计指标&lt;/h3&gt;
+&lt;h3 id=&quot;networkx-3&quot;&gt;NetWorkX部分统计指标&lt;/h3&gt;
 &lt;ul&gt;
   &lt;li&gt;度中心性（Degree Centrality)
     &lt;ul&gt;
@@ -286,9 +287,7 @@ Average out degree:   0.9877  # 80/81&lt;/p&gt;
 &lt;h2 id=&quot;github&quot;&gt;构建github的兴趣图&lt;/h2&gt;
 
 &lt;h3 id=&quot;section&quot;&gt;找出大神&lt;/h3&gt;
-&lt;p&gt;大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对&lt;a href=&quot;#networkx-1&quot;&gt;前面&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   &lt;br /&gt;
+&lt;p&gt;大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对&lt;a href=&quot;#networkx-1&quot;&gt;前面&lt;/a&gt;扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   &lt;br /&gt;
 由于API每小时限制使用5000个请求，打印下剩余请求数看有没有耗尽，耗尽的话抛出异常。&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;

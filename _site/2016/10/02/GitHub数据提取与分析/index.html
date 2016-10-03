@@ -274,8 +274,9 @@ MathJax.Hub.Config({
 </blockquote>
 
 <h2 id="networkx">如何使用NetworkX作图</h2>
-<p>### 了解NetworkX
-NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。<br />
+
+<h3 id="networkx-1">了解NetworkX</h3>
+<p>NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。<br />
 下面创建一个有向图x-&gt;y:</p>
 
 <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
@@ -333,7 +334,7 @@ X=&gt;Y props: {‘label’: ‘label1’}</p>
 
 <p>NetworkX提供了常用的图论经典算法，例如DFS、BFS、最短路、最小生成树、最大流等等，非常丰富，如果不做复杂网络，只作图论方面的工作，也可以应用NetworkX作为基本的开发包，更多用法参照<a href="http://networkx.github.io">networkx</a>。</p>
 
-<h3 id="networkx-1">使用NetworkX构建兴趣图</h3>
+<h3 id="networkx-2">使用NetworkX构建兴趣图</h3>
 
 <p>兴趣图和社交网络图是有区别的，最大的不同就是兴趣图节点代表的不一定是同一类的东西。有个<a href="https://github.com/minrk/findspark">项目</a>是我加星的，那么这个兴趣图就是：<br />
 我–(gazes)–&gt;项目<br />
@@ -398,7 +399,7 @@ Average out degree:   0.9877  # 80/81</p>
 []</p>
 </blockquote>
 
-<h3 id="networkx-2">NetWorkX部分统计指标</h3>
+<h3 id="networkx-3">NetWorkX部分统计指标</h3>
 <ul>
   <li>度中心性（Degree Centrality)
     <ul>
@@ -463,9 +464,7 @@ Average out degree:   0.9877  # 80/81</p>
 <h2 id="github">构建github的兴趣图</h2>
 
 <h3 id="section">找出大神</h3>
-<p>大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对<a href="#networkx-1">前面</a></p>
-
-<p>扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   <br />
+<p>大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对<a href="#networkx-1">前面</a>扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   <br />
 由于API每小时限制使用5000个请求，打印下剩余请求数看有没有耗尽，耗尽的话抛出异常。</p>
 
 <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sys</span>
