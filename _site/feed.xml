@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 03 Oct 2016 11:35:54 +0800</pubDate>
-    <lastBuildDate>Mon, 03 Oct 2016 11:35:54 +0800</lastBuildDate>
+    <pubDate>Mon, 03 Oct 2016 11:37:06 +0800</pubDate>
+    <lastBuildDate>Mon, 03 Oct 2016 11:37:06 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -227,9 +227,12 @@ Average out degree:   0.9877  # 80/81&lt;/p&gt;
   &lt;li&gt;度中心性（Degree Centrality)
     &lt;ul&gt;
       &lt;li&gt;是在网络分析中刻画节点中心性（Centrality）的最直接度量指标。一个节点的节点度越大就意味着这个节点的度中心性越高，该节点在网络中就越重要。某点的度中心性$C_d(i)=\frac{d(i)}{n-1}$，范围为[0,1]。
-      - degree_centrality(G)     Compute the degree centrality for nodes.
-    - in_degree_centrality(G)     Compute the in-degree centrality for nodes.
-    - out_degree_centrality(G)     Compute the out-degree centrality for nodes.&lt;/li&gt;
+        &lt;ul&gt;
+          &lt;li&gt;degree_centrality(G)     Compute the degree centrality for nodes.&lt;/li&gt;
+          &lt;li&gt;in_degree_centrality(G)     Compute the in-degree centrality for nodes.&lt;/li&gt;
+          &lt;li&gt;out_degree_centrality(G)     Compute the out-degree centrality for nodes.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;中介中心性/中间中心性(Between Centrality) 。
