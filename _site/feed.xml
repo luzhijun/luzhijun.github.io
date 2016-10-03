@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 03 Oct 2016 11:33:05 +0800</pubDate>
-    <lastBuildDate>Mon, 03 Oct 2016 11:33:05 +0800</lastBuildDate>
+    <pubDate>Mon, 03 Oct 2016 11:35:54 +0800</pubDate>
+    <lastBuildDate>Mon, 03 Oct 2016 11:35:54 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -679,6 +679,7 @@ Number of programmers who use JavaScript but not Python&lt;br /&gt;
 &lt;span class=&quot;n&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viz_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'100&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'900px'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;p&gt;下面的动态页面加载不出请点击&lt;a href=&quot;/html/force.html&quot;&gt;动态图&lt;/a&gt;&lt;/p&gt;
 &lt;iframe src=&quot;/html/force.html&quot; width=&quot;900&quot; height=&quot;900&quot; frameborder=&quot;no&quot; border=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot; allowtransparency=&quot;yes&quot;&gt;&lt;/iframe&gt;
 
 &lt;p&gt;如果要分析语言之间的关联，其实也可以从一个项目中拿到多个语言，比如是a,b,c,然后做无向图，标记a-b-c 权重为1，当在其他项目中还有a,b同时出现时,a-b 权重为2，以此类推，最后直接放mjwillson的成品:&lt;br /&gt;
