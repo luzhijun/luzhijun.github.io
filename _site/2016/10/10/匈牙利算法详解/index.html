@@ -383,13 +383,18 @@ deque deque([0])
 </div>
 <p>其中match用来保存匹配点，prev用来保存增光路非匹配点顺序，其功能相当于递归方法中的隐式栈。</p>
 
-<p>###匈牙利算法的要点如下
-1. 从左边第 1 个顶点开始，挑选未匹配点进行搜索，寻找增广路。
-	1. 如果经过一个未匹配点，说明寻找成功。更新路径信息，匹配边数 +1，停止搜索。
-	2. 如果一直没有找到增广路，则不再从这个点开始搜索。事实上，此时搜索后会形成一棵匈牙利树。我们可以永久性地把它从图中删去，而不影响结果。
-2. 由于找到增广路之后需要沿着路径更新匹配，所以我们需要一个结构来记录路径上的点。DFS 版本通过函数调用隐式地使用一个栈，而 BFS 版本使用 prev 数组。</p>
+<h3 id="section-3">匈牙利算法的要点如下</h3>
+<ol>
+  <li>从左边第 1 个顶点开始，挑选未匹配点进行搜索，寻找增广路。
+    <ol>
+      <li>如果经过一个未匹配点，说明寻找成功。更新路径信息，匹配边数 +1，停止搜索。</li>
+      <li>如果一直没有找到增广路，则不再从这个点开始搜索。事实上，此时搜索后会形成一棵匈牙利树。我们可以永久性地把它从图中删去，而不影响结果。</li>
+    </ol>
+  </li>
+  <li>由于找到增广路之后需要沿着路径更新匹配，所以我们需要一个结构来记录路径上的点。DFS 版本通过函数调用隐式地使用一个栈，而 BFS 版本使用 prev 数组。</li>
+</ol>
 
-<h3 id="section-3">性能比较</h3>
+<h3 id="section-4">性能比较</h3>
 <p>两个方法各运行一千次:</p>
 
 <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">print</span> <span class="p">(</span><span class="n">timeit</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s">'do1()'</span><span class="p">,</span><span class="s">'from __main__ import do1'</span><span class="p">)</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>

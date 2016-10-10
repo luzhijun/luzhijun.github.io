@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 10 Oct 2016 13:10:47 +0800</pubDate>
-    <lastBuildDate>Mon, 10 Oct 2016 13:10:47 +0800</lastBuildDate>
+    <pubDate>Mon, 10 Oct 2016 13:16:50 +0800</pubDate>
+    <lastBuildDate>Mon, 10 Oct 2016 13:16:50 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -208,13 +208,18 @@ deque deque([0])
 &lt;/div&gt;
 &lt;p&gt;其中match用来保存匹配点，prev用来保存增光路非匹配点顺序，其功能相当于递归方法中的隐式栈。&lt;/p&gt;
 
-&lt;p&gt;###匈牙利算法的要点如下
-1. 从左边第 1 个顶点开始，挑选未匹配点进行搜索，寻找增广路。
-	1. 如果经过一个未匹配点，说明寻找成功。更新路径信息，匹配边数 +1，停止搜索。
-	2. 如果一直没有找到增广路，则不再从这个点开始搜索。事实上，此时搜索后会形成一棵匈牙利树。我们可以永久性地把它从图中删去，而不影响结果。
-2. 由于找到增广路之后需要沿着路径更新匹配，所以我们需要一个结构来记录路径上的点。DFS 版本通过函数调用隐式地使用一个栈，而 BFS 版本使用 prev 数组。&lt;/p&gt;
+&lt;h3 id=&quot;section-3&quot;&gt;匈牙利算法的要点如下&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;从左边第 1 个顶点开始，挑选未匹配点进行搜索，寻找增广路。
+    &lt;ol&gt;
+      &lt;li&gt;如果经过一个未匹配点，说明寻找成功。更新路径信息，匹配边数 +1，停止搜索。&lt;/li&gt;
+      &lt;li&gt;如果一直没有找到增广路，则不再从这个点开始搜索。事实上，此时搜索后会形成一棵匈牙利树。我们可以永久性地把它从图中删去，而不影响结果。&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;由于找到增广路之后需要沿着路径更新匹配，所以我们需要一个结构来记录路径上的点。DFS 版本通过函数调用隐式地使用一个栈，而 BFS 版本使用 prev 数组。&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;h3 id=&quot;section-3&quot;&gt;性能比较&lt;/h3&gt;
+&lt;h3 id=&quot;section-4&quot;&gt;性能比较&lt;/h3&gt;
 &lt;p&gt;两个方法各运行一千次:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'do1()'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'from __main__ import do1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
