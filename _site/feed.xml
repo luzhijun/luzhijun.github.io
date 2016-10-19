@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 19 Oct 2016 19:38:17 +0800</pubDate>
-    <lastBuildDate>Wed, 19 Oct 2016 19:38:17 +0800</lastBuildDate>
+    <pubDate>Wed, 19 Oct 2016 19:41:45 +0800</pubDate>
+    <lastBuildDate>Wed, 19 Oct 2016 19:41:45 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -30,9 +30,10 @@
 &lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-17/94917912.jpg&quot; alt=&quot;&quot; /&gt;
 左侧栏第三个，点“凭据”，创建api密钥。这里用api密钥就可以，毕竟只采集公共数据信息，不是用户隐私数据（需要用户认证）。
 &lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-17/60559851.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-Google+ &lt;a href=&quot;https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/&quot;&gt;API文档&lt;/a&gt;中具体列出了使用方法。此外，有专门的&lt;a href=&quot;https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/plus.people.get?userId=118051310819094153327&amp;amp;_h=6&amp;amp;&quot;&gt;API浏览器&lt;/a&gt;可以根据查询条件快速生成RESTful对应的url地址，得到查询结果。(使用之前先设置右上角的API id)
-### RESTful API
-以查询某个用户为例。&lt;/p&gt;
+Google+ &lt;a href=&quot;https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/&quot;&gt;API文档&lt;/a&gt;中具体列出了使用方法。此外，有专门的&lt;a href=&quot;https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/plus.people.get?userId=118051310819094153327&amp;amp;_h=6&amp;amp;&quot;&gt;API浏览器&lt;/a&gt;可以根据查询条件快速生成RESTful对应的url地址，得到查询结果。(使用之前先设置右上角的API id)&lt;/p&gt;
+
+&lt;h3 id=&quot;restful-api&quot;&gt;RESTful API&lt;/h3&gt;
+&lt;p&gt;以查询某个用户为例。&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;&lt;strong&gt;使用API浏览器&lt;/strong&gt;
@@ -327,9 +328,10 @@ Displaying 4 of 4 matches:
 &lt;/div&gt;
 &lt;p&gt;&lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-18/30574312.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。
-## 特征词提取
-这节主要介绍TFIDF，高手直接跳过。&lt;/p&gt;
+&lt;p&gt;很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;特征词提取&lt;/h2&gt;
+&lt;p&gt;这节主要介绍TFIDF，高手直接跳过。&lt;/p&gt;
 
 &lt;p&gt;特征词/关键词提取最简单最基础的就是TFIDF，记得5年前我同学让我帮做DI-TFIDF的论文，也就只多了个类内离散度(DI)，今年阿里校招笔试题都有，用mapreduce实现的，很是广泛。实际上tfidf算法的岁数估计比我还大，目前应用还是很广。其他特征提取方法还有TF、MI、ECE、QEMI、IG、OR、GA、SA、PCA、N-Gram等，各有好坏，个人喜欢SA（模拟退火算法）。&lt;/p&gt;
 
@@ -485,7 +487,7 @@ Displaying 4 of 4 matches:
 
 &lt;p&gt;两者比较下波森要稍好一些，底层估计是改进的tfidf。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-3&quot;&gt;文本相似度&lt;/h2&gt;
+&lt;h2 id=&quot;section-4&quot;&gt;文本相似度&lt;/h2&gt;
 &lt;p&gt;我们看今日头条新闻，看完后下面会有推荐相似的文章，提供你更多阅读的机会。相似文本推荐最基本的方法用到”&lt;a href=&quot;https://en.wikipedia.org/wiki/Cosine_similarity&quot;&gt;余弦相似性&lt;/a&gt;“（cosine similiarity）。举个简单例子：
  两个文本，先分词：
  &amp;gt;文本1：google/和/百度/相似&lt;br /&gt;

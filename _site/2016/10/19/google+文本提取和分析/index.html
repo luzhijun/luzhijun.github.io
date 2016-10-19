@@ -207,9 +207,10 @@ MathJax.Hub.Config({
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/94917912.jpg" alt="" />
 左侧栏第三个，点“凭据”，创建api密钥。这里用api密钥就可以，毕竟只采集公共数据信息，不是用户隐私数据（需要用户认证）。
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/60559851.jpg" alt="" /><br />
-Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/">API文档</a>中具体列出了使用方法。此外，有专门的<a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/plus.people.get?userId=118051310819094153327&amp;_h=6&amp;">API浏览器</a>可以根据查询条件快速生成RESTful对应的url地址，得到查询结果。(使用之前先设置右上角的API id)
-### RESTful API
-以查询某个用户为例。</p>
+Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/">API文档</a>中具体列出了使用方法。此外，有专门的<a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/plus.people.get?userId=118051310819094153327&amp;_h=6&amp;">API浏览器</a>可以根据查询条件快速生成RESTful对应的url地址，得到查询结果。(使用之前先设置右上角的API id)</p>
+
+<h3 id="restful-api">RESTful API</h3>
+<p>以查询某个用户为例。</p>
 
 <ol>
   <li><strong>使用API浏览器</strong>
@@ -504,9 +505,10 @@ Displaying 4 of 4 matches:
 </div>
 <p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/30574312.jpg" alt="" /></p>
 
-<p>很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。
-## 特征词提取
-这节主要介绍TFIDF，高手直接跳过。</p>
+<p>很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。</p>
+
+<h2 id="section-3">特征词提取</h2>
+<p>这节主要介绍TFIDF，高手直接跳过。</p>
 
 <p>特征词/关键词提取最简单最基础的就是TFIDF，记得5年前我同学让我帮做DI-TFIDF的论文，也就只多了个类内离散度(DI)，今年阿里校招笔试题都有，用mapreduce实现的，很是广泛。实际上tfidf算法的岁数估计比我还大，目前应用还是很广。其他特征提取方法还有TF、MI、ECE、QEMI、IG、OR、GA、SA、PCA、N-Gram等，各有好坏，个人喜欢SA（模拟退火算法）。</p>
 
@@ -662,7 +664,7 @@ Displaying 4 of 4 matches:
 
 <p>两者比较下波森要稍好一些，底层估计是改进的tfidf。</p>
 
-<h2 id="section-3">文本相似度</h2>
+<h2 id="section-4">文本相似度</h2>
 <p>我们看今日头条新闻，看完后下面会有推荐相似的文章，提供你更多阅读的机会。相似文本推荐最基本的方法用到”<a href="https://en.wikipedia.org/wiki/Cosine_similarity">余弦相似性</a>“（cosine similiarity）。举个简单例子：
  两个文本，先分词：
  &gt;文本1：google/和/百度/相似<br />
