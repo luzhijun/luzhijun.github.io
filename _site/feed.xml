@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 19 Oct 2016 14:28:43 +0800</pubDate>
-    <lastBuildDate>Wed, 19 Oct 2016 14:28:43 +0800</lastBuildDate>
+    <pubDate>Wed, 19 Oct 2016 19:38:17 +0800</pubDate>
+    <lastBuildDate>Wed, 19 Oct 2016 19:38:17 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -24,8 +24,9 @@
 &lt;p&gt;除此之外本文还设计到情感词分析，齐普夫定律等。其他方法像摘要自动提取、意见挖掘、文本聚类、新闻分类等常规文本分析内容并不适合google+的数据集，因此本文没有涉及。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;获取数据&lt;/h2&gt;
-&lt;p&gt;### 准备
-google+ api 获取授权：
+
+&lt;h3 id=&quot;section-1&quot;&gt;准备&lt;/h3&gt;
+&lt;p&gt;google+ api 获取授权：
 &lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-17/94917912.jpg&quot; alt=&quot;&quot; /&gt;
 左侧栏第三个，点“凭据”，创建api密钥。这里用api密钥就可以，毕竟只采集公共数据信息，不是用户隐私数据（需要用户认证）。
 &lt;img src=&quot;http://oc5ofszxe.bkt.clouddn.com/16-10-17/60559851.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
@@ -183,7 +184,7 @@ Google+ &lt;a href=&quot;https://developers.google.com/apis-explorer/?hl=zh_CN#p
 &lt;/div&gt;
 &lt;p&gt;最后输出结果”422 activities written to resources/102121409478764742904.json”，共422条被输出。&lt;a href=&quot;/html/102121409478764742904.json&quot;&gt;查看&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;中文分词&lt;/h2&gt;
+&lt;h2 id=&quot;section-2&quot;&gt;中文分词&lt;/h2&gt;
 &lt;p&gt;为了进一步对每条记录分析，有必要进行中文分词。文章&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;中提到11款开放中文分词引擎，从分词效果和调用难度角度考虑，这里采用商业化的BosonNLP工具（关键被他一句广告吸引“现在加入BosonNLP，可获得分词与词性标注引擎不限量调用额度！”）。
 注册&lt;a href=&quot;http://bosonnlp.com/&quot;&gt;波森&lt;/a&gt;后会给你一个api_key，和google+一个原理。安装python版SDK： pip install -U bosonnlp
 。&lt;a href=&quot;http://bosonnlp-py.readthedocs.io/#bosonnlp&quot;&gt;api文档&lt;/a&gt;很简单，看一遍就直接用了。&lt;/p&gt;
@@ -484,7 +485,7 @@ Displaying 4 of 4 matches:
 
 &lt;p&gt;两者比较下波森要稍好一些，底层估计是改进的tfidf。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-2&quot;&gt;文本相似度&lt;/h2&gt;
+&lt;h2 id=&quot;section-3&quot;&gt;文本相似度&lt;/h2&gt;
 &lt;p&gt;我们看今日头条新闻，看完后下面会有推荐相似的文章，提供你更多阅读的机会。相似文本推荐最基本的方法用到”&lt;a href=&quot;https://en.wikipedia.org/wiki/Cosine_similarity&quot;&gt;余弦相似性&lt;/a&gt;“（cosine similiarity）。举个简单例子：
  两个文本，先分词：
  &amp;gt;文本1：google/和/百度/相似&lt;br /&gt;
@@ -643,7 +644,7 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
  #一日段子荟萃
 2016-8-23
 
-@MyDF：昨天下午路过洪都南大道，发现沿途增加了不少交警，诡异的是，大热天的街边还站着或坐着不少可疑的群众，几公里都是，象是在等什么大人物。今天看了新闻，才知道..
+@MyDF：昨天下午路过洪都南大道，发现沿途增加了不少交警，诡异的是，大热天的街边还站着或坐着不少可疑的群众，几公里都是，象是在等什么大人物。今天看了新闻，才知ß道..
 (https://plus.google.com/+MulinHong/posts/UVZVyshut8R) 
  相似度: 0.082137 
  ------------------------------

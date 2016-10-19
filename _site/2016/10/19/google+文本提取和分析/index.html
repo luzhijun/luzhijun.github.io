@@ -201,8 +201,9 @@ MathJax.Hub.Config({
 <p>除此之外本文还设计到情感词分析，齐普夫定律等。其他方法像摘要自动提取、意见挖掘、文本聚类、新闻分类等常规文本分析内容并不适合google+的数据集，因此本文没有涉及。</p>
 
 <h2 id="section">获取数据</h2>
-<p>### 准备
-google+ api 获取授权：
+
+<h3 id="section-1">准备</h3>
+<p>google+ api 获取授权：
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/94917912.jpg" alt="" />
 左侧栏第三个，点“凭据”，创建api密钥。这里用api密钥就可以，毕竟只采集公共数据信息，不是用户隐私数据（需要用户认证）。
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/60559851.jpg" alt="" /><br />
@@ -360,7 +361,7 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 </div>
 <p>最后输出结果”422 activities written to resources/102121409478764742904.json”，共422条被输出。<a href="/html/102121409478764742904.json">查看</a></p>
 
-<h2 id="section-1">中文分词</h2>
+<h2 id="section-2">中文分词</h2>
 <p>为了进一步对每条记录分析，有必要进行中文分词。文章<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>中提到11款开放中文分词引擎，从分词效果和调用难度角度考虑，这里采用商业化的BosonNLP工具（关键被他一句广告吸引“现在加入BosonNLP，可获得分词与词性标注引擎不限量调用额度！”）。
 注册<a href="http://bosonnlp.com/">波森</a>后会给你一个api_key，和google+一个原理。安装python版SDK： pip install -U bosonnlp
 。<a href="http://bosonnlp-py.readthedocs.io/#bosonnlp">api文档</a>很简单，看一遍就直接用了。</p>
@@ -661,7 +662,7 @@ Displaying 4 of 4 matches:
 
 <p>两者比较下波森要稍好一些，底层估计是改进的tfidf。</p>
 
-<h2 id="section-2">文本相似度</h2>
+<h2 id="section-3">文本相似度</h2>
 <p>我们看今日头条新闻，看完后下面会有推荐相似的文章，提供你更多阅读的机会。相似文本推荐最基本的方法用到”<a href="https://en.wikipedia.org/wiki/Cosine_similarity">余弦相似性</a>“（cosine similiarity）。举个简单例子：
  两个文本，先分词：
  &gt;文本1：google/和/百度/相似<br />
@@ -820,7 +821,7 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
  #一日段子荟萃
 2016-8-23
 
-@MyDF：昨天下午路过洪都南大道，发现沿途增加了不少交警，诡异的是，大热天的街边还站着或坐着不少可疑的群众，几公里都是，象是在等什么大人物。今天看了新闻，才知道..
+@MyDF：昨天下午路过洪都南大道，发现沿途增加了不少交警，诡异的是，大热天的街边还站着或坐着不少可疑的群众，几公里都是，象是在等什么大人物。今天看了新闻，才知ß道..
 (https://plus.google.com/+MulinHong/posts/UVZVyshut8R) 
  相似度: 0.082137 
  ------------------------------
