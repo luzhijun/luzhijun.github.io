@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="iCQLNHIUn9" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Google Plus 文本提取与分析 - 楚汐|Trucy Luce Blog</title>
+
+    <link rel="canonical" href="https://luzhijun.github.io/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?c07b62da6a94126e41877e6b30e15413";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">T.L Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-Google+.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-Google+.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#社交网站数据分析" title="社交网站数据分析">社交网站数据分析</a>
+                        
+                        <a class="tag" href="/tags/#社会计算" title="社会计算">社会计算</a>
+                        
+                    </div>
+                    <h1>Google Plus 文本提取与分析</h1>
+                    
+                    
+                    <h2 class="subheading">数据提取、Bosen分词、NLTK、TFIDF、余弦相似度等</h2>
+                    
+                    <span class="meta">Posted by T.L on October 19, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<p>本文所有数据源自google+,全篇围绕五个方面来进行文本提取和分析：</p>
+
+<ol>
+  <li>数据获取</li>
+  <li>中文分词</li>
+  <li>NLTK</li>
+  <li>特征词提取</li>
+  <li>文本相似度</li>
+</ol>
+
+<p>除此之外本文还设计到情感词分析，齐普夫定律等。其他方法像摘要自动提取、意见挖掘、文本聚类、新闻分类等常规文本分析内容并不适合google+的数据集，因此本文没有涉及。</p>
+
+<h2 id="section">获取数据</h2>
+<p>### 准备
+google+ api 获取授权：
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/94917912.jpg" alt="" />
+左侧栏第三个，点“凭据”，创建api密钥。这里用api密钥就可以，毕竟只采集公共数据信息，不是用户隐私数据（需要用户认证）。
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/60559851.jpg" alt="" /><br />
+Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/">API文档</a>中具体列出了使用方法。此外，有专门的<a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/plus.people.get?userId=118051310819094153327&amp;_h=6&amp;">API浏览器</a>可以根据查询条件快速生成RESTful对应的url地址，得到查询结果。(使用之前先设置右上角的API id)
+### RESTful API
+以查询某个用户为例。</p>
+
+<ol>
+  <li><strong>使用API浏览器</strong>
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/22885447.jpg" alt="" />
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/72652739.jpg" alt="" /></li>
+  <li><strong>直接浏览器抓取</strong></li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl <span class="s2">"https://www.googleapis.com/plus/v1/people?query=Trucy+Luce&amp;key=</span><span class="nv">$api_key</span><span class="s2">"</span>
+</code></pre>
+</div>
+<blockquote>
+
+  <p>{<br />
+ “kind”: “plus#peopleFeed”,<br />
+ “etag”: “"xw0en60W6-NurXn4VBU-CMjSPEw/ycgzanUve1bCMxC0NXlP6C4MSTM"”,<br />
+ “selfLink”: “https://www.googleapis.com/plus/v1/people?query=Trucy+Luce&amp;key=AIzaSyB2_mjqVwT5IpqGO8wfASMdnHUuvxwQqlI”,<br />
+ “title”: “Google+ People Search Results”,<br />
+ “nextPageToken”: “CAESFTExMjAzMzk2OTk4NDI0NTc3MzQ3NQ”,<br />
+ “items”: [<br />
+  {<br />
+   “kind”: “plus#person”,<br />
+   “etag”: “"xw0en60W6-NurXn4VBU-CMjSPEw/xLkYpT8h4zlkDrhCUQcTzEZDl1U"”,<br />
+   “objectType”: “person”,<br />
+   “id”: “112033969984245773475”,<br />
+   “displayName”: “Trucy Luce”,<br />
+   “url”: “https://plus.google.com/112033969984245773475”,<br />
+   “image”: {<br />
+    “url”: “https://lh3.googleusercontent.com/-L0oIZ63NyHk/AAAAAAAAAAI/AAAAAAAAABg/xr0lpRdSDLM/photo.jpg?sz=50”<br />
+   }<br />
+  }<br />
+ ]<br />
+}</p>
+</blockquote>
+
+<p>关于json中key的解释，可以在<a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1/">API文档</a>中找到。</p>
+
+<h3 id="python-sdk">利用python SDK</h3>
+<p>google api for python 有两个版本，一个是<a href="http://github.com/google/oauth2client">oauth2</a>授权的，另一个就是简单的<a href="http://github.com/google/google-api-python-client">api_key</a>授权的。我们使用第二个，这是其<a href="http://google.github.io/google-api-python-client/docs/epy/index.html">API文档</a>。该客户端已经支持python3版本，这里本文代码都以python3为基础。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">httplib2</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">apiclient.discovery</span> <span class="c"># pip install google-api-python-client</span>
+
+<span class="n">Q</span> <span class="o">=</span> <span class="s">"Trucy Luce"</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s">'自己输入'</span> 
+<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">people_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">people</span><span class="p">()</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Q</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">people_feed</span><span class="p">[</span><span class="s">'items'</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p>build方法详细查看<a href="http://google.github.io/google-api-python-client/docs/epy/index.html">代码</a>中的api说明，返回一个与服务交互的资源对象（” A Resource object with methods for interacting with the service. “  ）。而这个对象实际上是调动了 build_from_documen这个方法，这个方法返回的是googleapiclient.discovery.Resource资源对象，定位到这个Resource资源对象，但仔细查找发现其方法下面没有people()方法，但有三个生成方法的方法：</p>
+
+<ol>
+  <li>_add_basic_methods</li>
+  <li>_add_nested_resources</li>
+  <li>_add_next_methods</li>
+</ol>
+
+<p>实际上这三个方法是根据response的schem层次结构来生成的，这里的代码值得学习。
+最后只打印items部分，程序执行结果如下:</p>
+
+<blockquote>
+
+  <p>[<br />
+  {<br />
+    “etag”: “"xw0en60W6-NurXn4VBU-CMjSPEw/xLkYpT8h4zlkDrhCUQcTzEZDl1U"”,<br />
+    “displayName”: “Trucy Luce”,<br />
+    “objectType”: “person”,<br />
+    “image”: {<br />
+      “url”: “https://lh3.googleusercontent.com/-L0oIZ63NyHk/AAAAAAAAAAI/AAAAAAAAABg/  xr0lpRdSDLM/photo.jpg?sz=50”<br />
+    },<br />
+    “id”: “112033969984245773475”,<br />
+    “kind”: “plus#person”,<br />
+    “url”: “https://plus.google.com/112033969984245773475”<br />
+  }<br />
+]</p>
+</blockquote>
+
+<p>接下来挖掘下某个用户的近期活动，实际上就像推特或者一条说说。这次挑个说中文的“Mulin Hong”。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c"># Mulin Hong</span>
+<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span>
+  <span class="n">userId</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
+  <span class="n">collection</span><span class="o">=</span><span class="s">'public'</span><span class="p">,</span>
+  <span class="n">maxResults</span><span class="o">=</span><span class="s">'100'</span> <span class="c"># 最大允许记录条数</span>
+<span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p>service.activities().list方法有几个必要参数，userId:活动发起者Id。可选参数：collection:活动归属的集,默认为public，还是看下面图片吧：</p>
+
+<p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-17/84664354.jpg" alt="" /></p>
+
+<p>其他参数可以通过命令<em>help(service.activities().list)</em>来查看。
+由于共7000多行，不方便直接放入文章，可以点击查看内容。</p>
+
+<p>如果仔细观察内容，你会发现content中有许多html标签，像&lt;br&gt;之类的在文本中应该去除，这里用到python Beautifulsoup4包<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>,(Beautiful Soup)已成为和lxml、html6lib一样出色的python解释器，为用户灵活地提供不同的解析策略或强劲的速度，提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，所以不需要多少代码就可以写出一个完整的应用程序。简单来说，Beautiful Soup是python的一个库，最主要的功能是从网页抓取数据。更多关于Beautiful Soup的内容可以参见学习教程<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>。</p>
+
+<p>随便拿条内容:
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/58368208.jpg" alt="" />
+可以发现里面除了含有html标签还有BOM字符(\ufeff)，使用bs4去除：
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/17333322.jpg" alt="" /></p>
+
+<p>我们上面只拿了100条记录，能不能拿全部记录呢？我们在看一下爬下的json文件，发现第一行显示nextPageToken，也就是说还有下一页，我们可以通过service.activities().list_next方法拿到下一页的resopnse。最后我们拿到所有json并用上面方法清洗整理。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">httplib2</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">apiclient.discovery</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c"># Mulin Hong</span>
+<span class="n">MAX_RESULTS</span> <span class="o">=</span> <span class="mi">400</span> <span class="c"># 最大纪录数，每页100条，也就是说最多5页（0~4页）</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s">'你自己的api_key'</span> 
+
+<span class="k">def</span> <span class="nf">cleanHtml</span><span class="p">(</span><span class="n">html</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">html</span> <span class="o">==</span> <span class="s">""</span><span class="p">:</span> <span class="k">return</span> <span class="s">""</span>
+  <span class="k">return</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="s">'lxml'</span><span class="p">)</span><span class="o">.</span><span class="n">get_text</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> 
+                                    <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
+  <span class="n">collection</span><span class="o">=</span><span class="s">'public'</span><span class="p">,</span>
+  <span class="n">maxResults</span><span class="o">=</span><span class="s">'100'</span> 
+<span class="p">)</span>
+
+<span class="n">activity_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">while</span> <span class="n">activity_feed</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">activity_results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_RESULTS</span><span class="p">:</span>
+  <span class="n">activities</span> <span class="o">=</span> <span class="n">activity_feed</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+  <span class="k">if</span> <span class="s">'items'</span> <span class="ow">in</span> <span class="n">activities</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">activity</span> <span class="ow">in</span> <span class="n">activities</span><span class="p">[</span><span class="s">'items'</span><span class="p">]:</span>
+      <span class="k">if</span> <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'objectType'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'note'</span> <span class="ow">and</span> <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="o">!=</span> <span class="s">''</span><span class="p">:</span>        
+        <span class="n">activity</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanHtml</span><span class="p">(</span><span class="n">activity</span><span class="p">[</span><span class="s">'title'</span><span class="p">])</span>
+        <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanHtml</span><span class="p">(</span><span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">])</span>
+        <span class="n">activity_results</span> <span class="o">+=</span> <span class="p">[</span><span class="n">activity</span><span class="p">]</span>
+<span class="c">#查看下一页</span>
+  <span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="n">list_next</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">activities</span><span class="p">)</span>
+<span class="c"># 写到一个json文件中去</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">'resources'</span><span class="p">,</span> <span class="n">USER_ID</span> <span class="o">+</span> <span class="s">'.json'</span><span class="p">),</span> <span class="s">'w'</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_results</span><span class="p">,</span><span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">activity_results</span><span class="p">)),</span> <span class="s">"activities written to"</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>最后输出结果”422 activities written to resources/102121409478764742904.json”，共422条被输出。<a href="/html/102121409478764742904.json">查看</a></p>
+
+<h2 id="section-1">中文分词</h2>
+<p>为了进一步对每条记录分析，有必要进行中文分词。文章<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>中提到11款开放中文分词引擎，从分词效果和调用难度角度考虑，这里采用商业化的BosonNLP工具（关键被他一句广告吸引“现在加入BosonNLP，可获得分词与词性标注引擎不限量调用额度！”）。
+注册<a href="http://bosonnlp.com/">波森</a>后会给你一个api_key，和google+一个原理。安装python版SDK： pip install -U bosonnlp
+。<a href="http://bosonnlp-py.readthedocs.io/#bosonnlp">api文档</a>很简单，看一遍就直接用了。</p>
+
+<p>引用方法：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>In [1]: from bosonnlp import BosonNLP
+
+In [2]: nlp = BosonNLP('你自己的api_key')
+
+In [3]: s='当年北京市长夸下海口： 2017年治不了雾霾就提头来见      2016年10月16日，北京市空气污染指数读数    嗯，
+   ...: 北京市长同志，你只有两个多月的时间了……'
+
+In [4]: nlp.tag(s)[0]['word']
+Out[6]:
+['当年',
+ '北京',
+ '市长',
+ '夸',
+ '下',
+ '海口',
+ '：',
+ '2017年',
+ '治',
+ '不',
+ '了',
+ '雾霾',
+ ...
+</code></pre>
+</div>
+<p>直接使用里面的api进行情感分析：</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">bosonnlp</span> <span class="kn">import</span> <span class="n">BosonNLP</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">BosonNLP</span><span class="p">(</span><span class="s">'你的api_key'</span><span class="p">)</span>
+<span class="n">all_content</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">activity_results</span> <span class="p">]</span>
+<span class="n">emos</span><span class="o">=</span><span class="n">nlp</span><span class="o">.</span><span class="n">sentiment</span><span class="p">(</span><span class="n">all_content</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="s">'weibo'</span><span class="p">)</span><span class="c">#单词最多只能分析100个，每日最多500个</span>
+<span class="n">drawdata</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">emos</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre>
+</div>
+<p>绘制箱线图和统计直方图：</p>
+
+<p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/23871192.jpg" alt="" /></p>
+
+<p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/94976039.jpg" alt="" /></p>
+
+<p>从图中可以看出，整体情感偏上，这里只计算了100条，有兴趣把一天的免费记录数500条全计算完了看看结果。当然情感算法用的很普遍了，自己实现个也非难事。
+hrKOofx5.10057.yUUmemEd43Dm
+## NLTK
+斯坦福大学自然语言处理组是世界知名的NLP研究小组，他们提供了一系列开源的Java文本分析工具，包括分词器(Word Segmenter)，词性标注工具（Part-Of-Speech Tagger），命名实体识别工具（Named Entity Recognizer），句法分析器（Parser）等，可喜的事，他们还为这些工具训练了相应的中文模型，支持中文文本处理。NLTK<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>是针对python的一个自然语言处理平台,在windows、mac、linux平台上通用，并且是开源免费的，国内好多项目都是在它基础上做的。
+下面用nltk分析下抓到的数据。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">from</span> <span class="nn">bosonnlp</span> <span class="kn">import</span> <span class="n">BosonNLP</span>
+
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">BosonNLP</span><span class="p">(</span><span class="s">'你自己的api_key'</span><span class="p">)</span>
+
+<span class="c">#将所有记录转化为一个词语数组tokens</span>
+<span class="n">contents</span><span class="o">=</span><span class="s">'。'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_content</span><span class="p">)</span>
+<span class="n">tokens</span><span class="o">=</span><span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">contents</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+
+<span class="n">text</span><span class="o">.</span><span class="n">concordance</span><span class="p">(</span><span class="s">"三星"</span><span class="p">)</span><span class="c">#查看出现‘三星’的语句,可选参数包括语句数目和语句长度</span>
+<span class="s">'''
+Displaying 4 of 4 matches:
+ 北京 市长 准备 如何 收场 ？ 。 # 看 图 不 说话 1016 ： 三星 手机 名不虚传 。 How to mess up # StarWars a
+假 论文 ， 那 就 是 丢脸 了 。 # 看 图 不 说话 0923 ： 三星 一生 黑 http://cinacn.blogspot.com/2016/
+ ： 心里 想 说 没事 了 。 # 看 图 不 说话 0917 ： 使用 三星 手机 的 后果 。 这个 错误 有点 大 了 。 看看 朝鲜 战争 大事记
+ 你们 开学 一次性 交 多少 钱 。 # 看 图 不 说话 0906 ： 三星 手机 的 中东 版 。 舆情 监控 ， 已经 是 大陆 媒界 不用 公开 
+'''</span>
+<span class="n">text</span><span class="o">.</span><span class="n">collocations</span><span class="p">()</span><span class="c">#最搭配的用词</span>
+<span class="s">'''
+Displaying 4 of 4 matches:
+ 北京 市长 准备 如何 收场 ？ 。 # 看 图 不 说话 1016 ： 三星 手机 名不虚传 。 How to mess up # StarWars a
+假 论文 ， 那 就 是 丢脸 了 。 # 看 图 不 说话 0923 ： 三星 一生 黑 http://cinacn.blogspot.com/2016/
+ ： 心里 想 说 没事 了 。 # 看 图 不 说话 0917 ： 使用 三星 手机 的 后果 。 这个 错误 有点 大 了 。 看看 朝鲜 战争 大事记
+ 你们 开学 一次性 交 多少 钱 。 # 看 图 不 说话 0906 ： 三星 手机 的 中东 版 。 舆情 监控 ， 已经 是 大陆 媒界 不用 公开 
+'''</span>
+<span class="n">text</span><span class="o">.</span><span class="n">collocations</span><span class="p">()</span><span class="c">#最搭配的用词</span>
+<span class="s">'''
+@Homebaby Wen; little pink; sounds cute; 核废料 处理厂; 诺贝尔 文学奖; 连云港 核废料;
+创业者 越来越
+'''</span>
+<span class="n">fdist</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">vocab</span><span class="p">()</span><span class="c">#{词1：词1出现的个数，词2：词2出现的个数，...}</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"大陆"</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"老百姓"</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"的"</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"不"</span><span class="p">])</span>
+<span class="s">'''
+25
+27
+1250
+351
+'''</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span> <span class="c">#总共的词数</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="c">#不重复词</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">freq</span><span class="p">(</span><span class="s">'的'</span><span class="p">))</span><span class="c">#1250/27232</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span><span class="c"># 出现次数最大的前20个</span>
+<span class="s">'''
+27232
+6465
+0.04590188014101058
+[('，', 1651), ('的', 1250), ('。', 959), ('：', 568), ('是', 495), ('了', 380), ('不', 351), ('”', 257), ('“', 255), ('#', 242), ('一', 222), ('就', 207), ('在', 200), ('有', 162), ('？', 150), ('你', 130), ('我', 129), ('这', 129), ('人', 127), ('都', 124)]
+'''</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s">'stopwords'</span><span class="p">)</span>
+<span class="s">'''
+[nltk_data] Downloading package stopwords to /Users/Trucy/nltk_data...
+[nltk_data]   Unzipping corpora/stopwords.zip.
+然后在解压的停词目录中添加china文件，里面添加停词，这里用的哈工大停词库
+'''</span>
+<span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">100</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span><span class="c">#100个热词中非停词</span>
+<span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">comm</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+<span class="s">'''
+['中国', '说', '国家', '毛', '微', '语录', '精选', '图', '说话', '中共', '日', '政府', '年', '爱国', '美国', '天', '钱', '荟萃', '段子', '里', '想']
+'''</span>
+<span class="c"># 非url的长词语</span>
+<span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">12</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">w</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"http"</span><span class="p">)])</span>
+<span class="s">'''
+['@jianshenbiao', '@Jackstraw_PRC', '@Andrew19751110', '@boattractor_cj', '@_markhorton搞得后者不得不', '@Weaponmagazine-肖宁）', '@YE5MQ5Vtp2jlWX7', '@Menghuanlangqi2', '@szstupidcool', '@zhifangnvren', 'HappyBirthday', '@freedomandlaw', '@_mackhorton结果攻击了一个字母之差的无辜鬼佬', '@和菜头）——中国人能接受么？丝毫没有对他国的尊重', '@BattlerHenry', '@c338ki_selina', '@shangguanluan', '@zhanghui8964', '@fedsneighbor']
+'''</span>
+</code></pre>
+</div>
+<p>相信你肯定听过二八原则，如果把所有的单词（字）放在一起看呢？会不会20%的词（字）占了80%的出现次数？答案是肯定的。</p>
+
+<p>早在上个世纪30年代，就有人（Zipf）对此作出了研究，并给出了量化的表达——齐普夫定律（Zipf’s Law）：一个词在一个有相当长度的语篇中的等级序号（该词在按出现次数排列的词表中的位置，他称之为rank，简称r）与该词的出现次数（他称为frequency，简称f）的乘积几乎是一个常数（constant，简称C）。用公式表示，就是 r × f = C 。（此处的C一般认为取0.1）。Zipf定律是文献计量学的重要定律之一，它和洛特卡定律、布拉德福定律一起被并称为文献计量学的三大定律。</p>
+
+<p>我们直观地验证下，100个热词频度和排名的规律：</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c">#前100热词统计</span>
+<span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">400</span><span class="p">)))</span>
+<span class="n">top</span><span class="o">=</span><span class="p">[(</span><span class="n">w</span><span class="p">,</span><span class="n">comm</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> \
+<span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)]</span>
+<span class="n">dd</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">top</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">'-'</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="mi">2</span><span class="p">],</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'前100热词'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'频数'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'前100热词统计'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+<p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/30574312.jpg" alt="" /></p>
+
+<p>很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。
+## 特征词提取
+这节主要介绍TFIDF，高手直接跳过。</p>
+
+<p>特征词/关键词提取最简单最基础的就是TFIDF，记得5年前我同学让我帮做DI-TFIDF的论文，也就只多了个类内离散度(DI)，今年阿里校招笔试题都有，用mapreduce实现的，很是广泛。实际上tfidf算法的岁数估计比我还大，目前应用还是很广。其他特征提取方法还有TF、MI、ECE、QEMI、IG、OR、GA、SA、PCA、N-Gram等，各有好坏，个人喜欢SA（模拟退火算法）。</p>
+
+<p>简单介绍下TFIDF，TFIDF的主要思想是：如果某个词或短语在一篇文章中出现的频率TF高，并且在其他文章中很少出现，则认为此词或者短语具有很好的类别区分能力，适合用来分类。TFIDF实际上是：TF * IDF，TF词频(Term Frequency)，IDF反文档频率(Inverse Document Frequency)。TF词频(Term Frequency)指的是某一个给定的词语在该文件中出现的次数）。IDF反文档频率(Inverse Document Frequency)是指果包含词条的文档越少，IDF越大，则说明词条具有很好的类别区分能力。公式看看阮一峰的文章<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup>就懂。</p>
+
+<p>先用波森来玩一下。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c">#第100到109条记录各前五个关键字分析</span>
+<span class="n">nlp</span><span class="o">.</span><span class="n">extract_keywords</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">],</span><span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>[[[0.7099039005468386, ‘林志颖’],
+  [0.6618791162771835, ‘说话’],
+  [0.16548951440531323, ‘图’],
+  [0.1391678971188951, ‘真’],
+  [0.08401698377794771, ‘看’]],<br />
+ [[0.4023478548923522, ‘面试’],
+  [0.37301990285926334, ‘秋月’],
+  [0.3067035017321436, ‘程序员’],
+  [0.3039517495852464, ‘月饼’],
+  [0.30299584457854634, ‘语录’]],<br />
+ [[0.47362866866222336, ‘朝鲜’],
+  [0.3352703984048265, ‘兼听则明’],
+  [0.2612360542645001, ‘志愿军’],
+  [0.25878030672041646, ‘战争’],
+  [0.21926520954291415, ‘脸红’]],<br />
+ [[0.49721835098126743, ‘战争’],
+  [0.32820426275864795, ‘共产党’],
+  [0.3033420749749608, ‘朝鲜’],
+  [0.22718247058147462, ‘亲华派’],
+  [0.21472859448533965, ‘保家’]],<br />
+ [[0.2454776400796074, ‘老头’],
+  [0.2404142762073897, ‘导游’],
+  [0.18403709160053647, ‘平壤’],
+  [0.1753006540352852, ‘首都’],
+  [0.1462342959779542, ‘坦克’]],<br />
+ [[0.611209874316231, ‘语录’],
+  [0.47971562974594106, ‘精选’],
+  [0.3914587127344426, ‘女生’],
+  [0.32629224154255926, ‘复杂’],
+  [0.24636184499215347, ‘到底’]],<br />
+ [[0.49698250604754796, ‘响吧’],
+  [0.41302611057797883, ‘老百姓’],
+  [0.34093105823385067, ‘太监’],
+  [0.3321228504052302, ‘大陆’],
+  [0.2893273489670021, ‘税负’]],<br />
+ [[0.40325177993397743, ‘导游’],
+  [0.3096728358372618, ‘韩战’],
+  [0.2929205806460173, ‘游客’],
+  [0.2480119777270853, ‘带劲’],
+  [0.22704285072733602, ‘自以为是’]],<br />
+ [[0.7242722832662252, ‘哥们儿’],
+  [0.5061338668467491, ‘着急’],
+  [0.4404639544540359, ‘说话’],
+  [0.11012912198474084, ‘图’],
+  [0.07352170001676955, ‘太’]],<br />
+ [[0.39101364028081176, ‘鸦片’],
+  [0.27683827573410325, ‘种植’],
+  [0.22542041392575338, ‘zhuo’],
+  [0.22542041392575338, ‘nanjun’],
+  [0.22461629498500293, ‘缩头’]]]</p>
+</blockquote>
+
+<p>用tfidf来做一下，分四步走：</p>
+
+<ol>
+  <li>分词</li>
+  <li>去停词</li>
+  <li>计算tfidf</li>
+  <li>排序，topK</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">cts</span><span class="o">=</span><span class="p">[]</span>
+<span class="c">#1.十条记录的分词</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">]):</span>
+    <span class="n">cts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s">'word'</span><span class="p">])</span>
+<span class="n">tfidfC</span><span class="o">=</span><span class="p">[]</span>
+<span class="c">#2.去停词</span>
+<span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">cts</span><span class="p">:</span> 
+    <span class="n">tfidfC</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">ac</span> 
+                   <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+<span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">tfidfC</span><span class="p">)</span>
+<span class="n">tfidfR</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">topK</span><span class="o">=</span><span class="mi">5</span>
+<span class="c">#3.计算tfidf</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tfidfC</span><span class="p">:</span>
+    <span class="n">res</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+        <span class="n">val</span><span class="o">=</span><span class="n">tc</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">val</span><span class="p">,</span><span class="n">sc</span><span class="p">])</span>
+    <span class="c">#4.topK</span>
+    <span class="n">sres</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="n">topK</span><span class="p">]</span>
+    <span class="n">tfidfR</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sres</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tfidfR</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>结果:</p>
+
+<blockquote>
+  <p>[[[0.4605170185988092, ‘林志颖’],
+  [0.3218875824868201, ‘说话’],
+  [0.3218875824868201, ‘真’],
+  [0.3218875824868201, ‘0913’],
+  [0.3218875824868201, ‘图’]],<br />
+ [[0.24237737820989955, ‘面试’],
+  [0.24237737820989955, ‘官’],
+  [0.12118868910494977, ‘从前’],
+  [0.12118868910494977, ‘秋月’],
+  [0.12118868910494977, ‘原因’]],<br />
+ [[0.1485538769673578, ‘中’],
+  [0.11651349719283252, ‘朝鲜’],
+  [0.07767566479522169, ‘战争’],
+  [0.0742769384836789, ‘贡献’],
+  [0.0742769384836789, ‘话’]],<br />
+ [[0.15703993099903515, ‘战争’],
+  [0.10496334211526741, ‘共产党’],
+  [0.1001123953475672, ‘场’],
+  [0.07851996549951758, ‘朝鲜’],
+  [0.0500561976737836, ‘课本’]],<br />
+ [[0.03868841135658895, ‘说’],
+  [0.033210361918183356, ‘健康’],
+  [0.033210361918183356, ‘老头’],
+  [0.033210361918183356, ‘首都’],
+  [0.03095072908527116, ‘抢’]],<br />
+ [[0.3837641821656743, ‘关系’],
+  [0.3837641821656743, ‘0912’],
+  [0.3837641821656743, ‘女生’],
+  [0.26823965207235, ‘微’],
+  [0.26823965207235, ‘精选’]],
+ [[0.14631253749400913, ‘大陆’],
+  [0.14631253749400913, ‘老百姓’],
+  [0.10466295877245664, ‘总得’],
+  [0.10466295877245664, ‘倒数’],
+  [0.10466295877245664, ‘毛’]],<br />
+ [[0.10233711524417982, ‘想’],
+  [0.07153057388596001, ‘导游’],
+  [0.07153057388596001, ‘说’],
+  [0.07153057388596001, ‘游客’],
+  [0.07153057388596001, ‘年’]],<br />
+ [[0.3837641821656743, ‘着急’],
+  [0.3837641821656743, ‘哥们儿’],
+  [0.3837641821656743, ‘0911’],
+  [0.26823965207235, ‘说话’],
+  [0.26823965207235, ‘图’]],<br />
+ [[0.1151292546497023, ‘鸦片’],
+  [0.1151292546497023, ‘种植’],
+  [0.05756462732485115, ‘zhuo’],
+  [0.05756462732485115, ‘补习’],
+  [0.05756462732485115, ‘充当’]]]</p>
+</blockquote>
+
+<p>两者比较下波森要稍好一些，底层估计是改进的tfidf。</p>
+
+<h2 id="section-2">文本相似度</h2>
+<p>我们看今日头条新闻，看完后下面会有推荐相似的文章，提供你更多阅读的机会。相似文本推荐最基本的方法用到”<a href="https://en.wikipedia.org/wiki/Cosine_similarity">余弦相似性</a>“（cosine similiarity）。举个简单例子：
+ 两个文本，先分词：
+ &gt;文本1：google/和/百度/相似<br />
+ &gt;文本2：百度/比不了/谷歌</p>
+
+<p>计算词频
+ &gt;文本1：google:1,和:1,百度:1,相似:1<br />
+ &gt;文本2：百度:1,比不了:1,谷歌:1</p>
+
+<p>列出所有词，按词频排序：</p>
+
+<blockquote>
+  <p>文本1：google:1,和:1,百度:1,相似:1,比不了:0<br />
+文本2：google:1,和:0,百度:1,相似:0,比不了:1</p>
+</blockquote>
+
+<p>提取词频向量：</p>
+
+<blockquote>
+  <p>文本1：[1,1,1,1,0]
+文本2：[1,0,1,0,1]</p>
+</blockquote>
+
+<p>接下来计算余弦相似度:</p>
+
+<script type="math/tex; mode=display">CosineDistance(u, v)=\frac{u\cdot v}{|u||v|}</script>
+
+<p>这个公式代表两个向量的夹角，二维向量夹角高中不就是这个公式么，推广到三维甚至多维也一样。
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-19/6547011.jpg" alt="" /></p>
+
+<p>余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似，这就叫”余弦相似性”。所以上面两文本相似度为:</p>
+
+<script type="math/tex; mode=display">\frac{2}{\sqrt{1^2+1^2+1^2+1^2+0^2}\times \sqrt{1^2+0^2+1^2+0^2+1^2}}=\frac{\sqrt{3}}{3}</script>
+
+<p>下面我们来统计下内容较长的记录相似文本(内容较短相似度不明显)。
+第一步：找出内容长度大于700的记录，并做好分词和停词</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c">#筛选要比较的文本数据,共24条记录</span>
+<span class="n">data</span><span class="o">=</span><span class="p">[]</span><span class="c">#保存object.content内容大于700的所有数据</span>
+<span class="n">all_posts</span><span class="o">=</span><span class="p">[]</span><span class="c">#只保留发布的内容数据</span>
+<span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">activity_results</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ac</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">700</span><span class="p">:</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">ac</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ac</span><span class="p">)</span>
+        <span class="c">#分词和停词</span>
+        <span class="n">all_posts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">c</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+</code></pre>
+</div>
+<p>第二步：构造词条文档矩阵。形式如$td_matrix={(title_i,url_i):{term_j:tfidf_j,…},…}$</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">all_posts</span><span class="p">)</span>
+<span class="c">#构造词条文档矩阵</span>
+<span class="n">td_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_posts</span><span class="p">)):</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">all_posts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">fdist</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">FreqDist</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
+
+    <span class="n">doc_title</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s">'title'</span><span class="p">]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s">'url'</span><span class="p">]</span>
+    <span class="n">td_matrix</span><span class="p">[(</span><span class="n">doc_title</span><span class="p">,</span> <span class="n">url</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">td_matrix</span><span class="p">[(</span><span class="n">doc_title</span><span class="p">,</span> <span class="n">url</span><span class="p">)][</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">post</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>第三步:计算相似度<br />
+这里用到nltk.cluster.util.cosine_distance，这个函数说明如下：
+nltk.cluster.util.cosine_distance(u, v)[source]
+Returns 1 minus the cosine of the angle between vectors v and u. This is equal to 1 - (u.v / |u||v|).
+可以看到返回的是1-余弦相似度，表示的是余弦距离，也就是说余弦距离越小相似度越高。</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">distances</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+    <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">most_similar</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+        <span class="n">terms1</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">terms2</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c"># 填充0使两向量长度相同</span>
+        <span class="k">for</span> <span class="n">term1</span> <span class="ow">in</span> <span class="n">terms1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">term1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">terms2</span><span class="p">:</span>
+                <span class="n">terms2</span><span class="p">[</span><span class="n">term1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">term2</span> <span class="ow">in</span> <span class="n">terms2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">term2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">terms1</span><span class="p">:</span>
+                <span class="n">terms1</span><span class="p">[</span><span class="n">term2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c"># 产生v1,v2向量，向量元素映射一致</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms1</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms2</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
+
+        <span class="c"># 计算余弦相似度</span>
+        <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">=</span> \
+            <span class="n">nltk</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">cosine_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">url1</span> <span class="o">==</span> <span class="n">url2</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c"># 标记余弦距离最小的（相似度最大）</span>
+        <span class="k">if</span> <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">most_similar</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span>
+                                         <span class="n">url2</span><span class="p">)],</span> <span class="p">(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">))</span>
+    
+    <span class="k">print</span> <span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="se">\n</span><span class="s">(</span><span class="si">%</span><span class="s">s) </span><span class="se">\n</span><span class="s"> 最相似的是:</span><span class="se">\n</span><span class="s"> </span><span class="si">%</span><span class="s">s</span><span class="se">\n</span><span class="s">(</span><span class="si">%</span><span class="s">s) </span><span class="se">\n</span><span class="s"> 相似度: </span><span class="si">%</span><span class="s">f </span><span class="se">\n</span><span class="s"> ------------------------------</span><span class="se">\n</span><span class="s">"</span>
+           <span class="o">%</span> <span class="p">(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">,</span><span class="n">most_similar</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">most_similar</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="o">-</span><span class="n">min_dist</span><span class="p">))</span>
+</code></pre>
+</div>
+<p>查看部分结果：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+#一日段子荟萃
+2016-9-5
+
+@kxxj： 新歇后语：包子宽衣——露馅儿了。
+
+@CasperYang：通商宽衣已加入敏感词豪华午餐。
+
+@szeyan1220：宽衣解带新白娘。轻关易道寻佳人，..
+(https://plus.google.com/+MulinHong/posts/FJuFWhykUhU) 
+ 最相似的是:
+ #一日段子荟萃
+2016-9-7
+
+@boattractor_cj：“吃饱了没事干”，代表了习帝的外交思路，反映了他对洋夷的了解水平；“吃饭砸锅”代表了习帝的内政思路，反映了他蔑视屁民的霸气；“打断骨头..
+(https://plus.google.com/+MulinHong/posts/BfAsHEk3Dfs) 
+ 相似度: 0.018108 
+ ------------------------------
+
+#一日段子荟萃
+2016-8-9
+
+@blogtd：我奇怪的是，不管作为一个国家，还是一个族群，中国从未向世界展现过羞愧这种情绪。
+
+@hnjhj：各类辱华事件频发，但因星星角度不对而辱华还是始料未及..
+(https://plus.google.com/+MulinHong/posts/Y4DMUPtSSTB) 
+ 最相似的是:
+ #一日段子荟萃
+2016-9-26
+
+@zhanghui8964：就目前形态而言，我一直不认为渐进改良是一种政治存在，也不认为激进革命是一种政治存在。在一定意义上大家都是口炮党。区别只在于部分努力者搞了..
+(https://plus.google.com/+MulinHong/posts/BNqkLxd9YCP) 
+ 相似度: 0.026590 
+ ------------------------------
+
+#一日段子荟萃
+2016-8-29
+
+@侯虹斌：警力配置吧。主要精力放在维稳上，这类诈骗案几乎不会投入警力资源；到全社会都关注了，就变成维稳的事件了，警方马上就有资源对接了。
+
+@baidu冷兵器吧：..
+(https://plus.google.com/+MulinHong/posts/RTDgVPKvbyM) 
+ 最相似的是:
+ #一日段子荟萃
+2016-8-23
+
+@MyDF：昨天下午路过洪都南大道，发现沿途增加了不少交警，诡异的是，大热天的街边还站着或坐着不少可疑的群众，几公里都是，象是在等什么大人物。今天看了新闻，才知道..
+(https://plus.google.com/+MulinHong/posts/UVZVyshut8R) 
+ 相似度: 0.082137 
+ ------------------------------
+</code></pre>
+</div>
+<p>为查看方便，绘制相似度矩阵图：
+<img src="http://oc5ofszxe.bkt.clouddn.com/16-10-19/4103503.jpg" alt="" /></p>
+
+<h2 id="ref">REF</h2>
+<ul>
+  <li>Russell, Matthew A. Mining the Social Web: Data Mining Facebook, Twitter, LinkedIn, Google+, GitHub, and More. O’Reilly Media, Inc. 2013.</li>
+</ul>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>python3.4学习笔记(十七) 网络爬虫使用Beautifulsoup4抓取内容.http://www.cnblogs.com/zdz8207/p/python_learn_note_17.html <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>Beautiful Soup 4.2.0 文档.https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>11 款开放中文分词引擎评测.http://www.cnblogs.com/croso/p/5349517.html <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:4">
+      <p>Natural Language Toolkit.http://www.nltk.org/index.html <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:5">
+      <p>TF-IDF与余弦相似性的应用（一）：自动提取关键词.http://www.ruanyifeng.com/blog/2013/03/tf-idf.html <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/10/19/google+文本提取和分析"
+                    data-title="Google Plus 文本提取与分析"
+                    data-url="https://luzhijun.github.io/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/"
+                    data-images="https://luzhijun.github.io/img/post-bg-Google+.jpg"
+                    data-content="本文所有数据源自google+,全篇围绕五个方面来进行文本提取和分析：
+
+
+  数据获取
+  中文分词
+  NLTK
+  特征词提取
+  文本相似度
+
+
+... | 楚汐|Trucy Luce Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/10/10/%E5%8C%88%E7%89%99%E5%88%A9%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/" data-toggle="tooltip" data-placement="top" title="匈牙利算法详解">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/10/19/google+文本提取和分析"
+                        data-title="Google Plus 文本提取与分析"
+                        data-url="https://luzhijun.github.io/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
+                                    前端开发
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                                    JavaScript
+                                </a>
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#社会计算" title="社会计算" rel="3">
+                                    社会计算
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#算法" title="算法" rel="3">
+                                    算法
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#大数据" title="大数据" rel="2">
+                                    大数据
+                                </a>
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#社交网站数据分析" title="社交网站数据分析" rel="2">
+                                    社交网站数据分析
+                                </a>
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://blog.csdn.net/trucyluce">Trucy CSDN Blog</a></li>
+                    
+                        <li><a href="http://echoma.github.io/text_sequence_diagram/">在线时序图</a></li>
+                    
+                        <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/baiboy/">NLP伏草惟存</a></li>
+                    
+                        <li><a href="http://blog.5long.me/">茶码话桑麻</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'TrucyLuce';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/luzhijun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; T.L Blog 2016
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-83947622-1';
+    var _gaDomain = 'https://luzhijun.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c07b62da6a94126e41877e6b30e15413';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<!-- 代码行号-->
+<script type="text/javascript">
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(\w+)\b/i,t=0,n=_self.Prism={util:{encode:function(e){return e instanceof a?new a(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e){var t=n.util.type(e);switch(t){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=n.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return n.util.clone(e)})}return e}},languages:{extend:function(e,t){var a=n.util.clone(n.languages[e]);for(var r in t)a[r]=t[r];return a},insertBefore:function(e,t,a,r){r=r||n.languages;var l=r[e];if(2==arguments.length){a=arguments[1];for(var i in a)a.hasOwnProperty(i)&&(l[i]=a[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in a)a.hasOwnProperty(i)&&(o[i]=a[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,t,a,r){r=r||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],a||l),"Object"!==n.util.type(e[l])||r[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||r[n.util.objId(e[l])]||(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,r)):(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,r)))}},plugins:{},highlightAll:function(e,t){var a={callback:t,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var r,l=a.elements||document.querySelectorAll(a.selector),i=0;r=l[i++];)n.highlightElement(r,e===!0,a.callback)},highlightElement:function(t,a,r){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1],i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(!s||!i)return n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),a&&_self.Worker){var c=new Worker(n.filename);c.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},c.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,r){var l=n.tokenize(e,t);return a.stringify(n.util.encode(l),r)},tokenize:function(e,t){var a=n.Token,r=[e],l=t.rest;if(l){for(var i in l)t[i]=l[i];delete t.rest}e:for(var i in t)if(t.hasOwnProperty(i)&&t[i]){var o=t[i];o="Array"===n.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],c=u.inside,g=!!u.lookbehind,h=!!u.greedy,f=0,d=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var m=r[p];if(r.length>e.length)break e;if(!(m instanceof a)){u.lastIndex=0;var y=u.exec(m),v=1;if(!y&&h&&p!=r.length-1){var b=r[p+1].matchedStr||r[p+1],k=m+b;if(p<r.length-2&&(k+=r[p+2].matchedStr||r[p+2]),u.lastIndex=0,y=u.exec(k),!y)continue;var w=y.index+(g?y[1].length:0);if(w>=m.length)continue;var _=y.index+y[0].length,P=m.length+b.length;if(v=3,P>=_){if(r[p+1].greedy)continue;v=2,k=k.slice(0,P)}m=k}if(y){g&&(f=y[1].length);var w=y.index+f,y=y[0].slice(f),_=w+y.length,S=m.slice(0,w),O=m.slice(_),j=[p,v];S&&j.push(S);var A=new a(i,c?n.tokenize(y,c):y,d,y,h);j.push(A),O&&j.push(O),Array.prototype.splice.apply(r,j)}}}}}return r},hooks:{all:{},add:function(e,t){var a=n.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=n.hooks.all[e];if(a&&a.length)for(var r,l=0;r=a[l++];)r(t)}}},a=n.Token=function(e,t,n,a,r){this.type=e,this.content=t,this.alias=n,this.matchedStr=a||null,this.greedy=!!r};if(a.stringify=function(e,t,r){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return a.stringify(n,t,e)}).join("");var l={type:e.type,content:a.stringify(e.content,t,r),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:r};if("comment"==l.type&&(l.attributes.spellcheck="true"),e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o="";for(var s in l.attributes)o+=(o?" ":"")+s+'="'+(l.attributes[s]||"")+'"';return"<"+l.tag+' class="'+l.classes.join(" ")+'" '+o+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,r=t.code,l=t.immediateClose;_self.postMessage(n.highlight(r,n.languages[a],a)),l&&_self.close()},!1),_self.Prism):_self.Prism;var r=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return r&&(n.filename=r.src,document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",n.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+</script>
+<script >
+!function(){"undefined"!=typeof self&&self.Prism&&self.document&&Prism.hooks.add("complete",function(e){if(e.code){var t=e.element.parentNode,s=/\s*\bhighlight\b\s*/;if(t&&/pre/i.test(t.nodeName)&&(s.test(t.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s,"")),s.test(t.className)||(t.className+="highlight");var n,a=e.code.match(/\n(?!$)/g),l=a?a.length+1:1,m=new Array(l+1);m=m.join("<span></span>"),n=document.createElement("span"),n.className="line-numbers-rows",n.innerHTML=m,t.hasAttribute("data-start")&&(t.style.counterReset="linenumber "+(parseInt(t.getAttribute("data-start"),10)-1)),e.element.appendChild(n)}}})}();
+</script>
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
