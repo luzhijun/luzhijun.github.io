@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 29 Oct 2016 17:24:32 +0800</pubDate>
-    <lastBuildDate>Sat, 29 Oct 2016 17:24:32 +0800</lastBuildDate>
+    <pubDate>Sat, 29 Oct 2016 19:09:29 +0800</pubDate>
+    <lastBuildDate>Sat, 29 Oct 2016 19:09:29 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -15,7 +15,7 @@
 
 &lt;p&gt;本文基于python以新浪微博为数据平台，从数据采集、关键字提取、数据存储三个角度，用最简单的策略来挖掘我们的“黄金”。&lt;/p&gt;
 
-&lt;p&gt;有爬虫基础的人可以直接跳过数据采集部分看“上海租房”话题挖掘实战项目，项目地址&lt;a href=&quot;https://github.com/luzhijun/weiboSA&quot;&gt;https://github.com/luzhijun/weiboSA&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;有爬虫基础的人可以直接跳过数据采集部分看“上海租房”话题挖掘实战项目，项目s地址&lt;a href=&quot;https://github.com/luzhijun/weiboSA&quot;&gt;https://github.com/luzhijun/weiboSA&lt;/a&gt;。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;数据采集&lt;/h2&gt;
 &lt;p&gt;使用python是因为代码简洁，虽然计算比java和c慢很多，但数据采集时间开销大部分是IO部分的，你愿意每次用java或者c写效率也提高不到哪去。&lt;/p&gt;
@@ -311,11 +311,14 @@ BD_HOME : 0&lt;/p&gt;
 &lt;p&gt;当你准备爬某个网站的时候，首先应该先看下该网站有没有robots.txt。robots.txt是1994年出现的，也称为机器人排除标准(Robots Exclusion Standard)，网站管理员不想某些内容被爬到的时候可以再该文件中注明。robots.txt虽然有主流的语法格式，但是各大企业标准不一，没有别人可以阻止你创建自己版本的robots.txt，但这些robots.txt不应该因为不符合主流而不被遵守。一般文件字段包含：User-agent，Allow，Disallow分别代表搜索机器人允许看和不许看的内容。&lt;/p&gt;
 
 &lt;p&gt;之前看新闻说今年4月大众点评把百度给告了，请求法院判令两被告停止不正当竞争行为，共同赔偿汉涛公司经济损失9000万元和为制止侵权行为支出的45万余元，并刊登公告、澄清事实消除不良影响。有用百度地图的应该知道这个（最近百度高德开撕，又在黑百度了~~~），定位完毕会显示附近商家和点评信息，来看下大众点评网的&lt;a href=&quot;http://www.dianping.com/robots.txt&quot;&gt;robots.txt&lt;/a&gt;.
-光看 
-&amp;gt;User-agent: *&lt;br /&gt;
-&amp;gt;…&lt;br /&gt;
-&amp;gt;Disallow: /shop/&lt;em&gt;/rank_p&lt;/em&gt;&lt;br /&gt;
-&amp;gt;…&lt;/p&gt;
+光看&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;User-agent: *&lt;br /&gt;
+…&lt;br /&gt;
+Disallow: /shop/&lt;em&gt;/rank_p&lt;/em&gt;&lt;br /&gt;
+…&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;就知道不允许任何企业和个人爬他家的商店评分数据，更何况其他更具有价值的数据呢，数据是黄金，要求赔偿9000万元对百度来说不算多，但百度回应内容大众点评网的robots协议面向百度等搜索引擎开放，百度地图抓取大众点评网的内容正是在robots.txt允许的情况下。通常业内习惯上没有被不允许的就是允许的，也就是说网站的关键信息可以帮助SEO优化的这个不能被禁止哟，不然你就没头条了，看人家竞争对手爱帮网倒是单独被列出来全面封杀了，因为其实力太弱，没有商业合作价值。就算这样我也没看出允许百度抓点评的用户评论数据，难道说点评网之前没robots.txt？人家不傻！百度挖了人家数据还叫嚣着遵守Robots协议，（其实他完全可以偷偷摸摸抓了数据自己私下研究，却要直接在百度地图上显示出来，这是要把数据价值榨干啊，够霸道）好比把人打了顿理直气壮地说你瞅啥一样，太野蛮了。。。&lt;/p&gt;
 
@@ -536,6 +539,7 @@ containerid=&amp;amp;containerid=100103type%3D1%26q%3D浦东租房&lt;br /&gt;
   &lt;li&gt;python 的第三方requests库使用起来比自带的urllib更容易，是对urlib的进一步封装，读者可以自己尝试，这里不再举例。&lt;/li&gt;
   &lt;li&gt;在spider文件夹目录下可自建爬虫，爬取像豆瓣租房小组类似信息加入数据库。&lt;/li&gt;
   &lt;li&gt;数据分析部分比如如何识别微博机器人，如何构建信息评价指标等，每个人实现方案不一样，挖掘信息的程度不同而已，本文不予给出。&lt;/li&gt;
+  &lt;li&gt;可设置定时任务，比如一般上海租房每天更新两页，就定时运行命令并且num=2。&lt;/li&gt;
   &lt;li&gt;技术分享，全篇五千多字欢迎转载，但请注明出处，否则，否则我哭给你看😢。。。&lt;/li&gt;
 &lt;/ol&gt;
 
