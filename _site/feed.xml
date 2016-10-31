@@ -5,8 +5,8 @@
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
     <link>https://luzhijun.github.io/</link>
     <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 29 Oct 2016 19:09:29 +0800</pubDate>
-    <lastBuildDate>Sat, 29 Oct 2016 19:09:29 +0800</lastBuildDate>
+    <pubDate>Mon, 31 Oct 2016 09:53:31 +0800</pubDate>
+    <lastBuildDate>Mon, 31 Oct 2016 09:53:31 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -15,7 +15,7 @@
 
 &lt;p&gt;本文基于python以新浪微博为数据平台，从数据采集、关键字提取、数据存储三个角度，用最简单的策略来挖掘我们的“黄金”。&lt;/p&gt;
 
-&lt;p&gt;有爬虫基础的人可以直接跳过数据采集部分看“上海租房”话题挖掘实战项目，项目s地址&lt;a href=&quot;https://github.com/luzhijun/weiboSA&quot;&gt;https://github.com/luzhijun/weiboSA&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;有爬虫基础的人可以直接跳过数据采集部分看“上海租房”话题挖掘实战项目，项目地址&lt;a href=&quot;https://github.com/luzhijun/weiboSA&quot;&gt;https://github.com/luzhijun/weiboSA&lt;/a&gt;（目前已更新豆瓣小组爬取）。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;数据采集&lt;/h2&gt;
 &lt;p&gt;使用python是因为代码简洁，虽然计算比java和c慢很多，但数据采集时间开销大部分是IO部分的，你愿意每次用java或者c写效率也提高不到哪去。&lt;/p&gt;
