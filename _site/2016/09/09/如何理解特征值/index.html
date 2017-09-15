@@ -13,7 +13,7 @@
 
     <title>如何理解特征值 - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/">
+    <link rel="canonical" href="http://localhost:4000/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -199,18 +199,18 @@ MathJax.Hub.Config({
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h3 id="section">定义</h3>
+				<h3 id="定义">定义</h3>
 <p>从线性空间的角度看，在一个定义了内积的线性空间里，对一个N阶<b>对称</b>方阵进行特征分解，就是产生了该空间的N个标准正交基，然后把矩阵投影到这N个基上。N个特征向量就是N个标准正交基，而特征值的模则代表矩阵在每个基上的投影长度。<br />
 特征值越大，说明矩阵在对应的特征向量上的方差越大，功率越大，信息量越多。应用到最优化中，意思就是对于R的二次型，自变量在这个方向上变化的时候，对函数值的影响最大，也就是该方向上的方向导数最大。应用到数据挖掘中，意思就是最大特征值对应的特征向量方向上包含最多的信息量，如果某几个特征值很小，说明这几个方向信息量很小，可以用来降维，也就是删除小特征值对应方向的数据，只保留大特征值方向对应的数据，这样做以后数据量减小，但有用信息量变化不大。</p>
 
-<h3 id="section-1">应用1 二次型最优化问题</h3>
+<h3 id="应用1-二次型最优化问题">应用1 二次型最优化问题</h3>
 <p>二次型$y=x^{T}Rx$，其中R是已知的二阶矩阵，R=[1，0.5；0.5，1]，$x$是二维列向量，$x=[x_1；x_2]$，求$y$的最小值。求解很简单，讲一下这个问题与特征值的关系。<br />
 对R特征分解，特征向量是[-0.7071,0.7071]和[0.7071,0.7071]，对应的特征值分别是0.5和1.5。然后把y的等高线图画一下:<br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-10/57525802.jpg" alt="" /><br />
 从图中看，函数值变化最快的方向，也就是曲面最陡峭的方向，归一化以后是[0.7071；0.7071]，嗯哼，这恰好是矩阵R的一个特征值，而且它对应的特征向量是最大的。因为这个问题是二阶的，只有两个特征向量，所以另一个特征向量方向就是曲面最平滑的方向。这一点在分析最优化算法收敛性能的时候需要用到。<br />
 二阶问题比较直观，当R阶数升高时，也是一样的道理。</p>
 
-<h3 id="section-2">应用2 数据降维</h3>
+<h3 id="应用2-数据降维">应用2 数据降维</h3>
 <p>机器学习中的分类问题，给出178个葡萄酒样本，每个样本含有13个参数，比如酒精度、酸度、镁含量等，这些样本属于3个不同种类的葡萄酒。任务是提取3种葡萄酒的特征，以便下一次给出一个新的葡萄酒样本的时候，能根据已有数据判断出新样本是哪一种葡萄酒。<br />
 <a href="http://archive.ics.uci.edu/ml/datasets/Wine">问题详细描述</a>  <br />
 <a href="http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data">训练样本数据</a><br />
@@ -218,7 +218,20 @@ MathJax.Hub.Config({
 做法：把数据集赋给一个178行13列的矩阵R，减掉均值并归一化(中心化)，它的协方差矩阵$C=R^{T}R$，C是13行13列的矩阵，对C进行特征分解，对角化$C=UDU^{T}$，其中U是特征向量组成的矩阵，D是特征之组成的对角矩阵，并按由大到小排列。然后，另$R’ =RU$，就实现了数据集在特征向量这组正交基上的投影。嗯，重点来了，R’中的数据列是按照对应特征值的大小排列的，后面的列对应小特征值，去掉以后对整个数据集的影响比较小。比如，现在我们直接去掉后面的7列，只保留前6列，就完成了降维。这个降维方法叫PCA（Principal Component Analysis）。
 以下是PCA的python代码:</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">def</span> <span class="nf">pca</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">topNfeat</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="n">meanVals</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -232,7 +245,8 @@ MathJax.Hub.Config({
     <span class="n">lowDDataMat</span> <span class="o">=</span> <span class="n">stded</span> <span class="o">*</span> <span class="n">redEigVects</span>    <span class="c">#求新的数据矩阵</span>
     <span class="n">reconMat</span> <span class="o">=</span> <span class="p">(</span><span class="n">lowDDataMat</span> <span class="o">*</span> <span class="n">redEigVects</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span> <span class="o">+</span> <span class="n">meanVals</span>
     <span class="k">return</span> <span class="n">lowDDataMat</span><span class="p">,</span> <span class="n">reconMat</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 <p>下面看结果：<br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-10/84800048.jpg" alt="" /><br />
@@ -245,32 +259,10 @@ MathJax.Hub.Config({
 
                 <hr>
 
-                
-                <!-- 多说 Share start -->
-                </style>
-                <div class="ds-share"
-                    style="text-align: right"
-                    data-thread-key="/2016/09/09/如何理解特征值"
-                    data-title="如何理解特征值"
-                    data-url="https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/"
-                    data-images="https://luzhijun.github.io/img/post-bg-eigenvalue.jpg"
-                    data-content="定义
-从线性空间的角度看，在一个定义了内积的线性空间里，对一个N阶对称方阵进行特征分解，就是产生了该空间的N个标准正交基，然后把矩阵投影到这N个基上。N个... | 楚汐|Trucy Luce Blog " >
-                    <div class="ds-share-inline">
-                      <ul  class="ds-share-icons-16">
-                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
-                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
-                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
-                      </ul>
-                      <div class="ds-share-icons-more">
-                      </div>
-                    </div>
-                <hr>
-                </div>
-                <!-- 多说 Share end-->
-                
-
+                <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
                 <ul class="pager">
                     
@@ -284,21 +276,6 @@ MathJax.Hub.Config({
                     </li>
                     
                 </ul>
-
-
-                
-                <!-- 多说评论框 start -->
-                <div class="comment">
-                    <div class="ds-thread"
-                        data-thread-key="/2016/09/09/如何理解特征值"
-                        data-title="如何理解特征值"
-                        data-url="https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/" >
-                    </div>
-                </div>
-                <!-- 多说评论框 end -->
-                
-
-                
 
             </div>
 
@@ -402,25 +379,10 @@ MathJax.Hub.Config({
     </div>
 </article>
 
-
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    // dynamic User by Hux
-    var _user = 'TrucyLuce';
-
-    // duoshuo comment query.
-    var duoshuoQuery = {short_name: _user };
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-         || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 多说公共JS代码 end -->
-
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
 
 
@@ -517,7 +479,7 @@ MathJax.Hub.Config({
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2016
+                    Copyright &copy; T.L Blog 2017
                     <br>
                 </p>
             </div>

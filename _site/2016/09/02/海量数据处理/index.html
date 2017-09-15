@@ -13,7 +13,7 @@
 
     <title>海量大数据处理单机方案 - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">
+    <link rel="canonical" href="http://localhost:4000/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -204,7 +204,7 @@ MathJax.Hub.Config({
 				<p>所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。<br />
 现在如果要求单机解决海量数据处理呢？显然只有通过空间换时间，通过把大数据分成小块小块解决，或者通过巧妙的算法和相应的数据结构来各个击破。</p>
 
-<h2 id="hash">1. HASH算法</h2>
+<h2 id="1-hash算法">1. HASH算法</h2>
 
 <p>Hash可以通过散列函数将任意长度的输入变成固定长度的输出，也可以将不同的输入映射成为相同的相同的输出，而且这些输出范围也是可控制的，所以起到了很好的压缩映射和等价映射功能。这些特性被应用到了信息安全领域中加密算法，其中等价映射这一特性在海量数据解决方案中起到相当大的作用，特别是在整个MapReduce框架中，下面章节会对这二方面详细说。话说，Hash为什么会有这种压缩映射和等价映射功能，主要是因为Hash函数在实现上都使用到了取模。下面看看几种常用的Hash函数：</p>
 
@@ -215,7 +215,7 @@ MathJax.Hub.Config({
   <li>将关键字分割成位数相同的几个部分（最后一部分位数可以不同），然后取这几个部分的叠加和（舍弃进位）作为哈希地址。关键字位数很多，而且关键字中每一位数字分布大致均匀时，可以采用折叠法。。</li>
 </ul>
 
-<h3 id="hash-1">1.1 Hash算法在海量数据处理方案中的应用</h3>
+<h3 id="11-hash算法在海量数据处理方案中的应用">1.1 Hash算法在海量数据处理方案中的应用</h3>
 
 <p>单机处理海量数据的大体主流思想是和MapReduce框架一样，都是采取分而治之的方法，将海量数据切分为若干小份来进行处理，并且在处理的过程中要兼顾内存的使用情况和处理并发量情况。而更加仔细的处理流程大体上分为几步（对大多数情况都使用，其中少部分情况要根据你自己的实际情况和其他解决方法做比较采用最符合实际的方法）:</p>
 
@@ -259,12 +259,24 @@ MathJax.Hub.Config({
 
 <p>像例子3和例子4这些场景都可以用我们的一贯老招数解决：先Hash映射降低数据规模，然后统计加载到内存，最后排序。具体做法可以参考上面2个例子。</p>
 
-<h3 id="hashmapreduce">1.2 Hash算法在Mapreduce中的应用</h3>
+<h3 id="12-hash算法在mapreduce中的应用">1.2 Hash算法在Mapreduce中的应用</h3>
 <p>Hash算法在分布式计算框架MapReduce中起着核心作用。先来看看下面整个mapreduce的运行流程，首先是原始数据经过切片进入到map函数中，经过map函数的数据会在整个环形缓冲区里边进行第一次排序，接着map的输出结果会根据key值(默认情况是这样，另外可以自定义)进行Hash映射将数据量庞大的map输出分割为N份（N为reduce数目）来实现数据的并行处理，这就是Partition阶段，另外MapReduce框架中Partition的实现方式往往能够决定数据的倾斜度，所以在处理数据前最好要对数据的分布情况有所了解。其Partition的实现主要有：HashPartitioner、BinaryPartitioner、KeyFieldBasedPartitioner、TotalOrderPartitioner这几种，其中HashPartitioner是默认的。首先来看看HashPartitioner的核心实现： 
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/50512419.jpg" alt="" />
 	接下来从MapReudce的源码角度来研究一下Partition的实现原理：</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>	<span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">mapreduce</span><span class="o">.</span><span class="na">lib</span><span class="o">.</span><span class="na">partition</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre>	<span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">mapreduce</span><span class="o">.</span><span class="na">lib</span><span class="o">.</span><span class="na">partition</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceAudience</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceStability</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.mapreduce.Partitioner</span><span class="o">;</span>
@@ -277,11 +289,12 @@ MathJax.Hub.Config({
 	<span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">%</span> <span class="n">numReduceTasks</span><span class="o">;</span>
 	<span class="err"> </span> <span class="o">}</span>
 	<span class="o">}</span>
-</code></pre>
+</pre></td></tr></tbody></table>
 </div>
-<p>我们看到第11行，在这里我们有看到了可爱的Hash取模映射方法，这样做的原因大家看到这里都应该已经了然于心了。另外，TotalOrderPartitioner、BinaryPartitioner等几种Partitioner的实现都是基于Hash取模映射方法，只是他们为了实现自己自定义的功能而添加了一些逻辑，例如其中的TotalOrderPartitioner可以实现全排序功能。其他几个Partition的源代码这里就不贴了，有兴趣的可以自己看看。<br />
-## 2. BitMap
-先看看这样的一个场景：给一台普通PC，2G内存，要求处理一个包含40亿个不重复并且没有排过序的无符号的int整数，给出一个整数，问如果快速地判断这个整数是否在文件40亿个数据当中？</p>
+</div>
+<p>我们看到第11行，在这里我们有看到了可爱的Hash取模映射方法，这样做的原因大家看到这里都应该已经了然于心了。另外，TotalOrderPartitioner、BinaryPartitioner等几种Partitioner的实现都是基于Hash取模映射方法，只是他们为了实现自己自定义的功能而添加了一些逻辑，例如其中的TotalOrderPartitioner可以实现全排序功能。其他几个Partition的源代码这里就不贴了，有兴趣的可以自己看看。</p>
+<h2 id="2-bitmap">2. BitMap</h2>
+<p>先看看这样的一个场景：给一台普通PC，2G内存，要求处理一个包含40亿个不重复并且没有排过序的无符号的int整数，给出一个整数，问如果快速地判断这个整数是否在文件40亿个数据当中？</p>
 
 <p>问题思考：<br />
 40亿个int占（40亿*4）/1024/1024/1024 大概为14.9G左右，很明显内存只有2G，放不下，因此不可能将这40亿数据放到内存中计算。要快速的解决这个问题最好的方案就是将数据搁内存了，所以现在的问题就在如何在2G内存空间以内存储着40亿整数。一个int整数在java中是占4个字节的即要32bit位，如果能够用一个bit位来标识一个int整数那么存储空间将大大减少，算一下40亿个int需要的内存空间为40亿/8/1024/1024大概为476.83 mb，这样的话我们完全可以将这40亿个int数放到内存中进行处理。
@@ -295,10 +308,75 @@ tmp[2]可表示64~95<br />
 那么接下来就看看十进制数如何转换为对应的bit位：<br />
 假设这40亿int数据为：6,3,8,32,36,……，那么具体的BitMap表示为： 
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/19570036.jpg" alt="" />
-如何判断int数字在tmp数组的哪个下标，这个其实可以通过直接除以32取整数部分，例如：整数8除以32取整等于0，那么8就在tmp[0]上。另外，我们如何知道了8在tmp[0]中的32个位中的哪个位，这种情况直接mod上32就ok，又如整数8，在tmp[0]中的第8 mod上32等于8，那么整数8就在tmp[0]中的第八个bit位（从右边数起）。
-### 2.1 BitMap算法实现</p>
+如何判断int数字在tmp数组的哪个下标，这个其实可以通过直接除以32取整数部分，例如：整数8除以32取整等于0，那么8就在tmp[0]上。另外，我们如何知道了8在tmp[0]中的32个位中的哪个位，这种情况直接mod上32就ok，又如整数8，在tmp[0]中的第8 mod上32等于8，那么整数8就在tmp[0]中的第八个bit位（从右边数起）。</p>
+<h3 id="21-bitmap算法实现">2.1 BitMap算法实现</h3>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">BitMap</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66</pre></td><td class="code"><pre>	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">BitMap</span> <span class="o">{</span>
 	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">BITWORD</span><span class="o">=</span><span class="mi">32</span><span class="o">;</span><span class="c1">//int32大小</span>
 	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">SHIFT</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span><span class="c1">//2^5=32</span>
 	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">MASK</span><span class="o">=</span><span class="mh">0x1f</span><span class="o">;</span><span class="c1">//0001 1111   </span>
@@ -364,10 +442,11 @@ tmp[2]可表示64~95<br />
 	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">count</span><span class="o">());</span><span class="c1">//结果：2</span>
 	<span class="o">}</span>
 	<span class="o">}</span>
-</code></pre>
+</pre></td></tr></tbody></table>
 </div>
-<p>### 2.2 bitmap应用案例
-<strong>案例1 已知某文件中包含一些电话号码，每个号码8位，统计不同号码个数。</strong></p>
+</div>
+<h3 id="22-bitmap应用案例">2.2 bitmap应用案例</h3>
+<p><strong>案例1 已知某文件中包含一些电话号码，每个号码8位，统计不同号码个数。</strong></p>
 
 <p>8位数字最大表示99999999，用bitmap解决，每个数字对应一个比特位，就有10^8»3=12M,也就是说3M表示了所有8位数电话，依次读入每个号码，将对应bit置为1，最后统计bit-map中1的个数即可。</p>
 
@@ -386,7 +465,7 @@ tmp[2]可表示64~95<br />
 方案1：先大体估计一下这些数的范围，比如这里假设这些数都是32位无符号整数（共有$N^{32}$个，我们把$0 \sim 2^{32}-1$的整数划分为N个范围段，每个段包含$\frac{2^{32}}{N}$个整数，第一段为$0 \sim \frac{2^{32}}{N}-1$,第二段为$\frac{2^{32}}{N} \sim 2\frac{2^{32}}{N}-1$,…,以此类推。然后，扫描每个机器上的N个数，把属于第一个区段的数放到第一个机器上，属于第二个区段的数放到第二个机器上，…，属于第N个区段的数放到第N个机器上。 注意这个过程每个机器上存储的数应该是O(N)的。下面我们依次统计每个机器上数的个数，一次累加，直到找到第k个机器，在该机器上累加的数大于或等于$\frac{N^2}{2}$,而k-1个机器的累加和小于$\frac{N^2}{2}$，
 把这个数记作$x$，那么第k个机器的上只要找第$\frac{N^2}{2}-x$个数即为所求中位数。复杂度$O(N^2)$。</p>
 
-<h2 id="trie">3. Trie树</h2>
+<h2 id="3-trie树">3. Trie树</h2>
 <p>Trie 树， 又称字典树，单词查找树。它来源于retrieval(检索)中取中间四个字符构成(读音同try)。用于存储大量的字符串以便支持快速模式匹配。主要应用在信息检索领域。Trie 有三种结构： 标准trie (standard trie)、压缩trie、后缀trie(suffix trie) 。简要说下这个standard trie。</p>
 
 <p>标准Trie树的结构 ：所有含有公共前缀的字符串将挂在树中同一个结点下。实际上trie简明的存储了存在于串集合中的所有公共前缀。 假如有这样一个字符串集合$X{bear,bell,bid,bull,buy,sell,stock,stop}$。它的标准Trie树如下图：
@@ -428,18 +507,18 @@ tmp[2]可表示64~95<br />
 (2) 内部结点的指针用可变长数组存储。<br />
 特点：由于中文词语很少操作4个字的，因此Trie树的高度不长。查找的时间主要耗费在内部结点指针的查找。因此将这项指向字的指针按照字的Unicode码值排序，然后加载进内存以后通过二分查找能够提高效率。</p>
 
-<h3 id="section">3.1 应用案例</h3>
+<h3 id="31-应用案例">3.1 应用案例</h3>
 <p><strong>案例1.热门查询</strong><br />
 	搜索引擎会通过日志文件把用户每次检索使用的所有检索串都记录下来，每个查询串的长度为1-255字节。假设目前有一千万个记录，这些查询串的 重复读比较高，虽然总数是1千万，但是如果去除重复和，不超过3百万个。一个查询串的重复度越高，说明查询它的用户越多，也就越热门。请你统计最热门的 10个查询串，要求使用的内存不能超过1G。<br />
 	解决：300万个记录，每个记录不超过2^8B，总共存储的话不超过1G内存。采用trie树，关键字域存该查询串出现的次数，没有出现为0。最后用10个元素的最小推来对出现频率进行排序。</p>
 
-<h2 id="bloom-filter">4.Bloom Filter</h2>
+<h2 id="4bloom-filter">4.Bloom Filter</h2>
 <p>像1中例2，用分块hash的方法的确能处理问题，那如果允许少量错误的不分块解决方案呢？
 我们可不可以不存url本身？这样子所需空间就会大大减少了。于是我们想到一个很经典的做法：bitmap。将集合S中的url哈希到bitmap上，给定一个url，只需要将它hash，得到它在bitmap的下标，检查该位置是否为1即可。</p>
 
-<p>这样做空间是省了，可是也产生了一个问题：由于冲突（碰撞）不同的url可能会hash到同一个位置上，导致错误。如何降低hash冲突呢？Bloom Filter的想法是使用多个独立的哈希函数。
-### 4.1 Standard Bloom Filter
-传统的Bloom Filter中，我们有：集合S：其大小为m。也就是说，集合中有m个不同元素。可用内存B：B被当成位数组bitmap来使用，大小为n。（有n个bit）。哈希函数：有k个独立的、均匀分布的哈希函数。</p>
+<p>这样做空间是省了，可是也产生了一个问题：由于冲突（碰撞）不同的url可能会hash到同一个位置上，导致错误。如何降低hash冲突呢？Bloom Filter的想法是使用多个独立的哈希函数。</p>
+<h3 id="41-standard-bloom-filter">4.1 Standard Bloom Filter</h3>
+<p>传统的Bloom Filter中，我们有：集合S：其大小为m。也就是说，集合中有m个不同元素。可用内存B：B被当成位数组bitmap来使用，大小为n。（有n个bit）。哈希函数：有k个独立的、均匀分布的哈希函数。</p>
 
 <p>Bloom Filter的做法是：初始时，所有比特位都初始化为0。对于集合中的每个元素，利用k个哈希函数，对它哈希得到k个位置，将bitmap中的对应的k个位置置为1。</p>
 
@@ -476,38 +555,17 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
 总结一下，Bloom filter将集合中的元素映射到位数组中，用k（k为哈希函数个数）个映射位是否全1表示元素在不在这个集合中。另外Counting bloom filter（CBF）将位数组中的每一位扩展为一个counter，从而支持了元素的删除操作。Spectral Bloom Filter（SBF）将其与集合元素的出现次数关联。SBF采用counter中的最小值来近似表示元素的出现频率。感兴趣可以自己百科。
 总结下，使用bloom filter的场景必然允许false positive。也就是说，发生false positive不应该是致命的。比如说，搜索引擎的爬虫里，如果url不是set的元素，却被bloom filter过滤了，那么顶多就是不抓它而已，没啥特别大的损失。</p>
 
-<h3 id="section-1">4.2 案例应用</h3>
+<h3 id="42-案例应用">4.2 案例应用</h3>
 <p><strong>【案例1】给你A,B两个文件，各存放50亿条URL，每条URL占用64字节，内存限制是4G，让你找出A,B文件共同的URL。如果是三个乃至n个文件呢？</strong><br />
 根据这个问题我们来计算下内存的占用，4G=2^32大概是40亿字节，*8大概是320亿比特，m=50亿，如果按出错率0.01算需要的大概是650亿个bit。现在可用的是480亿，相差并不多，这样可能会使出错率上升些。另外如果这些url与ip是一一对应的，就可以转换成ip，则大大简单了。</p>
 
 
                 <hr>
 
-                
-                <!-- 多说 Share start -->
-                </style>
-                <div class="ds-share"
-                    style="text-align: right"
-                    data-thread-key="/2016/09/02/海量数据处理"
-                    data-title="海量大数据处理单机方案"
-                    data-url="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/"
-                    data-images="https://luzhijun.github.io/img/post-bg-bigData.jpg"
-                    data-content="所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次... | 楚汐|Trucy Luce Blog " >
-                    <div class="ds-share-inline">
-                      <ul  class="ds-share-icons-16">
-                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
-                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
-                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
-                      </ul>
-                      <div class="ds-share-icons-more">
-                      </div>
-                    </div>
-                <hr>
-                </div>
-                <!-- 多说 Share end-->
-                
-
+                <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
                 <ul class="pager">
                     
@@ -521,21 +579,6 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
                     </li>
                     
                 </ul>
-
-
-                
-                <!-- 多说评论框 start -->
-                <div class="comment">
-                    <div class="ds-thread"
-                        data-thread-key="/2016/09/02/海量数据处理"
-                        data-title="海量大数据处理单机方案"
-                        data-url="https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" >
-                    </div>
-                </div>
-                <!-- 多说评论框 end -->
-                
-
-                
 
             </div>
 
@@ -639,25 +682,10 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
     </div>
 </article>
 
-
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    // dynamic User by Hux
-    var _user = 'TrucyLuce';
-
-    // duoshuo comment query.
-    var duoshuoQuery = {short_name: _user };
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-         || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 多说公共JS代码 end -->
-
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
 
 
@@ -754,7 +782,7 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2016
+                    Copyright &copy; T.L Blog 2017
                     <br>
                 </p>
             </div>

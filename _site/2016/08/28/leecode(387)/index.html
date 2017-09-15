@@ -13,7 +13,7 @@
 
     <title>Leecode(387) - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/2016/08/28/leecode(387)/">
+    <link rel="canonical" href="http://localhost:4000/2016/08/28/leecode(387)/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -201,11 +201,11 @@ MathJax.Hub.Config({
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h3 id="section">题目</h3>
+				<h3 id="题目">题目</h3>
 <p>从一个字符串中找出第一个非重复字符，输出所在字符串中的位置，如果不存在，输出-1.<br />
 难度评价：简单</p>
 
-<h3 id="section-1">例子</h3>
+<h3 id="例子">例子</h3>
 <blockquote>
   <p>Examples:<br />
  s = “leetcode”<br />
@@ -214,12 +214,27 @@ MathJax.Hub.Config({
  return 2.</p>
 </blockquote>
 
-<h3 id="section-2">解法</h3>
+<h3 id="解法">解法</h3>
 <p>思路很简单，就是对每个字符计数，然后找出计数为1的字符输出。既然要输出索引，那么就要想办法在计数的时候就把索引信息输进去，千万别用index(x)或者find(x)方法来增大时间开销。</p>
 
 <p>第一种方法，利用Ordereddict. Ordereddict为python中的顺序字典，存储结构为FIFO的链式。</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="k">def</span> <span class="nf">firstUniqChar1</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="s">"""
     :type s: str
@@ -235,25 +250,40 @@ MathJax.Hub.Config({
         <span class="k">if</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 <p>上述程序设置OrderedDict初始值都为字符所在索引值，若有重复标记为-1，那么结果中只要查第一个非-1的item即可拿到索引。程序中用OrderedDict保持索引顺序性，但实际上字符串本身就有顺序性，只需要一个普通字典就可以了，以字符串为字典的键，无需OrderedDict这种高昂的结构。</p>
 
 <p>第二种方法，利用collections中的计数字典Counter来替代</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="k">def</span> <span class="nf">firstUniqChar2</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="n">char_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>     
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">char_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">i</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 
 <p>其实仔细想想字典的键值既然都是字符，那么其ASCII码对应的整数可以用数组索引表示。初始化一个128位的字符数组即可表示所有可能的拉丁字符,对应字典中的键值。</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">firstUniqChar3</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">firstUniqChar3</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="n">chars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">128</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
         <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">+=</span><span class="mi">1</span>
@@ -261,52 +291,25 @@ MathJax.Hub.Config({
         <span class="k">if</span> <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">i</span>        
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 
 <p>以上三种数据结构虽然都能解决问题，但时间复杂度明显有差距，尤其是第三种。
 以”dddccdbba”为例，重复1万次，对应时间做成柱状图如下：<br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-8-28/9428434.jpg" alt="" /></p>
 
-<h3 id="section-3">总结</h3>
+<h3 id="总结">总结</h3>
 <p>能用数组尽量数组，当键值为整数或者字符的时候，数组完全可以替代字典的功能。</p>
 
 
 
                 <hr>
 
-                
-                <!-- 多说 Share start -->
-                </style>
-                <div class="ds-share"
-                    style="text-align: right"
-                    data-thread-key="/2016/08/28/leecode(387)"
-                    data-title="Leecode(387)"
-                    data-url="https://luzhijun.github.io/2016/08/28/leecode(387)/"
-                    data-images="https://luzhijun.github.io/img/post-bg-cube.jpg"
-                    data-content="题目
-从一个字符串中找出第一个非重复字符，输出所在字符串中的位置，如果不存在，输出-1.
-难度评价：简单
-
-例子
-
-  Examples:
- s = “l... | 楚汐|Trucy Luce Blog " >
-                    <div class="ds-share-inline">
-                      <ul  class="ds-share-icons-16">
-                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
-                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
-                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
-                      </ul>
-                      <div class="ds-share-icons-more">
-                      </div>
-                    </div>
-                <hr>
-                </div>
-                <!-- 多说 Share end-->
-                
-
+                <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
                 <ul class="pager">
                     
@@ -320,21 +323,6 @@ MathJax.Hub.Config({
                     </li>
                     
                 </ul>
-
-
-                
-                <!-- 多说评论框 start -->
-                <div class="comment">
-                    <div class="ds-thread"
-                        data-thread-key="/2016/08/28/leecode(387)"
-                        data-title="Leecode(387)"
-                        data-url="https://luzhijun.github.io/2016/08/28/leecode(387)/" >
-                    </div>
-                </div>
-                <!-- 多说评论框 end -->
-                
-
-                
 
             </div>
 
@@ -438,25 +426,10 @@ MathJax.Hub.Config({
     </div>
 </article>
 
-
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    // dynamic User by Hux
-    var _user = 'TrucyLuce';
-
-    // duoshuo comment query.
-    var duoshuoQuery = {short_name: _user };
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-         || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 多说公共JS代码 end -->
-
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
 
 
@@ -553,7 +526,7 @@ MathJax.Hub.Config({
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2016
+                    Copyright &copy; T.L Blog 2017
                     <br>
                 </p>
             </div>

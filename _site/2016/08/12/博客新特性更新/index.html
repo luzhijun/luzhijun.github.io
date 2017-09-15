@@ -13,7 +13,7 @@
 
     <title>博客新特性更新 - 楚汐|Trucy Luce Blog</title>
 
-    <link rel="canonical" href="https://luzhijun.github.io/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/">
+    <link rel="canonical" href="http://localhost:4000/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -209,7 +209,7 @@ MathJax.Hub.Config({
   <li>添加latex公式支持</li>
 </ol>
 
-<h3 id="section">更改高亮样式</h3>
+<h3 id="更改高亮样式">更改高亮样式</h3>
 <p>使用rouge重新生成了github样式，喜欢这种简明的风格，也很简单。
 <a href="https://github.com/jneen/rouge">rouge</a>专注语法高亮，纯ruby代码，支持主题在<a href="https://github.com/jneen/rouge/tree/master/lib/rouge/themes">https://github.com/jneen/rouge/tree/master/lib/rouge/themes</a>可以找到。以github样式为例子。</p>
 
@@ -219,7 +219,7 @@ MathJax.Hub.Config({
 
 <p>将syntax.css替换原来的文件即可。这里在github样式基础上把background-color设置为纯白，这样显得更简洁。</p>
 
-<h3 id="section-1">解决代码显示问题</h3>
+<h3 id="解决代码显示问题">解决代码显示问题</h3>
 <p>kramdown可以像其他标准markdown一样提供代码模块，通过’`‘或者‘~’或者连续空格来展开代码书写，最后解析成含&lt;pre&gt;的html语句。但作为一个程序员怎么能忍受没有行号的代码呢。jekyll原生的显示行号代码标注符号为</p>
 
 <blockquote>
@@ -242,24 +242,39 @@ MathJax.Hub.Config({
 
 <p>看一下解析的源码,嵌套层次是&lt;figure&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;pre&gt;然后再显示代码疯了吧，果断不用这个语法。用原声&lt;pre&gt;语法改下,通过css来增加行号。实践过程中发现css的强大之处：伪选择器。在syntax.css中加入了linenumber的样式方案。js做的主要根据代码行数加入span标签，具体看博客源码提交描述为“特性2”的更新部分。现在可以通过最原始的插入代码方法，让代码显示如下：</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
   <span class="n">puts</span> <span class="s">'foo'</span>  
 <span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 
 <p>以上是python显示方式，如果在```之后没有加语言类型标注，css默认把行号和高亮去掉，并且取消缩进，显示如下格式。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>def foo:
+<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>def foo:
   puts 'foo'  
 a=[1,2,3]
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 
-<h3 id="latex">添加latex公式支持</h3>
+<h3 id="添加latex公式支持">添加latex公式支持</h3>
 <p>虽然kramdown支持解析公式，但需要mathjax支持显示。考虑搞算法的避免不了公式，轻量级公式怕支持度不够，于是装上了mathjax。注意到代码太长也不怕喽，支持滚动哟。</p>
 
-<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/x-mathjax-config"</span><span class="o">&gt;</span> 
+<div class="language-js highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/x-mathjax-config"</span><span class="o">&gt;</span> 
 <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Config</span><span class="p">({</span> 
   <span class="na">tex2jax</span><span class="p">:</span> <span class="p">{</span>
   <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="s1">'$'</span><span class="p">,</span><span class="s1">'$'</span><span class="p">],</span> <span class="p">[</span><span class="s2">"\\("</span><span class="p">,</span><span class="s2">"\\)"</span><span class="p">]</span> <span class="p">],</span>
@@ -269,20 +284,26 @@ a=[1,2,3]
 <span class="p">});</span> 
 <span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"</span><span class="o">&gt;</span>
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 <p>可以很好的支持公式显示，通过</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&lt;script type="math/tex; mode=display"&gt;
+<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>&lt;script type="math/tex; mode=display"&gt;
 O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}
 &lt;/script&gt;
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 <p>或者</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$$公式行居中$$
+<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre>$$公式行居中$$
 $公式$
-</code></pre>
+</pre></td></tr></tbody></table>
+</div>
 </div>
 
 <script type="math/tex; mode=display">O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}</script>
@@ -292,34 +313,10 @@ $公式$
 
                 <hr>
 
-                
-                <!-- 多说 Share start -->
-                </style>
-                <div class="ds-share"
-                    style="text-align: right"
-                    data-thread-key="/2016/08/12/博客新特性更新"
-                    data-title="博客新特性更新"
-                    data-url="https://luzhijun.github.io/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/"
-                    data-images="https://luzhijun.github.io/img/post-bg-kuaidi.jpg"
-                    data-content="新博客模板或许作者不更新了，部署了之后发现了一些bug。让一个程序员做前端的细节优化还真是耗时间呐，ok这次更新主要集中在以下三方面：
-
-
-  解决代码显... | 楚汐|Trucy Luce Blog " >
-                    <div class="ds-share-inline">
-                      <ul  class="ds-share-icons-16">
-                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
-                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
-                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
-                      </ul>
-                      <div class="ds-share-icons-more">
-                      </div>
-                    </div>
-                <hr>
-                </div>
-                <!-- 多说 Share end-->
-                
-
+                <!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
                 <ul class="pager">
                     
@@ -333,21 +330,6 @@ $公式$
                     </li>
                     
                 </ul>
-
-
-                
-                <!-- 多说评论框 start -->
-                <div class="comment">
-                    <div class="ds-thread"
-                        data-thread-key="/2016/08/12/博客新特性更新"
-                        data-title="博客新特性更新"
-                        data-url="https://luzhijun.github.io/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/" >
-                    </div>
-                </div>
-                <!-- 多说评论框 end -->
-                
-
-                
 
             </div>
 
@@ -451,25 +433,10 @@ $公式$
     </div>
 </article>
 
-
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    // dynamic User by Hux
-    var _user = 'TrucyLuce';
-
-    // duoshuo comment query.
-    var duoshuoQuery = {short_name: _user };
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-         || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 多说公共JS代码 end -->
-
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144688"></script>
+<!-- UY END -->
 
 
 
@@ -566,7 +533,7 @@ $公式$
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2016
+                    Copyright &copy; T.L Blog 2017
                     <br>
                 </p>
             </div>
