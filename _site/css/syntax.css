@@ -1,4 +1,4 @@
-.highlight table td { padding: 5px; }
+.highlight table td { padding: 0 px; }
 .highlight table pre { margin: 0; }
 .highlight .cm {
   color: #999988;
@@ -214,8 +214,17 @@ pre.highlight {
   counter-reset: linenumber;
 }
 
+.table>tbody>tr>td.gutter{
+  width: 20px;
+}
+
+.table>tbody>tr>td.gutter>.lineno{
+background-color:white;
+}
+
 pre.highlight > code {
   position: relative;
+  padding-right: 0px;
 }
 
 span.line-numbers-rows{
