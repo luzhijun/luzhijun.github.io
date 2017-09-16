@@ -17,7 +17,6 @@
 ###### 其他历史版本个人觉得没有必要了解，看看英文就行了。
 
 
-
 ## 支持
 
 * 你可以自由的fork。如果你能将我的信息和github的地址放在你的页面底部做成链接，我将非常感谢你。
@@ -121,11 +120,8 @@ featured-tags: true
 featured-condition-size: 1     # A tag will be featured if the size of it is more than this condition value
 ```
 
-唯一需要注意的是`featured-condition-size`: A tag will be featured if the size of it is more than this condition value. （也不知道Hux是想表达什么意思，请作者解答）
+唯一需要注意的是`featured-condition-size`: A tag will be featured if the size of it is more than this condition value. 
  
-内部有一个条件模板 `{% if tag[1].size > {{site.featured-condition-size}} %}` 是用来做筛选过滤的.
-
-
 #### Friends
 
 好友链接部分。这会在全部页面显示。
@@ -229,6 +225,3 @@ There are a number of tasks it performs like minification of the JavaScript, com
 2. 感谢[@BrucZhaoR](https://github.com/BruceZhaoR)的中文翻译 
 
 3. 感谢 Jekyll、Github Pages 和 Bootstrap!
-
-
-
