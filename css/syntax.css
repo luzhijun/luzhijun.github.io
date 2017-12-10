@@ -1,12 +1,5 @@
-.highlight { padding: 0 ; }
-.highlight { margin: 0; }
-div>table.rouge-table.table{
-  margin: 0;
-}
-pre{
-  margin: 0;
-  padding: 0 ;
-}
+.highlight table td { padding: 0 px; }
+.highlight table pre { margin: 0; }
 .highlight .cm {
   color: #999988;
   font-style: italic;
@@ -215,27 +208,23 @@ pre{
   background-color: #fff;
 }
 
+pre.highlight {
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
 
-.lineno{
+.table>tbody>tr>td.gutter{
+  width: 20px;
+}
+
+.table>tbody>tr>td.gutter>.lineno{
 background-color:white;
 }
 
-code.table-responsive{
-  padding: 0;
-}
-td.rouge-gutter.gl{
-  padding: 0;
-  position: absolute;
-  pointer-events: none;
-  top: 0;
-  font-size: 100%;
-  left: -3.8em;
-  width: 3em; /* works for line-numbers below 1000 lines */
-  letter-spacing: -1px;
-  border-right: 1px solid #999;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
+pre.highlight > code {
+  position: relative;
+  padding-right: 0px;
 }
 
 span.line-numbers-rows{
@@ -250,17 +239,15 @@ span.line-numbers-rows{
 
   -webkit-user-select: none;
   -moz-user-select: none;
+s
 }
 
-/*
 .line-numbers-rows > span {
   pointer-events: none;
   display: block;
   counter-increment: linenumber;
 }
-*/
 
-/*
 .line-numbers-rows > span:before {
   content: counter(linenumber);
   color: #999;
@@ -268,7 +255,6 @@ span.line-numbers-rows{
   padding-right: 0.8em;
   text-align: right;
 }
-*/
 div[class="highlighter-rouge"]>.highlight{
   position: relative;
   padding-left: 0em;
