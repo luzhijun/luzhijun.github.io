@@ -210,7 +210,17 @@
 
 pre.highlight {
   position: relative;
-  padding-left: 3.8em;
   counter-reset: linenumber;
+}
+td>pre.lineno{
+    background-color: white;
+    width: 3em;
+    position: absolute;
+    padding-right: 0;
+    padding-left: 0;
+    text-align: center;
+}
+td.rouge-gutter.gl{
+  padding-right: 2px;
 }
 
