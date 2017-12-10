@@ -216,6 +216,7 @@ pre.highlight {
 
 .table>tbody>tr>td.gutter{
   width: 20px;
+  background-color:white;
 }
 
 .table>tbody>tr>td.gutter>.lineno{
@@ -225,8 +226,8 @@ background-color:white;
 pre.highlight > code {
   position: relative;
   padding-right: 0px;
-}*/
-
+}
+*/
 span.line-numbers-rows{
   position: absolute;
   pointer-events: none;
@@ -242,11 +243,13 @@ span.line-numbers-rows{
 s
 }
 
+/*
 .line-numbers-rows > span {
   pointer-events: none;
   display: block;
   counter-increment: linenumber;
 }
+*/
 
 .line-numbers-rows > span:before {
   content: counter(linenumber);
