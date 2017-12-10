@@ -211,13 +211,14 @@
 pre.highlight {
   position: relative;
   counter-reset: linenumber;
+  padding: 0;
+  border-width:0;
 }
 td>pre.lineno{
     background-color: white;
     width: 2em;
     position: absolute;
-    padding-right: 0;
-    padding-left: 0;
+    padding: 0;
     text-align: center;
     -webkit-user-select: none;
     -moz-user-select: none;
