@@ -214,13 +214,16 @@ pre.highlight {
 }
 td>pre.lineno{
     background-color: white;
-    width: 3em;
+    width: 2em;
     position: absolute;
     padding-right: 0;
     padding-left: 0;
     text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    border-right: 1px solid #999;
 }
-td.rouge-gutter.gl{
-  padding-right: 2px;
+td.rouge-code{
+  padding-left: 2px;
 }
 
