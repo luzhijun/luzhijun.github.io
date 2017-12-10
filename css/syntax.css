@@ -234,6 +234,7 @@ td.rouge-code{
 }
 td.rouge-code>pre{
   padding: 0;
+  margin-left: 2.3em;
 }
 
 div.table-responsive{
