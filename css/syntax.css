@@ -242,7 +242,12 @@ span.line-numbers-rows{
   -moz-user-select: none;
 s
 }
-
+rouge-gutter.gl{
+  position: relative;
+  padding-left: 3.8em;
+  padding: 0 px
+  background-color:white;
+}
 /*
 .line-numbers-rows > span {
   pointer-events: none;
