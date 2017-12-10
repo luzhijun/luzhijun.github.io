@@ -1,5 +1,12 @@
-.highlight { padding: 0 px; }
+.highlight { padding: 0 ; }
 .highlight { margin: 0; }
+div>table.rouge-table.table{
+  margin: 0;
+}
+pre{
+  margin: 0;
+  padding: 0 ;
+}
 .highlight .cm {
   color: #999988;
   font-style: italic;
@@ -209,12 +216,7 @@
 }
 
 
-.table>tbody>tr>td.gutter{
-  width: 20px;
-  background-color:white;
-}
-
-.table>tbody>tr>td.gutter>.lineno{
+.lineno{
 background-color:white;
 }
 
