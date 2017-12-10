@@ -223,7 +223,12 @@ td>pre.lineno{
     -moz-user-select: none;
     border-right: 1px solid #999;
 }
+td.rouge-gutter.gl{
+  position: absolute;
+  width: 2em;
+  padding: 0;
+}
 td.rouge-code{
-  padding-left: 2px;
+  padding-left: 5px;
 }
 
