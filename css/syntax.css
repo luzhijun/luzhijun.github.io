@@ -222,12 +222,12 @@ pre.highlight {
 .table>tbody>tr>td.gutter>.lineno{
 background-color:white;
 }
-/*
+
 pre.highlight > code {
   position: relative;
   padding-right: 0px;
 }
-*/
+
 span.line-numbers-rows{
   position: absolute;
   pointer-events: none;
@@ -251,6 +251,7 @@ s
 }
 */
 
+/*
 .line-numbers-rows > span:before {
   content: counter(linenumber);
   color: #999;
@@ -258,6 +259,7 @@ s
   padding-right: 0.8em;
   text-align: right;
 }
+*/
 div[class="highlighter-rouge"]>.highlight{
   position: relative;
   padding-left: 0em;
