@@ -1,5 +1,5 @@
-.highlight table td { padding: 0 px; }
-.highlight table pre { margin: 0; }
+.highlight { padding: 0 px; }
+.highlight { margin: 0; }
 .highlight .cm {
   color: #999988;
   font-style: italic;
@@ -207,12 +207,12 @@
 .highlight {
   background-color: #fff;
 }
-/*
+
 pre.highlight {
   position: relative;
   padding-left: 3.8em;
   counter-reset: linenumber;
-}*/
+}
 
 .table>tbody>tr>td.gutter{
   width: 20px;
@@ -242,12 +242,7 @@ span.line-numbers-rows{
   -moz-user-select: none;
 s
 }
-rouge-gutter.gl{
-  position: relative;
-  padding-left: 3.8em;
-  padding: 0 px
-  background-color:white;
-}
+
 /*
 .line-numbers-rows > span {
   pointer-events: none;
