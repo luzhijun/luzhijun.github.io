@@ -208,10 +208,10 @@
   background-color: #fff;
 }
 
+
 pre.highlight {
   position: relative;
   padding-left: 3.8em;
-  counter-reset: linenumber;
 }
 
 .table>tbody>tr>td.gutter{
@@ -222,10 +222,7 @@ pre.highlight {
 background-color:white;
 }
 
-pre.highlight > code {
-  position: relative;
-  padding-right: 0px;
-}
+
 
 span.line-numbers-rows{
   position: absolute;
@@ -239,7 +236,6 @@ span.line-numbers-rows{
 
   -webkit-user-select: none;
   -moz-user-select: none;
-s
 }
 
 .line-numbers-rows > span {
