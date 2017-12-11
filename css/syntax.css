@@ -221,20 +221,23 @@ td>pre.lineno{
     padding: 0;
     text-align: center;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    border-right: 1px solid #999;
+    border-width: 0;
+    border-right: 1px solid #ddd;
+    color: #b99a3599;
+    border-radius: 0;
 }
 td.rouge-gutter.gl{
   position: absolute;
-  width: 2em;
   padding: 0;
+  border: 0; 
 }
 td.rouge-code{
   padding: 0;
 }
 td.rouge-code>pre{
-  padding: 0;
-  margin-left: 2.3em;
+    padding: 0;
+    margin-left: 2.1em;
+    border: 0;
 }
 
 div.table-responsive{
