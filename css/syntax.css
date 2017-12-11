@@ -230,6 +230,7 @@ td.rouge-gutter.gl{
   position: absolute;
   padding: 0;
   border: 0; 
+  background-color: white;
 }
 td.rouge-code{
   padding: 0;
