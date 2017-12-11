@@ -3,10 +3,10 @@
   <channel>
     <title>T.L Blog</title>
     <description>云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 11 Dec 2017 02:19:36 +0800</pubDate>
-    <lastBuildDate>Mon, 11 Dec 2017 02:19:36 +0800</lastBuildDate>
+    <link>https://luzhijun.github.io/</link>
+    <atom:link href="https://luzhijun.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Mon, 11 Dec 2017 20:15:31 +0800</pubDate>
+    <lastBuildDate>Mon, 11 Dec 2017 20:15:31 +0800</lastBuildDate>
     <generator>Jekyll v3.5.2</generator>
     
       <item>
@@ -785,8 +785,8 @@ containerid=&amp;amp;containerid=100103type%3D1%26q%3D浦东租房&lt;br /&gt;
 &lt;/div&gt;
 </description>
         <pubDate>Sat, 29 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/29/%E5%BE%AE%E5%8D%9A%E8%AF%9D%E9%A2%98%E7%88%AC%E5%8F%96%E4%B8%8E%E5%AD%98%E5%82%A8%E5%88%86%E6%9E%90/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/29/%E5%BE%AE%E5%8D%9A%E8%AF%9D%E9%A2%98%E7%88%AC%E5%8F%96%E4%B8%8E%E5%AD%98%E5%82%A8%E5%88%86%E6%9E%90/</guid>
+        <link>https://luzhijun.github.io/2016/10/29/%E5%BE%AE%E5%8D%9A%E8%AF%9D%E9%A2%98%E7%88%AC%E5%8F%96%E4%B8%8E%E5%AD%98%E5%82%A8%E5%88%86%E6%9E%90/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/10/29/%E5%BE%AE%E5%8D%9A%E8%AF%9D%E9%A2%98%E7%88%AC%E5%8F%96%E4%B8%8E%E5%AD%98%E5%82%A8%E5%88%86%E6%9E%90/</guid>
         
         <category>社交网站数据分析</category>
         
@@ -1770,8 +1770,8 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
 &lt;/div&gt;
 </description>
         <pubDate>Wed, 19 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/</guid>
+        <link>https://luzhijun.github.io/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/10/19/google+%E6%96%87%E6%9C%AC%E6%8F%90%E5%8F%96%E5%92%8C%E5%88%86%E6%9E%90/</guid>
         
         <category>社交网站数据分析</category>
         
@@ -2144,8 +2144,8 @@ deque deque([0])
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 10 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/10/%E5%8C%88%E7%89%99%E5%88%A9%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/10/%E5%8C%88%E7%89%99%E5%88%A9%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/</guid>
+        <link>https://luzhijun.github.io/2016/10/10/%E5%8C%88%E7%89%99%E5%88%A9%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/10/10/%E5%8C%88%E7%89%99%E5%88%A9%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/</guid>
         
         <category>算法</category>
         
@@ -3133,8 +3133,8 @@ Number of programmers who use JavaScript but not Python&lt;br /&gt;
 
 </description>
         <pubDate>Sun, 02 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</guid>
+        <link>https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/10/02/GitHub%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96%E4%B8%8E%E5%88%86%E6%9E%90/</guid>
         
         <category>社交网站数据分析</category>
         
@@ -3758,8 +3758,8 @@ hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce�
 
 </description>
         <pubDate>Sun, 18 Sep 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</guid>
+        <link>https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/09/18/%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88/</guid>
         
         <category>算法</category>
         
@@ -3828,8 +3828,8 @@ hive可以方便的把hql转化为mapreduce，所以不需要你手写mapreduce�
 &lt;p&gt;结论：降维以后分类错误率与不降维的方法相差无几，但需要处理的数据量减小了一半（不降维需要处理13维，降维后只需要处理6维。&lt;/p&gt;
 </description>
         <pubDate>Fri, 09 Sep 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/</guid>
+        <link>https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/09/09/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%80%BC/</guid>
         
         <category>数学</category>
         
@@ -4197,8 +4197,8 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
 根据这个问题我们来计算下内存的占用，4G=2^32大概是40亿字节，*8大概是320亿比特，m=50亿，如果按出错率0.01算需要的大概是650亿个bit。现在可用的是480亿，相差并不多，这样可能会使出错率上升些。另外如果这些url与ip是一一对应的，就可以转换成ip，则大大简单了。&lt;/p&gt;
 </description>
         <pubDate>Fri, 02 Sep 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</guid>
+        <link>https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/09/02/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</guid>
         
         <category>算法</category>
         
@@ -4312,8 +4312,8 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
 
 </description>
         <pubDate>Sun, 28 Aug 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/08/28/leecode(387)/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/08/28/leecode(387)/</guid>
+        <link>https://luzhijun.github.io/2016/08/28/leecode(387)/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/08/28/leecode(387)/</guid>
         
         <category>算法题</category>
         
@@ -4754,8 +4754,8 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
 &lt;p&gt;自建RSS服务器参见开源的&lt;a href=&quot;http://kindlefere-feed.appspot.com/my&quot;&gt;KindleEar&lt;/a&gt;,作者提取了Calibre的mobi模块用于通过Python在线生成mobi格式文件，不依赖Amazon的kindlegen工具， 杂志格式书籍排版精美，跳转方便，阅读体验更好。这是我的RSS服务器: &lt;a href=&quot;http://tl-kindle.appspot.com&quot;&gt;http://tl-kindle.appspot.com&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 16 Aug 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90/</guid>
+        <link>https://luzhijun.github.io/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/08/16/RSS%E8%AE%A2%E9%98%85%E6%BA%90/</guid>
         
         <category>阅读</category>
         
@@ -4874,8 +4874,8 @@ $公式$
 &lt;p&gt;$O(g(n)) = {f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)}$&lt;/p&gt;
 </description>
         <pubDate>Fri, 12 Aug 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/</guid>
+        <link>https://luzhijun.github.io/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/</link>
+        <guid isPermaLink="true">https://luzhijun.github.io/2016/08/12/%E5%8D%9A%E5%AE%A2%E6%96%B0%E7%89%B9%E6%80%A7%E6%9B%B4%E6%96%B0/</guid>
         
         <category>特性</category>
         
