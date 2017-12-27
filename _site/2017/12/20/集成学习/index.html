@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="iCQLNHIUn9" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>集成学习 - 楚汐|Trucy Luce Blog</title>
+
+    <link rel="canonical" href="http://localhost:4000/2017/12/20/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?c07b62da6a94126e41877e6b30e15413";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">T.L Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/element1.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/element1.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#机器学习" title="机器学习">机器学习</a>
+                        
+                        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+                        
+                    </div>
+                    <h1>集成学习</h1>
+                    
+                    
+                    <h2 class="subheading">结合R实例</h2>
+                    
+                    <span class="meta">Posted by T.L on December 20, 2017</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {
+  inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+  } 
+}); 
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+<!-- 百度自动推送 -->
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<h1 id="融合方法">融合方法</h1>
+<p>有人把它称为机器学习中的“<strong>屠龙刀</strong>”，非常万能且有效，集成模型是一种能在各种的机器学习任务上提高准确率的强有力技术，集成算法往往是很多数据竞赛关键的一步，能够很好地提升算法的性能。哲学思想为“<strong>三个臭皮匠赛过诸葛亮</strong>”</p>
+
+<p>现实生活中，我们经常会通过投票，开会等方式，以做出更加可靠的决策。集成学习就与此类似。集成学习就是有策略的生成一些基础模型，然后有策略地把它们都结合起来以做出最终的决策。集成学习又叫多分类器系统。</p>
+
+<p>集成方法是由多个较弱的模型集成模型组，一般的弱分类器可以是DT, SVM, NN, KNN等构成。其中的模型可以单独进行训练，并且它们的预测能以某种方式结合起来去做出一个总体预测。该算法主要的问题是要找出哪些较弱的模型可以结合起来，以及如何结合的方法。这是一个非常强大的技术集，因此广受欢迎。</p>
+
+<p>目前，有三种常见的集成学习框架：bagging，boosting和stacking。</p>
+<h3 id="算法鸟瞰">算法鸟瞰</h3>
+<p>Bagging：基于数据随机重抽样的分类器构建方法。从训练集抽样组成每个基模型所需要的子训练集，对所有基模型预测的结果进行综合产生最终的预测结果 ：
+<img src="http://oc5ofszxe.bkt.clouddn.com/bagging.png" alt="bagging" />
+boosting：训练过程为阶梯状，基模型按次序一一进行训练（实现上可以做到并行），基模型的训练集按照某种策略每次都进行一定的转化。对所有基模型预测的结果进行线性综合产生最终的预测结果：)
+<img src="http://oc5ofszxe.bkt.clouddn.com/boosting.png" alt="boosting" />
+stacking：将训练好的所有基模型对训练基进行预测，第j个基模型对第i个训练样本的预测值将作为新的训练集中第i个样本的第j个特征值，最后基于新的训练集进行训练。同理，预测的过程也要先经过所有基模型的预测形成新的测试集，最后再对测试集进行预测
+<img src="http://oc5ofszxe.bkt.clouddn.com/stacking.png" alt="stacking" /></p>
+<h2 id="关于基础分类器结果整合的主要方式">关于基础分类器结果整合的主要方式</h2>
+
+<h3 id="关于回归">关于回归</h3>
+
+<ol>
+  <li>简单平均（uniformly），就是取各个分类器结果的平均值。
+<script type="math/tex">G(x)=\frac{1}{T}\sum g_t(x)</script></li>
+  <li>加权平均（non-uniform）
+<script type="math/tex">G(x)=\frac{1}{T}\sum \alpha _tg_t(x),\alpha _t \ge 0</script></li>
+  <li>条件平均（non-uniform）
+<script type="math/tex">G(x)=\frac{1}{T}\sum q_t(x) g_t(x) ,q_t(x)\ge 0</script></li>
+</ol>
+
+<h3 id="关于分类">关于分类</h3>
+
+<p>和上面相同，公式同步变为：
+  <script type="math/tex">G(x)=sign(\sum 1g_t(x))</script></p>
+
+<h2 id="集成框架">集成框架</h2>
+
+<p>集成学习的关键有两点：</p>
+<ol>
+  <li>如何构建具有差异性的分类器</li>
+  <li>选择多少个模型</li>
+  <li>如何多这些分类器的结果进行整合。</li>
+</ol>
+
+<h3 id="多样性">多样性</h3>
+
+<p>基学习器之间的性能要有较大的差别，否则集成效果会很不好，也就是要保证多样性（Diversity），基学习器可以是DT, SVM, NN, KNN等，也可以是训练过程不同的同一种模型，例如不同的参数，不同的训练集，或者不同的特征选择等。</p>
+
+<p>为了说明多样性可以提升，以下面三个模型为例：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>1111111100 = 80% accuracy 
+1111111100 = 80% accuracy 
+1011111100 = 70% accuracy. 
+</pre></td></tr></tbody></table>
+</div>
+</div>
+<p>下面我们比较3个性能相对较差，但是高度不相关的模型：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>1111111100 = 80% accuracy 
+0111011101 = 70% accuracy 
+1000101111 = 60% accuracy 
+</pre></td></tr></tbody></table>
+</div>
+</div>
+<p>在比赛中挑选相关度低的模型进行组合。</p>
+
+<h3 id="模型数量">模型数量</h3>
+
+<p>我们有3个正确率为60%的二分类器记为A,B,C。你可以将这些分类器视为伪随机数产生器，以60%的概率产生”1”，40%的概率产生”0”。
+通过集成正确率多少？</p>
+
+<h3 id="集成框架-1">集成框架</h3>
+
+<h4 id="bagging">bagging</h4>
+<p>bagging实际上是一种把多个在同一数据集上训练的模型组合起来的直观过程，它对分类模型采用多数票，对回归模型使用平均值。
+以二元分类为例：
+输入： 
+·data：包含输入特征和带有二元输出标签的一个列的输入数据框 
+·M：一个代表我们要训练的模型数量的整数</p>
+
+<p>输入：
+·data：包含输入特征和带有二元输出标签的一个列的输入数据框<br />
+·M：一个代表我们要训练的模型数量的整数
+输出:
+models: 一个训练好的二元分类模型
+ 方法：</p>
+
+<p>1）创建一个大小为n的有放回的随机样本，其中的n是原始数据集里的观测数据数量。这意味着原始训练集里的某些观测数据会重复使用，而某些则根本不会被选取。这个过程被称为自助法（bootstrapping）、自助抽样（bootstrap sampling）或自助重抽样（bootstrap resampling）。<br />
+2）利用这些抽样的数据集训练一个分类模型。典型情况下，我们在该步骤不会选择用于约简过拟合的正则化或收缩方法，因为最终采用的聚合过程会用来消减过拟合。<br />
+3）对抽样数据集里的每条观测数据，记录模型给它分配的类别。<br />
+4）重复这个过程M次，训练M个模型。<br />
+5）对于原始训练数据集里的每条观测数据，通过不同模型的多数票计算预测出的类别。例如，假设M＝61，通过自主抽样，某条观测数据出现在其中50个模型的训练数据中。如果这些模型中有37个对这条观测数据预测了类别1，13个预测了类别-1，根据多数票原则，整体的预测就是类别1。 <br />
+ 6）利用训练集提供的标签来计算模型的精确度。</p>
+
+<p>有个值得探讨的问题是：“每次进行有放回的抽样时，我们能得到多少不同的观测数据？</p>
+
+<p>在步骤1里，我们构建了一个训练数据的样本，用来训练模型。在原始数据集里，我们把在该过程的某次迭代没有选中的观测数据称为袋外（out-of-bag，OOB）观测数据。那么，这些观测数据在那一次迭代中就没有用在模型的训练中。因此，我们实际上可以利用OOB观测数据来记录某个模型的精确度，而不必每一步都依靠那些用来训练模型的观测数据。</p>
+
+<p>由于是有放回的抽样，我们可以认为这些数据是独立同分布的，这些观测数据均值的方差是$\sigma^2/n$。</p>
+
+<p>代表算法： 随机森林</p>
+
+<h4 id="boosting">boosting</h4>
+
+<p>对于分类来说，增强起作用的原理是通过在训练数据上构建一个模型，然后衡量在那些训练数据上的分类精确度。被模型错误分类的每条观测数据会得到一个比正确分类的观测数据更大的权值，然后这个模型会用这些新的权值重新训练。这个过程会重复很多次，每次都会根据上一次迭代时是否正确分类的结果来调整每条观测数据的权值。</p>
+
+<p>为了应对过拟合问题，集成分类器的构建方式是取在这个序列里训练的所有模型的加权平均，其中的权值通常是和每个模型的分类精确度成比例的。因为我们用到了全部训练数据，所以就没有袋外观测数据，因此每个模型的精确度都是用训练数据本身来衡量的。而用增强进行回归的做法，通常是根据预测值和标签值之间距离的某种衡量指标来调整观测数据的权值。</p>
+
+<p>用于二元分类的自适应增强<br />
+输入：<br />
+·data：包含了输入特征和一个二元输出标签列的输入数据框<br />
+·M：表示我们需要训练的模型数量的一个整数<br />
+输出：<br />
+·model：由M个训练好的模型组成的序列<br />
+·alpha：包含M个模型权值的向量</p>
+
+<p>方法： 
+1）初始化一条观测数据权值的向量w，它的长度为n，初始元素为wi＝1/n。该向量会在每次迭代中更新。<br />
+2）使用观测数据权值的当前值和训练集里的所有数据训练一个分类器模型Gm。<br />
+3）计算权值的误差率，用所有错误分类观测数据乘以其权值然后求和，再除以权值向量的总和。根据用xi作为一条观测数据并用yi作为其标签的惯例，我们可以利用下面的公式来表示： <br />
+<script type="math/tex">err_m=\frac{\sum \omega_iI(y_i\ne G_m(x_i)) }{\sum \omega_i}</script>
+4）设置该模型的模型权值$\alpha_m$为精确度和误差率之比的对数。用公式表达为: 
+<script type="math/tex">\alpha_m=\frac{1}{2}ln(\frac{1-err_m}{err_m})</script>
+5）为下一次迭代更新观测数据权值向量w。错误分类的观测数据的权值会乘以$e^{\alpha m}$，从而增大它们在下一次迭代时的权值。正确分类的观测数据的权值会乘以$e^{-\alpha m}$，从而减小它们在下一次迭代时的权值。 
+6）对权值向量重新进行归一化，使权值的总和等于1。<br />
+7）把步骤2到6重复M次，产生M个模型。<br />
+8）定义我们的集成分类器为所有增强模型输出的加权总和：<br />
+<script type="math/tex">G(x)=sign(\sum \alpha_m G_m(x))</script></p>
+
+<h3 id="stacking">stacking</h3>
+
+<p>参照<a href="http://prozhuchen.com/2016/12/28/CCF%E5%A4%A7%E8%B5%9B%E6%90%9C%E7%8B%97%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E6%80%BB%E7%BB%93/">CCF大赛搜狗用户画像总结</a></p>
+
+<h1 id="代码实践">代码实践</h1>
+
+<h2 id="bagging-1">bagging</h2>
+
+<h3 id="针对statlog心脏病数据集的逻辑回归分类器">针对Statlog心脏病数据集的逻辑回归分类器</h3>
+
+<p><a href="http://archive.ics.uci.edu/ml/datasets/Statlog+%28Heart%29">心脏病数据集</a><br />
+该数据包含了270个可能心脏有问题的病人的观测数据。其中有120个病人表现出心脏有问题，因此两个类别的划分是比较平均的。我们的任务是根据病人的基本情况和一系列的医学检查来预测病人是否患有心脏病。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="n">library</span><span class="p">(</span><span class="n">shiny</span><span class="p">)</span><span class="w">
+</span><span class="n">heart</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.table</span><span class="p">(</span><span class="s2">"./data/heart.dat"</span><span class="p">,</span><span class="w"> </span><span class="n">quote</span><span class="o">=</span><span class="s2">"\""</span><span class="p">)</span><span class="w">
+</span><span class="nf">names</span><span class="p">(</span><span class="n">heart</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"AGE"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SEX"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CHESTPAIN"</span><span class="p">,</span><span class="w"> </span><span class="s2">"RESTBP"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CHOL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SUGAR"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ECG"</span><span class="p">,</span><span class="w"> </span><span class="s2">"MAXHR"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ANGINA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"DEP"</span><span class="p">,</span><span class="w"> </span><span class="s2">"EXERCISE"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FLUOR"</span><span class="p">,</span><span class="w"> </span><span class="s2">"THAL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"OUTPUT"</span><span class="p">)</span><span class="w">
+</span><span class="n">numericInput</span><span class="p">(</span><span class="s2">"n"</span><span class="p">,</span><span class="w">
+ </span><span class="s2">"How many records?"</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w">
+</span><span class="n">renderTable</span><span class="p">({</span><span class="w">
+ </span><span class="n">head</span><span class="p">(</span><span class="n">heart</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">n</span><span class="p">)</span><span class="w">
+</span><span class="p">})</span><span class="w"> 
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>列名</th>
+      <th>类型</th>
+      <th>定义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AGE</td>
+      <td>数值</td>
+      <td>岁为单位</td>
+    </tr>
+    <tr>
+      <td>SEX</td>
+      <td>二元类型</td>
+      <td>性别</td>
+    </tr>
+    <tr>
+      <td>CHESTPAIN</td>
+      <td>类别</td>
+      <td>4种胸痛级别</td>
+    </tr>
+    <tr>
+      <td>RESTBP</td>
+      <td>数值</td>
+      <td>静息血压</td>
+    </tr>
+    <tr>
+      <td>CHOL</td>
+      <td>数值</td>
+      <td>血清胆固醇</td>
+    </tr>
+    <tr>
+      <td>SUGAR</td>
+      <td>二元类型</td>
+      <td>空腹血糖浓度</td>
+    </tr>
+    <tr>
+      <td>ECG</td>
+      <td>类别</td>
+      <td>心电图结果，三个类别</td>
+    </tr>
+    <tr>
+      <td>MAXHR</td>
+      <td>数值</td>
+      <td>每分钟最大心率</td>
+    </tr>
+    <tr>
+      <td>ANGINA</td>
+      <td>二元类别</td>
+      <td>心绞痛来自运动？</td>
+    </tr>
+    <tr>
+      <td>DEP</td>
+      <td>数值</td>
+      <td>ST诱发比例，不懂</td>
+    </tr>
+    <tr>
+      <td>EXERCISE</td>
+      <td>有序类别</td>
+      <td>运动ST曲线峰值斜率</td>
+    </tr>
+    <tr>
+      <td>FLUOR</td>
+      <td>数值</td>
+      <td>透视着色的主要血管数量</td>
+    </tr>
+    <tr>
+      <td>THAL</td>
+      <td>类别</td>
+      <td>地中海贫血，三类</td>
+    </tr>
+    <tr>
+      <td>OUTPUT</td>
+      <td>二元类别</td>
+      <td>是否有心脏病（输出）</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>CHESTPAIN、THAL和ECG特征都是分类特征。EXERCISE变量虽然是一个有序的分类变量，但它还是属于分类变量，所以它也必须编码为一个因子。<br />
+具体而言，R语言会把k个因子水平中的1个作为参考水平，然后根据其他因子水平创建k-1个二元特征，类似OneHot。 
+最后把结果变换到0和1即可。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></td><td class="code"><pre><span class="c1">#因子变换
+</span><span class="n">heart</span><span class="o">$</span><span class="n">CHESTPAIN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">heart</span><span class="o">$</span><span class="n">CHESTPAIN</span><span class="p">)</span><span class="w">
+</span><span class="n">heart</span><span class="o">$</span><span class="n">ECG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">heart</span><span class="o">$</span><span class="n">ECG</span><span class="p">)</span><span class="w">
+</span><span class="n">heart</span><span class="o">$</span><span class="n">THAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">heart</span><span class="o">$</span><span class="n">THAL</span><span class="p">)</span><span class="w">
+</span><span class="n">heart</span><span class="o">$</span><span class="n">EXERCISE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">heart</span><span class="o">$</span><span class="n">EXERCISE</span><span class="p">)</span><span class="w">
+</span><span class="n">heart</span><span class="o">$</span><span class="n">OUTPUT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heart</span><span class="o">$</span><span class="n">OUTPUT</span><span class="m">-1</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w">
+</span><span class="c1">#拆分训练集和测试集
+</span><span class="n">heart_sampling_vector</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">createDataPartition</span><span class="p">(</span><span class="n">heart</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.85</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span><span class="n">heart_train</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart</span><span class="p">[</span><span class="n">heart_sampling_vector</span><span class="p">,]</span><span class="w">
+</span><span class="n">heart_train_labels</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">[</span><span class="n">heart_sampling_vector</span><span class="p">]</span><span class="w">
+</span><span class="n">heart_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart</span><span class="p">[</span><span class="o">-</span><span class="n">heart_sampling_vector</span><span class="p">,]</span><span class="w">
+</span><span class="n">heart_test_labels</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">[</span><span class="o">-</span><span class="n">heart_sampling_vector</span><span class="p">]</span><span class="w">
+</span><span class="c1">#glm--&gt;广义线性模型
+</span><span class="n">heart_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="p">(</span><span class="n">OUTPUT</span><span class="o">~</span><span class="n">.</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">heart_train</span><span class="p">,</span><span class="n">family</span><span class="o">=</span><span class="n">binomial</span><span class="p">(</span><span class="s2">"logit"</span><span class="p">))</span><span class="w">
+</span><span class="n">summary</span><span class="p">(</span><span class="n">heart_model</span><span class="p">)</span><span class="w">
+</span><span class="n">heart_model2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="p">(</span><span class="n">OUTPUT</span><span class="o">~</span><span class="n">AGE</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">heart_train</span><span class="p">,</span><span class="n">family</span><span class="o">=</span><span class="n">binomial</span><span class="p">(</span><span class="s2">"logit"</span><span class="p">))</span><span class="w">
+</span><span class="n">summary</span><span class="p">(</span><span class="n">heart_model2</span><span class="p">)</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>准确性评估</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="n">train_predictions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">heart_model</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="o">=</span><span class="n">heart_train</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"response"</span><span class="p">)</span><span class="w">
+</span><span class="n">train_class_predictions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">train_predictions</span><span class="o">&gt;</span><span class="m">0.5</span><span class="p">)</span><span class="w">
+</span><span class="n">mean</span><span class="p">(</span><span class="n">train_class_predictions</span><span class="o">==</span><span class="n">heart_train</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">)</span><span class="w">
+</span><span class="n">test_predictions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">heart_model</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="o">=</span><span class="n">heart_test</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"response"</span><span class="p">)</span><span class="w">
+</span><span class="n">test_class_predictions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">test_predictions</span><span class="o">&gt;</span><span class="m">0.5</span><span class="p">)</span><span class="w">
+</span><span class="n">mean</span><span class="p">(</span><span class="n">test_class_predictions</span><span class="o">==</span><span class="n">heart_test</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">)</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>注：利用了glmnet包来通过岭回归和lasso进行正则化可以进一步提高正确率到90%
+混淆矩阵</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="p">(</span><span class="n">confusion_matrix</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">table</span><span class="p">(</span><span class="n">predicted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train_class_predictions</span><span class="p">,</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heart_train</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="n">precision</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">confusion_matrix</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">[</span><span class="m">2</span><span class="p">,]))</span><span class="w">
+</span><span class="p">(</span><span class="n">recall</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">confusion_matrix</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">[,</span><span class="m">2</span><span class="p">]))</span><span class="w">
+</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">recall</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">precision</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">recall</span><span class="p">))</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<h2 id="用bagging预测心脏病">用bagging预测心脏病</h2>
+
+<p>用有放回的方式抽取样本，并用它们来训练我们的模型,假设我们训练11个模型。</p>
+
+<pre><code class="language-{r}">M &lt;- 11
+n &lt;- nrow(heart_train)
+sample_vectors&lt;-sapply(seq(1,11),function(x) { return(sample(n,n,replace=T)) })
+
+train_1glm &lt;- function(sample_indices) { 
+	data &lt;- heart_train[sample_indices,]; 
+	model &lt;- glm(OUTPUT~., data=data, family=binomial("logit")); 
+	return(model)
+}
+</code></pre>
+<p>它现在包含了11个训练好的模型。
+作为评估我们模型的第一个方法，我们要利用每个模型训练用到的数据。下面构造bag变量，代表每个模型具体用到哪些不重复的数据。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="n">models</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">sample_vectors</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">train_1glm</span><span class="p">)</span><span class="w">
+
+</span><span class="n">get_1bag</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">sample_indices</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="n">unique_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">unique</span><span class="p">(</span><span class="n">sample_indices</span><span class="p">);</span><span class="w"> 
+	</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart_train</span><span class="p">[</span><span class="n">unique_sample</span><span class="p">,</span><span class="w"> </span><span class="p">];</span><span class="w"> 
+	</span><span class="n">df</span><span class="o">$</span><span class="n">ID</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">unique_sample</span><span class="p">;</span><span class="w"> 
+	</span><span class="nf">return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bags</span><span class="o">&lt;-</span><span class="n">apply</span><span class="p">(</span><span class="n">sample_vectors</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">get_1bag</span><span class="p">)</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>现在我们有了一个模型的列表和一个训练时用到的数据框的列表，且后者中没有重复的观测数据。根据这两个列表，我们可以得出一批预测结果。对于每个训练数据框，我们会附加一个叫PREDICTIONS{m}的新列，其中的{m}会是作出这个预测所用到的模型编号。这样，bags列表里的第一个数据框就会有一个名为PREDICTIONS 1的预测结果列，第二个数据框会有一个名为PREDICTIONS 2的预测结果列，第三个的名为PREDICTIONS 3，以此类推。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="n">glm_predictions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">model_index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="n">colname</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="s2">"PREDICTIONS"</span><span class="p">,</span><span class="n">model_index</span><span class="p">);</span><span class="w">
+	</span><span class="n">data</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">type</span><span class="o">=</span><span class="s2">"response"</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.5</span><span class="p">);</span><span class="w"> 
+	</span><span class="nf">return</span><span class="p">(</span><span class="n">data</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s2">"ID"</span><span class="p">,</span><span class="n">colname</span><span class="p">),</span><span class="w"> </span><span class="n">drop</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">])</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">training_predictions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mapply</span><span class="p">(</span><span class="n">glm_predictions</span><span class="p">,</span><span class="n">models</span><span class="p">,</span><span class="n">bags</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="n">M</span><span class="p">,</span><span class="n">SIMPLIFY</span><span class="o">=</span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span><span class="c1">#head(training_predictions[1],10)
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>下一步，我们要把所有这些数据框合并为一个数据框，其中的行是原始数据框的行（因而对应了数据集里的观测数据），列则是每个模型对该观测数据的预测结果。对于在抽样过程中没有被选取来训练特定模型的特定行（即观测数据），它在对应此模型作出预测结果的列里会有一个NA值。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">train_pred_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Reduce</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ID"</span><span class="p">,</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">T</span><span class="p">),</span><span class="w"> </span><span class="n">training_predictions</span><span class="p">)</span><span class="w">
+</span><span class="n">renderTable</span><span class="p">({</span><span class="w">
+ </span><span class="n">head</span><span class="p">(</span><span class="n">train_pred_df</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
+</span><span class="p">})</span><span class="w"> 
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>根据这个数据框每一行的多数票，我们现在就可以产生整个装袋模型对训练数据的预测结果。一旦我们得到了这些结果，就只需要用预测结果和原始的heart_train数据框里对应的标签值进行匹配，并计算出我们的精确度：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="n">train_pred_vote</span><span class="o">&lt;-</span><span class="n">apply</span><span class="p">(</span><span class="n">train_pred_df</span><span class="p">[,</span><span class="m">-1</span><span class="p">],</span><span class="m">1</span><span class="p">,</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="o">&gt;</span><span class="m">0.5</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="n">training_accuracy</span><span class="o">&lt;-</span><span class="n">mean</span><span class="p">(</span><span class="n">train_pred_vote</span><span class="o">==</span><span class="n">heart_train</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">[</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">train_pred_df</span><span class="o">$</span><span class="n">ID</span><span class="p">)]))</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>现在我们有了装袋模型的第一个精确度衡量指标。这和衡量在训练数据上的精确度是类似的。现在对每个模型采用袋外观测数据重复这个过程，计算出袋外精确度。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="c1"># Out of Bag Accuracy
+</span><span class="w">
+</span><span class="n">get_1oo_bag</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">sample_indices</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="n">unique_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setdiff</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">,</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_indices</span><span class="p">));</span><span class="w"> 
+	</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart_train</span><span class="p">[</span><span class="n">unique_sample</span><span class="p">,];</span><span class="w"> 
+	</span><span class="n">df</span><span class="o">$</span><span class="n">ID</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">unique_sample</span><span class="p">;</span><span class="w"> 
+	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">heart_train</span><span class="p">[</span><span class="n">sample_indices</span><span class="p">,]</span><span class="o">$</span><span class="n">ECG</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">ECG</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="s2">"ECG"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">;</span><span class="w"> 
+	</span><span class="nf">return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">oo_bags</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">sample_vectors</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">get_1oo_bag</span><span class="p">)</span><span class="w">
+</span><span class="n">oob_predictions</span><span class="o">&lt;-</span><span class="n">mapply</span><span class="p">(</span><span class="n">glm_predictions</span><span class="p">,</span><span class="w"> </span><span class="n">models</span><span class="p">,</span><span class="w"> </span><span class="n">oo_bags</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">M</span><span class="p">,</span><span class="n">SIMPLIFY</span><span class="o">=</span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span><span class="n">oob_pred_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Reduce</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"ID"</span><span class="p">,</span><span class="w"> </span><span class="n">all</span><span class="o">=</span><span class="nb">T</span><span class="p">),</span><span class="w"> </span><span class="n">oob_predictions</span><span class="p">)</span><span class="w">
+</span><span class="n">oob_pred_vote</span><span class="o">&lt;-</span><span class="n">apply</span><span class="p">(</span><span class="n">oob_pred_df</span><span class="p">[,</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="o">&gt;</span><span class="m">0.5</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="n">oob_accuracy</span><span class="o">&lt;-</span><span class="n">mean</span><span class="p">(</span><span class="n">oob_pred_vote</span><span class="o">==</span><span class="n">heart_train</span><span class="o">$</span><span class="n">OUTPUT</span><span class="p">[</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">oob_pred_df</span><span class="o">$</span><span class="n">ID</span><span class="p">)],</span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>最后，利用heart_test数据框第三次重复这个过程，获得测试集的精确度：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre></td><td class="code"><pre><span class="c1"># Test Accuracy
+</span><span class="w">
+</span><span class="n">get_1test_bag</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">sample_indices</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+     </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">heart_test</span><span class="p">;</span><span class="w"> 
+     </span><span class="n">df</span><span class="o">$</span><span class="n">ID</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">row.names</span><span class="p">(</span><span class="n">df</span><span class="p">);</span><span class="w"> 
+     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">heart_train</span><span class="p">[</span><span class="n">sample_indices</span><span class="p">,]</span><span class="o">$</span><span class="n">ECG</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> 
+         </span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">ECG</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="s2">"ECG"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">;</span><span class="w"> 
+     </span><span class="nf">return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+
+</span><span class="n">test_bags</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">sample_vectors</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">get_1test_bag</span><span class="p">)</span><span class="w">
+</span><span class="n">test_predictions</span><span class="o">&lt;-</span><span class="n">mapply</span><span class="p">(</span><span class="n">glm_predictions</span><span class="p">,</span><span class="w"> </span><span class="n">models</span><span class="p">,</span><span class="w"> </span><span class="n">test_bags</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">SIMPLIFY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span><span class="n">test_pred_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Reduce</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"ID"</span><span class="p">,</span><span class="n">all</span><span class="o">=</span><span class="nb">T</span><span class="p">),</span><span class="w"> </span><span class="n">test_predictions</span><span class="p">)</span><span class="w">
+</span><span class="n">test_pred_vote</span><span class="o">&lt;-</span><span class="n">apply</span><span class="p">(</span><span class="n">test_pred_df</span><span class="p">[,</span><span class="m">-1</span><span class="p">],</span><span class="m">1</span><span class="p">,</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="o">&gt;</span><span class="m">0.5</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="n">test_accuracy</span><span class="o">&lt;-</span><span class="n">mean</span><span class="p">(</span><span class="n">test_pred_vote</span><span class="o">==</span><span class="n">heart_test</span><span class="p">[</span><span class="n">test_pred_df</span><span class="o">$</span><span class="n">ID</span><span class="p">,</span><span class="s2">"OUTPUT"</span><span class="p">],</span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span><span class="w">
+
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>使用不同的M值把前面的代码运行多次，并把结果保存在一个数据框里</p>
+
+<p>注意：只有遇到非线性模型时，采用装袋才有意义。因为装袋过程就是对产生的模型进行一次取平均值（线性运算）的处理，从而我们在线性回归里就不会看到任何改善，因为我们没有增加模型的表达力。</p>
+
+<h2 id="bagging的局限性">bagging的局限性</h2>
+<ol>
+  <li>bagging涉及对多个模型作出的预测结果取平均值，当目标函数比较平滑时，这样会减少偏误。但如果目标函数并不平滑，使用装袋实际上会引入更多偏误。</li>
+  <li>当某些类别特征包含了罕见的值时，它们可能在某些自助样本里根本不出现。如果发生了这种情况，用这些样本构建的模型在测试集里遇到这个新特征的时候就无法作出预测了。</li>
+  <li>构建的不同模型严格地说并不是真的相互独立的，因为它们使用的还是同一套输入特征。如果模型是相互独立的，取平均的过程会更有效果。</li>
+  <li>弱化模型的解释力。</li>
+</ol>
+
+<h1 id="增强">增强</h1>
+<p>增强（Boosting）对如何把模型组合起来达到更大性能的问题给出了另一个思路。它尤其适用于弱学习器（weak learner）。弱学习器指能产生比随机猜测模型的精确度略好一点的模型。创建弱学习器的一种方式是采用一个复杂度可配置的模型。</p>
+<h2 id="预测大气中伽马射线的辐射">预测大气中伽马射线的辐射</h2>
+
+<p>伽马射线会留下独特的椭圆形态，所以我们可以创建一组特征来描述这些模式。我们要用到的数据集是MAGIC Gamma Telescope data set，它存放在UCI机器学习知识库（<a href="http://archive.ics.uci.edu/ml/datasets/MAGIC+Gamma+Telescope">UCI Machine Learning repository</a>）里。数据包含了19020条观测数据.</p>
+
+<p>首先，我们要把数据加载到一个名为magic的数据框里，并把CLASS输出变量，重新编码，对伽马射线和背景辐射分别采用1和-1类别：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="n">magic</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s2">"./data/magic04.dat"</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span><span class="nf">names</span><span class="p">(</span><span class="n">magic</span><span class="p">)</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"FLENGTH"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FWIDTH"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FSIZE"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FCONC"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FCONC1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FASYM"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FM3LONG"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FM3TRANS"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FALPHA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FDIST"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CLASS"</span><span class="p">)</span><span class="w">
+</span><span class="n">magic</span><span class="o">$</span><span class="n">CLASS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as.factor</span><span class="p">(</span><span class="n">ifelse</span><span class="p">(</span><span class="n">magic</span><span class="o">$</span><span class="n">CLASS</span><span class="o">==</span><span class="s1">'g'</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">))</span><span class="w">
+</span><span class="n">renderTable</span><span class="p">({</span><span class="w">
+ </span><span class="n">head</span><span class="p">(</span><span class="n">magic</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
+</span><span class="p">})</span><span class="w"> 
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>采用典型的80%/20%拆分比例，把这个数据框拆分为一个训练数据框和一个测试数据框：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="c1"># 划分训练集测试集
+</span><span class="n">magic_sampling_vector</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">createDataPartition</span><span class="p">(</span><span class="n">magic</span><span class="o">$</span><span class="n">CLASS</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.80</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span><span class="n">magic_train</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">magic</span><span class="p">[</span><span class="n">magic_sampling_vector</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">]</span><span class="w">
+</span><span class="n">magic_train_output</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">magic</span><span class="p">[</span><span class="n">magic_sampling_vector</span><span class="p">,</span><span class="m">11</span><span class="p">]</span><span class="w">
+</span><span class="n">magic_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">magic</span><span class="p">[</span><span class="o">-</span><span class="n">magic_sampling_vector</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">]</span><span class="w">
+</span><span class="n">magic_test_output</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">magic</span><span class="p">[</span><span class="o">-</span><span class="n">magic_sampling_vector</span><span class="p">,</span><span class="m">11</span><span class="p">]</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>对于神经网络，我们在对输入进行归一化的情况下往往会得到良好的精确度，因此，在训练任何模型之前，我们会进行这个预处理步骤</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="c1"># 数据预处理
+</span><span class="n">magic_pp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">preProcess</span><span class="p">(</span><span class="n">magic_train</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"center"</span><span class="p">,</span><span class="w"> </span><span class="s2">"scale"</span><span class="p">))</span><span class="w">
+</span><span class="n">magic_train_pp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">magic_pp</span><span class="p">,</span><span class="w"> </span><span class="n">magic_train</span><span class="p">)</span><span class="w">
+</span><span class="n">magic_train_df_pp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cbind</span><span class="p">(</span><span class="n">magic_train_pp</span><span class="p">,</span><span class="w"> </span><span class="n">CLASS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">magic_train_output</span><span class="p">)</span><span class="w">
+</span><span class="n">magic_test_pp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">magic_pp</span><span class="p">,</span><span class="w"> </span><span class="n">magic_test</span><span class="p">)</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>增强是设计用来和弱学习器搭配发挥最佳效果的，因此，我们会在隐藏层里使用很小数量的隐藏神经元。具体而言，我们会从能做出的最简单的只采用单个隐藏神经元的多层感知器入手。为了理解使用增强的效果，我们会训练单个神经网络并衡量其精确度，从而得到基准性能。做法如下：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">library</span><span class="p">(</span><span class="n">nnet</span><span class="p">)</span><span class="w">
+</span><span class="n">n_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nnet</span><span class="p">(</span><span class="n">CLASS</span><span class="o">~</span><span class="n">.</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">magic_train_df_pp</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="n">n_test_predictions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">n_model</span><span class="p">,</span><span class="w"> </span><span class="n">magic_test_pp</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"class"</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="n">n_test_accuracy</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">n_test_predictions</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">magic_test_output</span><span class="p">))</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>精度不错，看能不能通过adaboost提高。</p>
+
+<p>编写自己的函数AdaBoostNN（），它接收的输入是一个数据框、输出变量名、我们要创建的单隐藏层神经网络模型的个数，以及这些神经网络里含有的隐藏神经元个数。然后，这个函数会返回一个模型及其权值的列表. 
+我们还需要一个作出预测的函数。这个函数会接受训练函数AdaBoostNN（）产生的输出和一个测试数据集作为输入。我们把这个函数命名为AdaBoostNN.predict（）。 
+在这个函数里，我们首先会从前面函数产生的列表中提取模型及模型权值。然后我们会创建一个预测结果的矩阵，其中的每列对应某个模型产生的预测结果向量。这样，在这个矩阵里的列数就会和用于增强的模型数量相等。
+然后，把每个模型产生的预测结果乘以它们对应的模型权值。例如，第一个模型的每个预测结果都在预测矩阵第一列里，它们的值会乘以第一个模型的权值α1。最终，在最后一个步骤中，通过对每条观测数据求其加权预测结果之和并取结果的正负号，把加权观测数据的矩阵缩减为一条观测数据的向量。然后这个预测结果的向量就会被我们的函数返回。</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></td><td class="code"><pre><span class="n">AdaBoostNN</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span><span class="w"> </span><span class="n">output_column</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">hidden_units</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">require</span><span class="p">(</span><span class="s2">"nnet"</span><span class="p">)</span><span class="w">
+  </span><span class="n">models</span><span class="o">&lt;-</span><span class="nf">list</span><span class="p">()</span><span class="w">
+  </span><span class="n">alphas</span><span class="o">&lt;-</span><span class="nf">list</span><span class="p">()</span><span class="w">
+  </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nrow</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="w">
+  </span><span class="n">model_formula</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.formula</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="n">output_column</span><span class="p">,</span><span class="s1">'~.'</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">''</span><span class="p">))</span><span class="w">
+  </span><span class="n">w</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">((</span><span class="m">1</span><span class="o">/</span><span class="n">n</span><span class="p">),</span><span class="n">n</span><span class="p">)</span><span class="w">
+  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">M</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">model</span><span class="o">&lt;-</span><span class="n">nnet</span><span class="p">(</span><span class="n">model_formula</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">training_data</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">hidden_units</span><span class="p">,</span><span class="w"> </span><span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">)</span><span class="w">
+    </span><span class="n">models</span><span class="p">[[</span><span class="n">m</span><span class="p">]]</span><span class="o">&lt;-</span><span class="n">model</span><span class="w">
+    </span><span class="n">predictions</span><span class="o">&lt;-</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">training_data</span><span class="p">[,</span><span class="o">-</span><span class="n">which</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">output_column</span><span class="p">)],</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"class"</span><span class="p">))</span><span class="w">
+    </span><span class="n">errors</span><span class="o">&lt;-</span><span class="n">predictions</span><span class="o">!=</span><span class="n">training_data</span><span class="p">[,</span><span class="n">output_column</span><span class="p">]</span><span class="w">
+    </span><span class="n">error_rate</span><span class="o">&lt;-</span><span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="w">
+    </span><span class="n">alpha</span><span class="o">&lt;</span><span class="m">-0.5</span><span class="o">*</span><span class="nf">log</span><span class="p">((</span><span class="m">1</span><span class="o">-</span><span class="n">error_rate</span><span class="p">)</span><span class="o">/</span><span class="n">error_rate</span><span class="p">)</span><span class="w">
+    </span><span class="n">alphas</span><span class="p">[[</span><span class="n">m</span><span class="p">]]</span><span class="o">&lt;-</span><span class="n">alpha</span><span class="w">
+    </span><span class="n">temp_w</span><span class="o">&lt;-</span><span class="n">mapply</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="n">x</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="n">alpha</span><span class="p">)}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">x</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">)},</span><span class="n">w</span><span class="p">,</span><span class="n">errors</span><span class="p">)</span><span class="w">
+    </span><span class="n">w</span><span class="o">&lt;-</span><span class="n">temp_w</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">temp_w</span><span class="p">)</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span><span class="w"> </span><span class="n">alphas</span><span class="o">=</span><span class="n">unlist</span><span class="p">(</span><span class="n">alphas</span><span class="p">)))</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">AdaBoostNN.predict</span><span class="o">&lt;-</span><span class="k">function</span><span class="p">(</span><span class="n">ada_model</span><span class="p">,</span><span class="n">test_data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">models</span><span class="o">&lt;-</span><span class="n">ada_model</span><span class="o">$</span><span class="n">models</span><span class="w">
+  </span><span class="n">alphas</span><span class="o">&lt;-</span><span class="n">ada_model</span><span class="o">$</span><span class="n">alphas</span><span class="w">
+  </span><span class="n">prediction_matrix</span><span class="o">&lt;-</span><span class="n">sapply</span><span class="p">(</span><span class="n">models</span><span class="p">,</span><span class="k">function</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">test_data</span><span class="p">,</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"class"</span><span class="p">)))</span><span class="w">
+  </span><span class="n">weighted_predictions</span><span class="o">&lt;-</span><span class="n">t</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">prediction_matrix</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="k">function</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">mapply</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="n">y</span><span class="o">*</span><span class="n">z</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">alphas</span><span class="p">)))</span><span class="w">
+  </span><span class="n">final_predictions</span><span class="o">&lt;-</span><span class="n">apply</span><span class="p">(</span><span class="n">weighted_predictions</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sign</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="w">
+  </span><span class="nf">return</span><span class="p">(</span><span class="n">final_predictions</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>训练10个带有单个隐藏神经元的神经网络模型，观察增强是否会提高精确度</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre><span class="n">ada_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">AdaBoostNN</span><span class="p">(</span><span class="n">magic_train_df_pp</span><span class="p">,</span><span class="w"> </span><span class="s1">'CLASS'</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="n">predictions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">AdaBoostNN.predict</span><span class="p">(</span><span class="n">ada_model</span><span class="p">,</span><span class="w"> </span><span class="n">magic_test_pp</span><span class="p">)</span><span class="w">
+</span><span class="n">mean</span><span class="p">(</span><span class="n">predictions</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">magic_test_output</span><span class="p">)</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+<p>增强10个模型看起来会给我们在精确度上带来微小的改进，但也许训练更多模型会带来更多不同。我们还对弱学习器之间复杂度的关系感兴趣，它是用隐藏神经元的数量以及在这个数据集上进行增强后能够预期的性能提高来衡量的。</p>
+
+<p>使用不同参数来调整神经网络：</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre><span class="n">magic_boost</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">expand.grid</span><span class="p">(</span><span class="n">M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">),</span><span class="w"> </span><span class="n">hidden_units</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">))</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+</div>
+
+<p><img src="http://oc5ofszxe.bkt.clouddn.com/jc.png" alt="tp" /></p>
+
+<p>对于只有1个隐藏神经元的神经网络，随着增强模型的数量增加，我们看到了精确度的提高，但在100个模型之后，精确度会逐渐减小，到200个模型时实际上精确度反而更小了一点。对于这些网络，性能比单个模型的基准有明显提高。当通过采用带有3个隐藏神经元的隐藏层来增加分类器的复杂度时，我们在性能上得到的提高就小得多。在模型数量为200个时，两种集成方法的性能都在相似水平上，这表明在这个点上，我们的精确度会受限于我们所训练的模型的类型。</p>
+
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2017/12/10/pyspark%E4%BE%9D%E8%B5%96%E9%83%A8%E7%BD%B2/" data-toggle="tooltip" data-placement="top" title="pyspark依赖部署">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="2">
+                                    前端开发
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#JavaScript" title="JavaScript" rel="2">
+                                    JavaScript
+                                </a>
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#社会计算" title="社会计算" rel="4">
+                                    社会计算
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#算法" title="算法" rel="3">
+                                    算法
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#大数据" title="大数据" rel="5">
+                                    大数据
+                                </a>
+                            
+        				
+                            
+        				
+                            
+                				<a href="/tags/#社交网站数据分析" title="社交网站数据分析" rel="3">
+                                    社交网站数据分析
+                                </a>
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+                            
+        				
+        			</div>
+                </section>
+                
+                <!-- 来必力City版安装代码 -->
+                <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDkwOC83NDU3">
+                <script type="text/javascript">
+                   (function(d, s) {
+                       var j, e = d.getElementsByTagName(s)[0];
+
+                       if (typeof LivereTower === 'function') { return; }
+
+                       j = d.createElement(s);
+                       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                       j.async = true;
+
+                       e.parentNode.insertBefore(j, e);
+                   })(document, 'script');
+                </script>
+                <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                </div>
+                <!-- City版安装代码已完成 -->
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://blog.csdn.net/trucyluce">Trucy CSDN Blog</a></li>
+                    
+                        <li><a href="http://echoma.github.io/text_sequence_diagram/">在线时序图</a></li>
+                    
+                        <li><a href="http://naotu.baidu.com/">在线思维导图</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/baiboy/">NLP伏草惟存</a></li>
+                    
+                        <li><a href="http://blog.5long.me/">茶码话桑麻</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/trucyluce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/TrucyLuce">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/luzhijun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; T.L Blog 2017
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+<script src="/js/fastclick.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--Click.js -->
+<script>
+    async("/js/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'f2fd34a3c5de02cf1e94e7584f314dc6';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<!-- 代码行号-->
+<script type="text/javascript">
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(\w+)\b/i,t=0,n=_self.Prism={util:{encode:function(e){return e instanceof a?new a(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e){var t=n.util.type(e);switch(t){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=n.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return n.util.clone(e)})}return e}},languages:{extend:function(e,t){var a=n.util.clone(n.languages[e]);for(var r in t)a[r]=t[r];return a},insertBefore:function(e,t,a,r){r=r||n.languages;var l=r[e];if(2==arguments.length){a=arguments[1];for(var i in a)a.hasOwnProperty(i)&&(l[i]=a[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in a)a.hasOwnProperty(i)&&(o[i]=a[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,t,a,r){r=r||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],a||l),"Object"!==n.util.type(e[l])||r[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||r[n.util.objId(e[l])]||(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,r)):(r[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,r)))}},plugins:{},highlightAll:function(e,t){var a={callback:t,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var r,l=a.elements||document.querySelectorAll(a.selector),i=0;r=l[i++];)n.highlightElement(r,e===!0,a.callback)},highlightElement:function(t,a,r){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1],i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(!s||!i)return n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),a&&_self.Worker){var c=new Worker(n.filename);c.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},c.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,r&&r.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,r){var l=n.tokenize(e,t);return a.stringify(n.util.encode(l),r)},tokenize:function(e,t){var a=n.Token,r=[e],l=t.rest;if(l){for(var i in l)t[i]=l[i];delete t.rest}e:for(var i in t)if(t.hasOwnProperty(i)&&t[i]){var o=t[i];o="Array"===n.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],c=u.inside,g=!!u.lookbehind,h=!!u.greedy,f=0,d=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var m=r[p];if(r.length>e.length)break e;if(!(m instanceof a)){u.lastIndex=0;var y=u.exec(m),v=1;if(!y&&h&&p!=r.length-1){var b=r[p+1].matchedStr||r[p+1],k=m+b;if(p<r.length-2&&(k+=r[p+2].matchedStr||r[p+2]),u.lastIndex=0,y=u.exec(k),!y)continue;var w=y.index+(g?y[1].length:0);if(w>=m.length)continue;var _=y.index+y[0].length,P=m.length+b.length;if(v=3,P>=_){if(r[p+1].greedy)continue;v=2,k=k.slice(0,P)}m=k}if(y){g&&(f=y[1].length);var w=y.index+f,y=y[0].slice(f),_=w+y.length,S=m.slice(0,w),O=m.slice(_),j=[p,v];S&&j.push(S);var A=new a(i,c?n.tokenize(y,c):y,d,y,h);j.push(A),O&&j.push(O),Array.prototype.splice.apply(r,j)}}}}}return r},hooks:{all:{},add:function(e,t){var a=n.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=n.hooks.all[e];if(a&&a.length)for(var r,l=0;r=a[l++];)r(t)}}},a=n.Token=function(e,t,n,a,r){this.type=e,this.content=t,this.alias=n,this.matchedStr=a||null,this.greedy=!!r};if(a.stringify=function(e,t,r){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return a.stringify(n,t,e)}).join("");var l={type:e.type,content:a.stringify(e.content,t,r),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:r};if("comment"==l.type&&(l.attributes.spellcheck="true"),e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o="";for(var s in l.attributes)o+=(o?" ":"")+s+'="'+(l.attributes[s]||"")+'"';return"<"+l.tag+' class="'+l.classes.join(" ")+'" '+o+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,r=t.code,l=t.immediateClose;_self.postMessage(n.highlight(r,n.languages[a],a)),l&&_self.close()},!1),_self.Prism):_self.Prism;var r=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return r&&(n.filename=r.src,document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",n.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+</script>
+<script >
+!function(){"undefined"!=typeof self&&self.Prism&&self.document&&Prism.hooks.add("complete",function(e){if(e.code){var t=e.element.parentNode,s=/\s*\bhighlight\b\s*/;if(t&&/pre/i.test(t.nodeName)&&(s.test(t.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s,"")),s.test(t.className)||(t.className+="highlight");var n,a=e.code.match(/\n(?!$)/g),l=a?a.length+1:1,m=new Array(l+1);m=m.join("<span></span>"),n=document.createElement("span"),n.className="line-numbers-rows",n.innerHTML=m,t.hasAttribute("data-start")&&(t.style.counterReset="linenumber "+(parseInt(t.getAttribute("data-start"),10)-1)),e.element.appendChild(n)}}})}();
+</script>
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
