@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>GitHub数据提取与分析 - 楚汐|Trucy Luce Blog</title>
@@ -220,7 +220,7 @@ MathJax.Hub.Config({
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/9660244.jpg" alt="" /><br />
 向api根目录发送请求，试一试这个token连接情况：</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -252,7 +252,8 @@ MathJax.Hub.Config({
 30
 31
 32
-33</pre></td><td class="code"><pre>curl https://api.github.com/?access_token<span class="o">=</span><span class="nv">$TOKEN</span>
+33
+</pre></td><td class="rouge-code"><pre>curl https://api.github.com/?access_token<span class="o">=</span><span class="nv">$TOKEN</span>
 <span class="o">{</span>
   <span class="s2">"current_user_url"</span>: <span class="s2">"https://api.github.com/user"</span>,
   <span class="s2">"current_user_authorizations_html_url"</span>: <span class="s2">"https://github.com/settings/connections/applications{/client_id}"</span>,
@@ -285,12 +286,10 @@ MathJax.Hub.Config({
   <span class="s2">"user_repositories_url"</span>: <span class="s2">"https://api.github.com/users/{user}/repos{?type,page,per_page,sort}"</span>,
   <span class="s2">"user_search_url"</span>: <span class="s2">"https://api.github.com/search/users?q={query}{&amp;page,per_page,sort,order}"</span>
 <span class="o">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>github 的API符合<a href="https://en.wikipedia.org/wiki/HATEOAS">HATEOAS</a>设计，从上面可以看到，如果想获取当前用户的信息，应该去访问api.github.com/user，然后就得到了下面结果。</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -298,7 +297,8 @@ MathJax.Hub.Config({
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="o">{</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="o">{</span>
 <span class="s2">"login"</span>: <span class="s2">"luzhijun"</span>,
 <span class="s2">"id"</span>: 15256911,
 <span class="s2">"avatar_url"</span>: <span class="s2">"https://avatars.githubusercontent.com/u/15256911?v=3"</span>,
@@ -307,32 +307,29 @@ MathJax.Hub.Config({
 <span class="s2">"html_url"</span>: <span class="s2">"https://github.com/luzhijun"</span>,
 ...
 <span class="o">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="pygithub">pygithub</h3>
 <p>ok，这里介绍一个方便python使用的包，<a href="http://pygithub.github.io/PyGithub/v1/introduction.html">pygithub</a>,你可以通过它方便地用python脚本管理github。其API与github<a href="http://pygithub.github.io/PyGithub/v1/apis.html">对应</a>。 
 举个例子，拿到指定用户的所有仓库:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
-<span class="c"># Specify your own access token here</span>
-<span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="s">''</span>
+8
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+<span class="c1"># Specify your own access token here
+</span><span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="s">''</span>
 <span class="n">USER</span> <span class="o">=</span> <span class="s">'luzhijun'</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">ACCESS_TOKEN</span><span class="p">)</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
-<span class="n">REPOS</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
+<span class="n">REPOS</span><span class="o">=</span><span class="n">user</span><span class="p">.</span><span class="n">get_repos</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">REPOS</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>[Repository(full_name=”luzhijun/huxblog-boilerplate”), Repository(full_name=”luzhijun/leecode”), Repository(full_name=”luzhijun/luzhijun.github.io”), Repository(full_name=”luzhijun/Optimization”), Repository(full_name=”luzhijun/SVDRecommenderSystem”)]</p>
 </blockquote>
@@ -343,7 +340,7 @@ MathJax.Hub.Config({
 <p>NetworkX是一个用Python语言开发的图论与复杂网络建模工具,内置了常用的图与复杂网络分析算法,可以方便的进行复杂网络数据分析、仿真建模等工作。<br />
 下面创建一个有向图x-&gt;y:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -364,31 +361,30 @@ MathJax.Hub.Config({
 19
 20
 21
-22</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+22
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="n">nx</span>
 
-<span class="c"># 创建有向图</span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="c"># 加条边x-&gt;y</span>
-<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span> <span class="s">'Y'</span><span class="p">)</span>
-<span class="c"># 打印图的相关数据信息</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 创建有向图
+</span><span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="p">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="c1"># 加条边x-&gt;y
+</span><span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span> <span class="s">'Y'</span><span class="p">)</span>
+<span class="c1"># 打印图的相关数据信息
+</span><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">"Nodes:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Edges:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
-<span class="c"># 节点属性</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'Y'</span><span class="p">])</span>
-<span class="c"># 边属性</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Nodes:"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes</span><span class="p">())</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Edges:"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">edges</span><span class="p">())</span>
+<span class="c1"># 节点属性
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'Y'</span><span class="p">])</span>
+<span class="c1"># 边属性
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"X=&gt;Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">])</span>
+<span class="c1"># 更新节点信息
+</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">].</span><span class="n">update</span><span class="p">({</span><span class="s">'prop1'</span> <span class="p">:</span> <span class="s">'value1'</span><span class="p">})</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
+<span class="c1"># 更新边信息
+</span><span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">].</span><span class="n">update</span><span class="p">({</span><span class="s">'label'</span> <span class="p">:</span> <span class="s">'label1'</span><span class="p">})</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"X=&gt;Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">])</span>
-<span class="c"># 更新节点信息</span>
-<span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">'prop1'</span> <span class="p">:</span> <span class="s">'value1'</span><span class="p">})</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"X props:"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'X'</span><span class="p">])</span>
-<span class="c"># 更新边信息</span>
-<span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">'label'</span> <span class="p">:</span> <span class="s">'label1'</span><span class="p">})</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"X=&gt;Y props:"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">'X'</span><span class="p">][</span><span class="s">'Y'</span><span class="p">])</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Name: <br />
 Type: DiGraph  #无向图表示为Graph
@@ -410,12 +406,11 @@ X=&gt;Y props: {‘label’: ‘label1’}</p>
 
 <p>有向图和无向图都可以给边赋予权重，用到的方法是add_weighted_edges_from，它接受1个或多个三元组[u,v,w]作为参数，其中u是起点，v是终点，w是权重。例如：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre><span class="n">g</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)])</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">g</span><span class="p">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)])</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="s">'X'</span><span class="p">,</span><span class="s">'Y'</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>{‘weight’: 10.0, ‘label’: ‘label1’}</p>
 </blockquote>
@@ -428,7 +423,7 @@ X=&gt;Y props: {‘label’: ‘label1’}</p>
 我–(gazes)–&gt;项目<br />
 那么还有其他很多人也关注了这个项目，我们把加星的人都找出来。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -460,42 +455,41 @@ X=&gt;Y props: {‘label’: ‘label1’}</p>
 30
 31
 32
-33</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+33
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="n">nx</span>
 
 <span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="s">''</span>
 <span class="n">USER</span><span class="o">=</span><span class="s">'minrk'</span>
 <span class="n">REPO</span><span class="o">=</span><span class="s">'findspark'</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">ACCESS_TOKEN</span><span class="p">)</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
-<span class="n">repo</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
-<span class="n">stargazers</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">get_stargazers</span><span class="p">())</span><span class="c">#加星的用户集合</span>
-
-<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">repo</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">USER</span><span class="p">)</span>
+<span class="n">repo</span><span class="o">=</span><span class="n">user</span><span class="p">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+<span class="n">stargazers</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">repo</span><span class="p">.</span><span class="n">get_stargazers</span><span class="p">())</span><span class="c1">#加星的用户集合
+</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="p">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">g</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">repo</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">repo</span><span class="p">.</span><span class="n">language</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">user</span><span class="p">.</span><span class="n">login</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">stargazers</span><span class="p">:</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'user'</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
-<span class="c"># 打印图的基本属性   </span>
-<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="c"># 打印项目和用户点的基本属性</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="c"># 打印这条边属性</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
-<span class="c"># 打印起点为XXX的信息</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">])</span>
+    <span class="n">g</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">sg</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'user'</span><span class="p">)</span>
+    <span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">repo</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
+<span class="c1"># 打印图的基本属性   
+</span><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 打印项目和用户点的基本属性
+</span><span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 打印这条边属性
+</span><span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
+<span class="c1"># 打印起点为XXX的信息
+</span><span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">])</span>
 <span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s">'findspark(repo)'</span><span class="p">])</span>
-<span class="c"># 打印用户的出入度信息</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
-<span class="c"># 打印项目的出入度信息</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="c1"># 打印用户的出入度信息
+</span><span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'luzhijun(user)'</span><span class="p">]))</span>
+<span class="c1"># 打印项目的出入度信息
+</span><span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">in_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">out_edges</span><span class="p">([</span><span class="s">'findspark(repo)'</span><span class="p">]))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Name: <br />
 Type: DiGraph<br />
@@ -557,7 +551,7 @@ Average out degree:   0.9877  # 80/81</p>
 <p>作为学习，我们使用<a href="http://mathworld.wolfram.com/KrackhardtKite.html">Krackhardt kite graph</a>来研究，之所以称之为风筝图，因为长得像风筝。。。(废话)<br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/93702051.jpg" alt="" /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -567,20 +561,19 @@ Average out degree:   0.9877  # 80/81</p>
 8
 9
 10
-11</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
-<span class="n">kkg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">small</span><span class="o">.</span><span class="n">krackhardt_kite_graph</span><span class="p">()</span>
+11
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="n">kkg</span> <span class="o">=</span> <span class="n">nx</span><span class="p">.</span><span class="n">generators</span><span class="p">.</span><span class="n">small</span><span class="p">.</span><span class="n">krackhardt_kite_graph</span><span class="p">()</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Degree Centrality"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
              <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Betweenness Centrality"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
              <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Closeness Centrality"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">kkg</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
              <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Degree Centrality
 [(3, 0.6666666666666666), (5, 0.5555555555555556), (6, 0.5555555555555556), (0, 0.4444444444444444), (1, 0.4444444444444444), (2, 0.3333333333333333), (4, 0.3333333333333333), (7, 0.3333333333333333), (8, 0.2222222222222222), (9, 0.1111111111111111)]</p>
@@ -602,7 +595,7 @@ Average out degree:   0.9877  # 80/81</p>
 <p>大神一般都是关注者很高，在社区中很活跃，除了前面加星，类似微博、facebook，github我们还有“关注”关系可以用，现在对<a href="#networkx-1">前面</a>扩展关注关系，对每个加星的用户扩展。这里简单起见，关注者都是现有的结点，不再新增结点。   <br />
 由于API每小时限制使用5000个请求，打印下剩余请求数看有没有耗尽，耗尽的话抛出异常。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -616,24 +609,23 @@ Average out degree:   0.9877  # 80/81</p>
 12
 13
 14
-15</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">sys</span>
+15
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">sys</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stargazers</span><span class="p">):</span>   
-    <span class="c"># 增加关注联系，如果有关注者的话</span>
-        <span class="k">try</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">follower</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_followers</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">follower</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
-                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">follower</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> 
+    <span class="c1"># 增加关注联系，如果有关注者的话
+</span>        <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">follower</span> <span class="ow">in</span> <span class="n">sg</span><span class="p">.</span><span class="n">get_followers</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">follower</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+                <span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">follower</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">sg</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> 
                            <span class="nb">type</span><span class="o">=</span><span class="s">'follows'</span><span class="p">)</span>
-    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c">#ssl.SSLError</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="s">"Encountered an error fetching followers for"</span><span class="p">,</span> \
-                             <span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c1">#ssl.SSLError
+</span>        <span class="n">sys</span><span class="p">.</span><span class="n">stderr</span><span class="p">.</span><span class="n">write</span><span class="p">(</span> <span class="s">"Encountered an error fetching followers for"</span><span class="p">,</span> \
+                             <span class="n">sg</span><span class="p">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
 
     <span class="k">print</span> <span class="p">(</span><span class="s">"Processed"</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">" stargazers. Num nodes/edges in graph"</span><span class="p">,</span> \
-          <span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
-    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit remaining"</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">rate_limiting</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+          <span class="n">g</span><span class="p">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit remaining"</span><span class="p">,</span> <span class="n">client</span><span class="p">.</span><span class="n">rate_limiting</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>rocessed 1  stargazers. Num nodes/edges in graph 81 / 80<br />
 Rate limit remaining (4999, 5000)<br />
@@ -659,7 +651,7 @@ Rate limit remaining (4854, 5000)</p>
 
 <p>接下来，对关联关系统计。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -682,33 +674,32 @@ Rate limit remaining (4854, 5000)</p>
 21
 22
 23
-24</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+24
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
-<span class="c"># 看下更新的图信息</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 看下更新的图信息
+</span><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
-<span class="c"># 每个打星用户的关注者数量不同</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 每个打星用户的关注者数量不同
+</span><span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
-<span class="c"># 查看某个打星用户有多少关注者</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> 
-           <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+<span class="c1"># 查看某个打星用户有多少关注者
+</span><span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">e</span> 
+           <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
                <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span> <span class="ow">and</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">'freeman-lab(user)'</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
 
-<span class="c"># 打印度最多的前10个结点</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">degree_iter</span><span class="p">()],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 打印度最多的前10个结点
+</span><span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">degree_iter</span><span class="p">()],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
 
-<span class="c"># 对每个打星用户的关注者数目计数</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">])</span>
-<span class="n">popular_users</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span>
+<span class="c1"># 对每个打星用户的关注者数目计数
+</span><span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'follows'</span><span class="p">])</span>
+<span class="n">popular_users</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="n">c</span><span class="p">.</span><span class="n">most_common</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Number of popular users"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">popular_users</span><span class="p">))</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Top popular users:"</span><span class="p">,</span> <span class="n">popular_users</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Name: 
 Type: DiGraph
@@ -737,7 +728,7 @@ Top popular users: [(‘freeman-lab(user)’, 4), (‘rgbkrk(user)’, 3), (‘m
 
 <p>(‘freeman-lab(user)’, 4)指freeman-lab在findspark项目中的加星者中还有4个关注者，为了更清楚挖掘图信息，用上面介绍的几个图算法来看一下这个图，由于’仓库’结点有大量的度，其他结点相比来说度都很小，因此先删掉’仓库’结点再计算。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -756,29 +747,28 @@ Top popular users: [(‘freeman-lab(user)’, 4), (‘rgbkrk(user)’, 3), (‘m
 17
 18
 19
-20</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
-<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="c"># 移除中心结点</span>
-<span class="n">h</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="s">'findspark(repo)'</span><span class="p">)</span>
+20
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># 移除中心结点
+</span><span class="n">h</span><span class="p">.</span><span class="n">remove_node</span><span class="p">(</span><span class="s">'findspark(repo)'</span><span class="p">)</span>
 
-<span class="n">dc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="n">dc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">degree_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="k">print</span> <span class="p">(</span><span class="s">"Degree Centrality"</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="n">dc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="n">bc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="k">print</span> <span class="p">(</span><span class="s">"Betweenness Centrality"</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="n">bc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
 <span class="k">print</span> <span class="p">(</span><span class="s">"Closeness Centrality"</span><span class="p">)</span>
-<span class="n">cc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+<span class="n">cc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">h</span><span class="p">).</span><span class="n">items</span><span class="p">(),</span> 
             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="n">cc</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Degree Centrality<br />
 [(‘rgbkrk(user)’, 0.06329113924050633), <br />
@@ -831,7 +821,7 @@ andrew来自香港，关注与被关注比率几乎有两个数量级的差别�
 <h3 id="找出活跃项目">找出活跃项目</h3>
 <p>现在图中只有一个项目，其余结点都是用户。为了找出活跃项目，对每个用户，遍历找其加星的项目添加到图中，扩充图的项目结点。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -844,23 +834,22 @@ andrew来自香港，关注与被关注比率几乎有两个数量级的差别�
 11
 12
 13
-14</pre></td><td class="code"><pre><span class="n">MAX_REPOS</span> <span class="o">=</span> <span class="mi">500</span>
+14
+</pre></td><td class="rouge-code"><pre><span class="n">MAX_REPOS</span> <span class="o">=</span> <span class="mi">500</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stargazers</span><span class="p">):</span>
-    <span class="k">print</span> <span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+    <span class="k">print</span> <span class="p">(</span><span class="n">sg</span><span class="p">.</span><span class="n">login</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">starred</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_starred</span><span class="p">()[:</span><span class="n">MAX_REPOS</span><span class="p">]:</span> <span class="c"># Slice to avoid supernodes</span>
-            <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">starred</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">starred</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> \
-                       <span class="n">owner</span><span class="o">=</span><span class="n">starred</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
-            <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">starred</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
-    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c">#ssl.SSLError:</span>
-        <span class="k">print</span> <span class="p">(</span><span class="s">"Encountered an error fetching starred repos for"</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">starred</span> <span class="ow">in</span> <span class="n">sg</span><span class="p">.</span><span class="n">get_starred</span><span class="p">()[:</span><span class="n">MAX_REPOS</span><span class="p">]:</span> <span class="c1"># Slice to avoid supernodes
+</span>            <span class="n">g</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">starred</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">starred</span><span class="p">.</span><span class="n">language</span><span class="p">,</span> \
+                       <span class="n">owner</span><span class="o">=</span><span class="n">starred</span><span class="p">.</span><span class="n">owner</span><span class="p">.</span><span class="n">login</span><span class="p">)</span>
+            <span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="p">.</span><span class="n">login</span> <span class="o">+</span> <span class="s">'(user)'</span><span class="p">,</span> <span class="n">starred</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">'(repo)'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'gazes'</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span><span class="p">:</span> <span class="c1">#ssl.SSLError:
+</span>        <span class="k">print</span> <span class="p">(</span><span class="s">"Encountered an error fetching starred repos for"</span><span class="p">,</span> <span class="n">sg</span><span class="p">.</span><span class="n">login</span><span class="p">,</span> <span class="s">"Skipping."</span><span class="p">)</span>
 
     <span class="k">print</span> <span class="p">(</span><span class="s">"Processed"</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">"stargazers' starred repos"</span><span class="p">)</span>
-    <span class="k">print</span> <span class="p">(</span><span class="s">"Num nodes/edges in graph"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
-    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit"</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">rate_limiting</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Num nodes/edges in graph"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="s">"/"</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"Rate limit"</span><span class="p">,</span> <span class="n">client</span><span class="p">.</span><span class="n">rate_limiting</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>pchalasani<br />
 Processed 1 stargazers’ starred repos<br />
@@ -884,7 +873,7 @@ Rate limit (4368, 5000)</p>
 <p>以上操作挺费时间的，结点数由几百个一下子扩充到上万个，可以把MAX_REPOS改小一点，然后去泡杯咖啡吧😁。<br />
 拿到所有项目数据，接下来就是要统计哪个是热点项目，可以查询哪个用户mark了哪些项目，他喜欢用啥程序语言，还有那些加星加到手软的用户也可以查询出来。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -911,37 +900,36 @@ Rate limit (4368, 5000)</p>
 25
 26
 27
-28</pre></td><td class="code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="c"># 拿到图里面的所有项目构成列表</span>
-<span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
+28
+</pre></td><td class="rouge-code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 拿到图里面的所有项目构成列表
+</span><span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes_iter</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
 
-<span class="c"># 关注最多的前10个项目</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Popular repositories"</span><span class="p">)</span>
+<span class="c1"># 关注最多的前10个项目
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"Popular repositories"</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> 
-              <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree_iter</span><span class="p">()</span> 
-                  <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">],</span> \
+              <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">in_degree_iter</span><span class="p">()</span> 
+                  <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">],</span> \
              <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
 
 <span class="k">print</span> <span class="s">"Respositories that luzhijun has bookmarked"</span>
-<span class="k">print</span> <span class="p">([(</span><span class="n">n</span><span class="p">,</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">])</span> 
+<span class="k">print</span> <span class="p">([(</span><span class="n">n</span><span class="p">,</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">])</span> 
        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">]</span> 
            <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span><span class="p">])</span>
 
-<span class="c"># 用户喜爱的程序语言</span>
-
+<span class="c1"># 用户喜爱的程序语言
+</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Programming languages luzhijun is interested in"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> 
+<span class="k">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> 
                 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">]</span> 
                     <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'luzhijun(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span><span class="p">])))</span>
-<span class="c">#查看关注项目最多的用户(超过MAX_REPOS)</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Supernode candidates"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> 
-              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
-                  <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">MAX_REPOS</span><span class="p">],</span> \
+<span class="c1">#查看关注项目最多的用户(超过MAX_REPOS)
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"Supernode candidates"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> 
+              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+                  <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">MAX_REPOS</span><span class="p">],</span> \
              <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Name: <br />
 Type: DiGraph<br />
@@ -978,7 +966,7 @@ Average out degree:   1.3851</p>
 <p>现在问题来了，怎么查询当前图中所有项目最热门的语言？我们可以查找每个项目然后抽取语言放入到counter计数器里面统计，这个看起来也不费事，但如果要查询有多少用户以某种语言编程呢？这就要扫描每个项目的入度用户，最后统计求和，时间复杂度挺大的。这个时候一种好的思路就是扩充图，将语言单独作为一个节点，最终图的逻辑图如下： <br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-2/13761577.jpg" alt="" /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -993,29 +981,28 @@ Average out degree:   1.3851</p>
 13
 14
 15
-16</pre></td><td class="code"><pre><span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> 
-         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
-             <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
+16
+</pre></td><td class="rouge-code"><pre><span class="n">repos</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> 
+         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+             <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'repo'</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-    <span class="c"># 消除None,有些空项目语言为None</span>
-    <span class="n">lang</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">repo</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> <span class="ow">or</span> <span class="s">""</span><span class="p">)</span> <span class="o">+</span> <span class="s">"(lang)"</span>
-    <span class="c"># 加星于repo的用户</span>
-    <span class="n">stargazers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
-                  <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+    <span class="c1"># 消除None,有些空项目语言为None
+</span>    <span class="n">lang</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">repo</span><span class="p">][</span><span class="s">'lang'</span><span class="p">]</span> <span class="ow">or</span> <span class="s">""</span><span class="p">)</span> <span class="o">+</span> <span class="s">"(lang)"</span>
+    <span class="c1"># 加星于repo的用户
+</span>    <span class="n">stargazers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
+                  <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
                      <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'gazes'</span>
                  <span class="p">]</span>
     <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">stargazers</span><span class="p">:</span>
-        <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'lang'</span><span class="p">)</span>
-        <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'programs'</span><span class="p">)</span>
-        <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'implements'</span><span class="p">)</span>   
-</pre></td></tr></tbody></table>
-</div>
-</div>
+        <span class="n">g</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'lang'</span><span class="p">)</span>
+        <span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'programs'</span><span class="p">)</span>
+        <span class="n">g</span><span class="p">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">'implements'</span><span class="p">)</span>   
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>接下来看下对语言的统计信息</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -1048,43 +1035,42 @@ Average out degree:   1.3851</p>
 31
 32
 33
-34</pre></td><td class="code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="c"># 看下图里有什么语言</span>
-<span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
-       <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
-           <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">])</span>
-<span class="c"># 某个用户使用的语言</span>
-<span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
+34
+</pre></td><td class="rouge-code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="c1"># 看下图里有什么语言
+</span><span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
+       <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+           <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">])</span>
+<span class="c1"># 某个用户使用的语言
+</span><span class="k">print</span> <span class="p">([</span><span class="n">n</span> 
        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">'ocanbascil(user)'</span><span class="p">]</span> 
            <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s">'ocanbascil(user)'</span><span class="p">][</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'programs'</span><span class="p">],</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="c"># 查询最热门的语言</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Most popular languages"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
- <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
-     <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
-<span class="c"># 查询用某种语言的有多少人</span>
-<span class="n">python_programmers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
-                      <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'Python(lang)'</span><span class="p">)</span> 
-                          <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
+<span class="c1"># 查询最热门的语言
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"Most popular languages"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+ <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">nodes_iter</span><span class="p">()</span> 
+     <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="c1"># 查询用某种语言的有多少人
+</span><span class="n">python_programmers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> 
+                      <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'Python(lang)'</span><span class="p">)</span> 
+                          <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Number of Python programmers:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">))</span>
 
 <span class="n">javascript_programmers</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> 
-                          <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'JavaScript(lang)'</span><span class="p">)</span> 
-                              <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
+                          <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">in_edges_iter</span><span class="p">(</span><span class="s">'JavaScript(lang)'</span><span class="p">)</span> 
+                              <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Number of JavaScript programmers:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">))</span>
 
-<span class="c"># 两个语言都用的人</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript and Python"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">))))</span>
+<span class="c1"># 两个语言都用的人
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript and Python"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">).</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">))))</span>
 
-<span class="c"># 只用python不用js的人</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript but not Python"</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">))))</span>
+<span class="c1"># 只用python不用js的人
+</span><span class="k">print</span> <span class="p">(</span><span class="s">"Number of programmers who use JavaScript but not Python"</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">javascript_programmers</span><span class="p">).</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">python_programmers</span><span class="p">))))</span>
 
-<span class="c"># XXX: Can you determine who is the most polyglot programmer?</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="c1"># XXX: Can you determine who is the most polyglot programmer?
+</span></pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
   <p>Name: 
 Type: DiGraph
@@ -1123,7 +1109,7 @@ Number of programmers who use JavaScript but not Python<br />
 <p>依靠Networkx的导出能力，可以通过JSON的JavaScript工具包<a href="https://d3js.org">D3</a>使用，但也有许多其他的工具包，你可以考虑当可视化图。<a href="http://www.graphviz.org">Graphviz</a>是高度可配置的经典工具，可以设计出非常复杂的图形和位图图像。传统上在终端上运行，但现在也有支持大多数平台的用户界面。另一个流行的开源项目是<a href="https://gephi.org">Gephi</a>，其在交互上做的很好，在过去的几年中Gephi已经迅速流行，非常值得推荐。
 这里由于有上万个项目结点，一张图乌漆嘛黑都看不到，并且很卡。所以下面只截取用户点和语言点的可视化。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -1140,27 +1126,26 @@ Number of programmers who use JavaScript but not Python<br />
 15
 16
 17
-18</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">os</span>
+18
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">IFrame</span>
 <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span> 
 <span class="kn">from</span> <span class="nn">networkx.readwrite</span> <span class="kn">import</span> <span class="n">json_graph</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Stats on the full graph"</span> <span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
-<span class="c"># 只提取用户和语言结点</span>
-<span class="n">mtsw_users</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span> <span class="o">+</span><span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">]</span> 
-<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mtsw_users</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="c1"># 只提取用户和语言结点
+</span><span class="n">mtsw_users</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'user'</span><span class="p">]</span> <span class="o">+</span><span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'lang'</span><span class="p">]</span> 
+<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mtsw_users</span><span class="p">)</span>
 <span class="k">print</span> <span class="p">(</span><span class="s">"Stats on the extracted subgraph"</span> <span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
-<span class="c"># json导出</span>
-<span class="n">d</span> <span class="o">=</span> <span class="n">json_graph</span><span class="o">.</span><span class="n">node_link_data</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">'force.json'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">nx</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+<span class="c1"># json导出
+</span><span class="n">d</span> <span class="o">=</span> <span class="n">json_graph</span><span class="p">.</span><span class="n">node_link_data</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="n">json</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">'force.json'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">))</span>
 <span class="n">viz_file</span> <span class="o">=</span> <span class="s">'files/force.html'</span>
-<span class="c"># D3可视化</span>
-<span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">viz_file</span><span class="p">,</span> <span class="s">'100</span><span class="si">%</span><span class="s">'</span><span class="p">,</span> <span class="s">'900px'</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="c1"># D3可视化
+</span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">viz_file</span><span class="p">,</span> <span class="s">'100%'</span><span class="p">,</span> <span class="s">'900px'</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>下面的动态页面加载不出请点击<a href="/html/force.html">动态图</a></p>
 <iframe src="/html/force.html" width="900" height="900" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
 
@@ -1418,7 +1403,7 @@ Number of programmers who use JavaScript but not Python<br />
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

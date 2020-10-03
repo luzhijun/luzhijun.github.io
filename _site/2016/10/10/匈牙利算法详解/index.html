@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>匈牙利算法详解 - 楚汐|Trucy Luce Blog</title>
@@ -258,7 +258,7 @@ MathJax.Hub.Config({
 <p>为了简单起见代码采用矩阵方式存储，换成邻接表也一样。下面采用两个版本，一个是DFS版本，采用递归方式，当然用栈实现也一样，另一种是BFS版本，主要用队列和prev数组。这里python中的队列虽然用list也可以轻松实现，但pop(0)实际上开销还是很大的，因此还是用链式存储结构Deque。<br />
 测试图采用图4数据。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -359,28 +359,29 @@ MathJax.Hub.Config({
 99
 100
 101
-102</pre></td><td class="code"><pre><span class="c">#!/Users/Trucy/anaconda/bin/python</span>
-<span class="c"># coding: utf-8</span>
-<span class="kn">import</span> <span class="nn">timeit</span>
+102
+</pre></td><td class="rouge-code"><pre><span class="c1">#!/Users/Trucy/anaconda/bin/python
+# coding: utf-8
+</span><span class="kn">import</span> <span class="nn">timeit</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
-<span class="c">#==============================================================================</span>
-<span class="c"># 匈牙利算法</span>
-<span class="c">#==============================================================================</span>
-<span class="k">class</span> <span class="nc">HungarianAlgorithm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="c1">#==============================================================================
+# 匈牙利算法
+#==============================================================================
+</span><span class="k">class</span> <span class="nc">HungarianAlgorithm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">graph</span><span class="p">):</span>
         <span class="s">"""
         @graph:图的矩阵表示
         """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>       
+        <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>       
 
     <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">used</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="c">#放入交替路</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">x</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">used</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="c1">#放入交替路
+</span>                <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">x</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>
                     <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="s">'-&gt;'</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
                     <span class="k">return</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="mi">0</span>
@@ -388,44 +389,44 @@ MathJax.Hub.Config({
     <span class="k">def</span> <span class="nf">hungarian1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="s">"""递归形式
         """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="c">#记录匹配情况</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="c">#记录是否访问过</span>
-        <span class="n">m</span><span class="o">=</span><span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="c1">#记录匹配情况
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="c1">#记录是否访问过
+</span>        <span class="n">m</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">'开始匹配:'</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">m</span><span class="o">+=</span><span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">m</span><span class="o">+=</span><span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">m</span>
     
     <span class="k">def</span> <span class="nf">hungarian2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="s">"""循环形式
         """</span>
-        <span class="n">match</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="c">#记录匹配情况</span>
-        <span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="c">#记录是否访问过</span>
-        <span class="n">Q</span><span class="o">=</span><span class="n">deque</span><span class="p">()</span>  <span class="c">#设置队列</span>
-        <span class="n">ans</span><span class="o">=</span><span class="mi">0</span>
-        <span class="n">prev</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>  <span class="c">#代表上一节点</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span> 
+        <span class="n">match</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="c1">#记录匹配情况
+</span>        <span class="n">used</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="c1">#记录是否访问过
+</span>        <span class="n">Q</span><span class="o">=</span><span class="n">deque</span><span class="p">()</span>  <span class="c1">#设置队列
+</span>        <span class="n">ans</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">prev</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span>  <span class="c1">#代表上一节点
+</span>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="p">):</span> 
             <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">Q</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="n">Q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">prev</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=-</span><span class="mi">1</span><span class="c">#设i为出发点</span>
-                <span class="n">flag</span><span class="o">=</span><span class="bp">False</span> <span class="c">#未找到增广路</span>
-                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
-                    <span class="n">u</span><span class="o">=</span><span class="n">Q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span>  <span class="n">used</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">!=</span><span class="n">i</span><span class="p">:</span>
+                <span class="n">Q</span><span class="p">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">Q</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">prev</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=-</span><span class="mi">1</span><span class="c1">#设i为出发点
+</span>                <span class="n">flag</span><span class="o">=</span><span class="bp">False</span> <span class="c1">#未找到增广路
+</span>                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+                    <span class="n">u</span><span class="o">=</span><span class="n">Q</span><span class="p">.</span><span class="n">popleft</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span>  <span class="n">used</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">!=</span><span class="n">i</span><span class="p">:</span>
                             <span class="n">used</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>        
                             <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
-                                <span class="n">Q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-                                <span class="n">prev</span><span class="p">[</span><span class="n">match</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">=</span><span class="n">u</span><span class="c">#记录点的顺序</span>
-                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                                <span class="n">prev</span><span class="p">[</span><span class="n">match</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">=</span><span class="n">u</span><span class="c1">#记录点的顺序
+</span>                            <span class="k">else</span><span class="p">:</span>
                                 <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
                                 <span class="n">d</span><span class="o">=</span><span class="n">u</span>
                                 <span class="n">e</span><span class="o">=</span><span class="n">j</span>
-                                <span class="k">while</span><span class="p">(</span><span class="n">d</span><span class="o">!=-</span><span class="mi">1</span><span class="p">):</span><span class="c">#将原匹配的边去掉加入原来不在匹配中的边</span>
-                                    <span class="n">t</span><span class="o">=</span><span class="n">match</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                                <span class="k">while</span><span class="p">(</span><span class="n">d</span><span class="o">!=-</span><span class="mi">1</span><span class="p">):</span><span class="c1">#将原匹配的边去掉加入原来不在匹配中的边
+</span>                                    <span class="n">t</span><span class="o">=</span><span class="n">match</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
                                     <span class="n">match</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">=</span><span class="n">e</span>
                                     <span class="n">match</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">=</span><span class="n">d</span>
                                     <span class="n">d</span><span class="o">=</span><span class="n">prev</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
@@ -433,8 +434,8 @@ MathJax.Hub.Config({
                                 <span class="k">print</span><span class="p">(</span><span class="s">'mathch:'</span><span class="p">,</span><span class="n">match</span><span class="p">)</span>
                                 <span class="k">print</span><span class="p">(</span><span class="s">'prev:'</span><span class="p">,</span><span class="n">prev</span><span class="p">)</span>
                                 <span class="k">print</span><span class="p">(</span><span class="s">'deque'</span><span class="p">,</span><span class="n">Q</span><span class="p">)</span>
-                <span class="k">if</span>  <span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span><span class="c">#新增匹配边</span>
-                    <span class="n">ans</span><span class="o">+=</span><span class="mi">1</span>
+                <span class="k">if</span>  <span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span><span class="c1">#新增匹配边
+</span>                    <span class="n">ans</span><span class="o">+=</span><span class="mi">1</span>
         <span class="k">return</span> <span class="n">ans</span>
         
 
@@ -448,7 +449,7 @@ MathJax.Hub.Config({
        <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
        <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
     <span class="n">h</span><span class="o">=</span><span class="n">HungarianAlgorithm</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-    <span class="k">print</span> <span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">hungarian1</span><span class="p">())</span>
+    <span class="k">print</span> <span class="p">(</span><span class="n">h</span><span class="p">.</span><span class="n">hungarian1</span><span class="p">())</span>
 
 <span class="k">def</span> <span class="nf">do2</span><span class="p">():</span>  
     <span class="n">graph</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
@@ -460,13 +461,11 @@ MathJax.Hub.Config({
        <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
        <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
     <span class="n">h</span><span class="o">=</span><span class="n">HungarianAlgorithm</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-    <span class="k">print</span> <span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">hungarian2</span><span class="p">())</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+    <span class="k">print</span> <span class="p">(</span><span class="n">h</span><span class="p">.</span><span class="n">hungarian2</span><span class="p">())</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>运行do1(),可以看到结果:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -475,7 +474,8 @@ MathJax.Hub.Config({
 7
 8
 9
-10</pre></td><td class="code"><pre>开始匹配: 1
+10
+</pre></td><td class="rouge-code"><pre>开始匹配: 1
 1 -&gt; 5
 开始匹配: 2
 1 -&gt; 7
@@ -485,14 +485,12 @@ MathJax.Hub.Config({
 开始匹配: 4
 4 -&gt; 8
 4
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>首先从1开始匹配一直到4（代码中到8实际不影响，因为接下来5，6，7，8都不会进入到递归了），遍历1~8（实际上遍历5~8即可），扩展第一个增广路为(1-&gt;5)，然后从2开始匹配，5是匹配点，于是找5的匹配点1，发现一条增广路(2-&gt;5-&gt;1-&gt;7),修改匹配，得到(2-&gt;5)(1-&gt;7),下面以此类推。</p>
 
 <p>运行do2(),可以看到结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -504,7 +502,8 @@ MathJax.Hub.Config({
 10
 11
 12
-13</pre></td><td class="code"><pre>mathch: [4, -1, -1, -1, 0, -1, -1, -1]
+13
+</pre></td><td class="rouge-code"><pre>mathch: [4, -1, -1, -1, 0, -1, -1, -1]
 prev: [-1, 0, 0, 0, 0, 0, 0, 0]
 deque deque([])
 mathch: [6, 4, -1, -1, 1, -1, 0, -1]
@@ -517,9 +516,7 @@ mathch: [6, 4, 5, 7, 1, 2, 0, 3]
 prev: [3, 2, -1, -1, 0, 0, 0, 0]
 deque deque([0])
 4
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>其中match用来保存匹配点，prev用来保存增光路非匹配点顺序，其功能相当于递归方法中的隐式栈。</p>
 
 <h3 id="匈牙利算法的要点如下">匈牙利算法的要点如下</h3>
@@ -536,20 +533,18 @@ deque deque([0])
 <h3 id="性能比较">性能比较</h3>
 <p>两个方法各运行一千次:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">timeit</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s">'do1()'</span><span class="p">,</span><span class="s">'from __main__ import do1'</span><span class="p">)</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">timeit</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s">'do2()'</span><span class="p">,</span><span class="s">'from __main__ import do2'</span><span class="p">)</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="k">print</span> <span class="p">(</span><span class="n">timeit</span><span class="p">.</span><span class="n">Timer</span><span class="p">(</span><span class="s">'do1()'</span><span class="p">,</span><span class="s">'from __main__ import do1'</span><span class="p">).</span><span class="n">timeit</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">timeit</span><span class="p">.</span><span class="n">Timer</span><span class="p">(</span><span class="s">'do2()'</span><span class="p">,</span><span class="s">'from __main__ import do2'</span><span class="p">).</span><span class="n">timeit</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>结果:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre>0.01775275500040152
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>0.01775275500040152
 0.013543492999815498
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>两个版本的时间复杂度均为$O(V⋅E)$。DFS 的优点是思路清晰、代码量少，但是性能不如 BFS。测试了两种算法的性能。对于稀疏图，BFS 版本明显快于 DFS 版本；而对于稠密图两者则不相上下。在完全随机数据 9000 个顶点 4,0000 条边时前者领先后者大约 97.6%，9000 个顶点 100,0000 条边时前者领先后者 8.6%, 而达到 500,0000 条边时 BFS 仅领先 0.85%。</p>
 
@@ -799,7 +794,7 @@ deque deque([0])
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

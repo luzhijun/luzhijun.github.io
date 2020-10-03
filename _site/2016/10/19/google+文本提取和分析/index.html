@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>Google Plus 文本提取与分析 - 楚汐|Trucy Luce Blog</title>
@@ -233,10 +233,9 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
   <li><strong>直接浏览器抓取</strong></li>
 </ol>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>curl <span class="s2">"https://www.googleapis.com/plus/v1/people?query=Trucy+Luce&amp;key=</span><span class="nv">$api_key</span><span class="s2">"</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>curl <span class="s2">"https://www.googleapis.com/plus/v1/people?query=Trucy+Luce&amp;key=</span><span class="nv">$api_key</span><span class="s2">"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <blockquote>
 
   <p>{<br />
@@ -266,7 +265,7 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 <h3 id="利用python-sdk">利用python SDK</h3>
 <p>google api for python 有两个版本，一个是<a href="http://github.com/google/oauth2client">oauth2</a>授权的，另一个就是简单的<a href="http://github.com/google/google-api-python-client">api_key</a>授权的。我们使用第二个，这是其<a href="http://google.github.io/google-api-python-client/docs/epy/index.html">API文档</a>。该客户端已经支持python3版本，这里本文代码都以python3为基础。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -274,18 +273,17 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">httplib2</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">httplib2</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">apiclient.discovery</span> <span class="c"># pip install google-api-python-client</span>
-
+<span class="kn">import</span> <span class="nn">apiclient.discovery</span> <span class="c1"># pip install google-api-python-client
+</span>
 <span class="n">Q</span> <span class="o">=</span> <span class="s">"Trucy Luce"</span>
 <span class="n">API_KEY</span> <span class="o">=</span> <span class="s">'自己输入'</span> 
-<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">people_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">people</span><span class="p">()</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Q</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">people_feed</span><span class="p">[</span><span class="s">'items'</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="p">.</span><span class="n">discovery</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="p">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">people_feed</span> <span class="o">=</span> <span class="n">service</span><span class="p">.</span><span class="n">people</span><span class="p">().</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Q</span><span class="p">).</span><span class="n">execute</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">people_feed</span><span class="p">[</span><span class="s">'items'</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>build方法详细查看<a href="http://google.github.io/google-api-python-client/docs/epy/index.html">代码</a>中的api说明，返回一个与服务交互的资源对象（” A Resource object with methods for interacting with the service. “  ）。而这个对象实际上是调动了 build_from_documen这个方法，这个方法返回的是googleapiclient.discovery.Resource资源对象，定位到这个Resource资源对象，但仔细查找发现其方法下面没有people()方法，但有三个生成方法的方法：</p>
 
@@ -317,24 +315,23 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 
 <p>接下来挖掘下某个用户的近期活动，实际上就像推特或者一条说说。这次挑个说中文的“Mulin Hong”。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre><span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c"># Mulin Hong</span>
-<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span>
+8
+</pre></td><td class="rouge-code"><pre><span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c1"># Mulin Hong
+</span><span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="p">.</span><span class="n">discovery</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="p">.</span><span class="n">Http</span><span class="p">(),</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="p">.</span><span class="n">activities</span><span class="p">().</span><span class="nb">list</span><span class="p">(</span>
   <span class="n">userId</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
   <span class="n">collection</span><span class="o">=</span><span class="s">'public'</span><span class="p">,</span>
-  <span class="n">maxResults</span><span class="o">=</span><span class="s">'100'</span> <span class="c"># 最大允许记录条数</span>
-<span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+  <span class="n">maxResults</span><span class="o">=</span><span class="s">'100'</span> <span class="c1"># 最大允许记录条数
+</span><span class="p">).</span><span class="n">execute</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>service.activities().list方法有几个必要参数，userId:活动发起者Id。可选参数：collection:活动归属的集,默认为public，还是看下面图片吧：</p>
 
@@ -343,7 +340,7 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 <p>其他参数可以通过命令<em>help(service.activities().list)</em>来查看。
 由于共7000多行，不方便直接放入文章，可以点击查看内容。</p>
 
-<p>如果仔细观察内容，你会发现content中有许多html标签，像&lt;br&gt;之类的在文本中应该去除，这里用到python Beautifulsoup4包<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>,(Beautiful Soup)已成为和lxml、html6lib一样出色的python解释器，为用户灵活地提供不同的解析策略或强劲的速度，提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，所以不需要多少代码就可以写出一个完整的应用程序。简单来说，Beautiful Soup是python的一个库，最主要的功能是从网页抓取数据。更多关于Beautiful Soup的内容可以参见学习教程<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>。</p>
+<p>如果仔细观察内容，你会发现content中有许多html标签，像&lt;br&gt;之类的在文本中应该去除，这里用到python Beautifulsoup4包<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>,(Beautiful Soup)已成为和lxml、html6lib一样出色的python解释器，为用户灵活地提供不同的解析策略或强劲的速度，提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，所以不需要多少代码就可以写出一个完整的应用程序。简单来说，Beautiful Soup是python的一个库，最主要的功能是从网页抓取数据。更多关于Beautiful Soup的内容可以参见学习教程<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote">2</a></sup>。</p>
 
 <p>随便拿条内容:
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/58368208.jpg" alt="" />
@@ -352,7 +349,7 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 
 <p>我们上面只拿了100条记录，能不能拿全部记录呢？我们在看一下爬下的json文件，发现第一行显示nextPageToken，也就是说还有下一页，我们可以通过service.activities().list_next方法拿到下一页的resopnse。最后我们拿到所有json并用上面方法清洗整理。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -389,23 +386,24 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 35
 36
 37
-38</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">os</span>
+38
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">httplib2</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">apiclient.discovery</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 
-<span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c"># Mulin Hong</span>
-<span class="n">MAX_RESULTS</span> <span class="o">=</span> <span class="mi">400</span> <span class="c"># 最大纪录数，每页100条，也就是说最多5页（0~4页）</span>
-<span class="n">API_KEY</span> <span class="o">=</span> <span class="s">'你自己的api_key'</span> 
+<span class="n">USER_ID</span> <span class="o">=</span> <span class="s">'102121409478764742904'</span> <span class="c1"># Mulin Hong
+</span><span class="n">MAX_RESULTS</span> <span class="o">=</span> <span class="mi">400</span> <span class="c1"># 最大纪录数，每页100条，也就是说最多5页（0~4页）
+</span><span class="n">API_KEY</span> <span class="o">=</span> <span class="s">'你自己的api_key'</span> 
 
 <span class="k">def</span> <span class="nf">cleanHtml</span><span class="p">(</span><span class="n">html</span><span class="p">):</span>
   <span class="k">if</span> <span class="n">html</span> <span class="o">==</span> <span class="s">""</span><span class="p">:</span> <span class="k">return</span> <span class="s">""</span>
-  <span class="k">return</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="s">'lxml'</span><span class="p">)</span><span class="o">.</span><span class="n">get_text</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="s">'lxml'</span><span class="p">).</span><span class="n">get_text</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">(),</span> 
+<span class="n">service</span> <span class="o">=</span> <span class="n">apiclient</span><span class="p">.</span><span class="n">discovery</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="s">'plus'</span><span class="p">,</span> <span class="s">'v1'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">httplib2</span><span class="p">.</span><span class="n">Http</span><span class="p">(),</span> 
                                     <span class="n">developerKey</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
+<span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="p">.</span><span class="n">activities</span><span class="p">().</span><span class="nb">list</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
   <span class="n">collection</span><span class="o">=</span><span class="s">'public'</span><span class="p">,</span>
   <span class="n">maxResults</span><span class="o">=</span><span class="s">'100'</span> 
 <span class="p">)</span>
@@ -413,33 +411,31 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 <span class="n">activity_results</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="k">while</span> <span class="n">activity_feed</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">activity_results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_RESULTS</span><span class="p">:</span>
-  <span class="n">activities</span> <span class="o">=</span> <span class="n">activity_feed</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+  <span class="n">activities</span> <span class="o">=</span> <span class="n">activity_feed</span><span class="p">.</span><span class="n">execute</span><span class="p">()</span>
   <span class="k">if</span> <span class="s">'items'</span> <span class="ow">in</span> <span class="n">activities</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">activity</span> <span class="ow">in</span> <span class="n">activities</span><span class="p">[</span><span class="s">'items'</span><span class="p">]:</span>
       <span class="k">if</span> <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'objectType'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'note'</span> <span class="ow">and</span> <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="o">!=</span> <span class="s">''</span><span class="p">:</span>        
         <span class="n">activity</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanHtml</span><span class="p">(</span><span class="n">activity</span><span class="p">[</span><span class="s">'title'</span><span class="p">])</span>
         <span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanHtml</span><span class="p">(</span><span class="n">activity</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">])</span>
         <span class="n">activity_results</span> <span class="o">+=</span> <span class="p">[</span><span class="n">activity</span><span class="p">]</span>
-<span class="c">#查看下一页</span>
-  <span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">activities</span><span class="p">()</span><span class="o">.</span><span class="n">list_next</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">activities</span><span class="p">)</span>
-<span class="c"># 写到一个json文件中去</span>
-<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">'resources'</span><span class="p">,</span> <span class="n">USER_ID</span> <span class="o">+</span> <span class="s">'.json'</span><span class="p">),</span> <span class="s">'w'</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_results</span><span class="p">,</span><span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">activity_results</span><span class="p">)),</span> <span class="s">"activities written to"</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="c1">#查看下一页
+</span>  <span class="n">activity_feed</span> <span class="o">=</span> <span class="n">service</span><span class="p">.</span><span class="n">activities</span><span class="p">().</span><span class="n">list_next</span><span class="p">(</span><span class="n">activity_feed</span><span class="p">,</span> <span class="n">activities</span><span class="p">)</span>
+<span class="c1"># 写到一个json文件中去
+</span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">'resources'</span><span class="p">,</span> <span class="n">USER_ID</span> <span class="o">+</span> <span class="s">'.json'</span><span class="p">),</span> <span class="s">'w'</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">activity_results</span><span class="p">,</span><span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">f</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">activity_results</span><span class="p">)),</span> <span class="s">"activities written to"</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>最后输出结果”422 activities written to resources/102121409478764742904.json”，共422条被输出。<a href="/html/102121409478764742904.json">查看</a></p>
 
 <h2 id="中文分词">中文分词</h2>
-<p>为了进一步对每条记录分析，有必要进行中文分词。文章<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>中提到11款开放中文分词引擎，从分词效果和调用难度角度考虑，这里采用商业化的BosonNLP工具（关键被他一句广告吸引“现在加入BosonNLP，可获得分词与词性标注引擎不限量调用额度！”）。
+<p>为了进一步对每条记录分析，有必要进行中文分词。文章<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote">3</a></sup>中提到11款开放中文分词引擎，从分词效果和调用难度角度考虑，这里采用商业化的BosonNLP工具（关键被他一句广告吸引“现在加入BosonNLP，可获得分词与词性标注引擎不限量调用额度！”）。
 注册<a href="http://bosonnlp.com/">波森</a>后会给你一个api_key，和google+一个原理。安装python版SDK： pip install -U bosonnlp
 。<a href="http://bosonnlp-py.readthedocs.io/#bosonnlp">api文档</a>很简单，看一遍就直接用了。</p>
 
 <p>引用方法：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -460,7 +456,8 @@ Google+ <a href="https://developers.google.com/apis-explorer/?hl=zh_CN#p/plus/v1
 19
 20
 21
-22</pre></td><td class="code"><pre>In [1]: from bosonnlp import BosonNLP
+22
+</pre></td><td class="rouge-code"><pre>In [1]: from bosonnlp import BosonNLP
 
 In [2]: nlp = BosonNLP('你自己的api_key')
 
@@ -482,23 +479,20 @@ Out[6]:
  '了',
  '雾霾',
  ...
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>直接使用里面的api进行情感分析：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">bosonnlp</span> <span class="kn">import</span> <span class="n">BosonNLP</span>
+5
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">bosonnlp</span> <span class="kn">import</span> <span class="n">BosonNLP</span>
 <span class="n">nlp</span> <span class="o">=</span> <span class="n">BosonNLP</span><span class="p">(</span><span class="s">'你的api_key'</span><span class="p">)</span>
 <span class="n">all_content</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">activity_results</span> <span class="p">]</span>
-<span class="n">emos</span><span class="o">=</span><span class="n">nlp</span><span class="o">.</span><span class="n">sentiment</span><span class="p">(</span><span class="n">all_content</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="s">'weibo'</span><span class="p">)</span><span class="c">#单词最多只能分析100个，每日最多500个</span>
-<span class="n">drawdata</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">emos</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="n">emos</span><span class="o">=</span><span class="n">nlp</span><span class="p">.</span><span class="n">sentiment</span><span class="p">(</span><span class="n">all_content</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="s">'weibo'</span><span class="p">)</span><span class="c1">#单词最多只能分析100个，每日最多500个
+</span><span class="n">drawdata</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">emos</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>绘制箱线图和统计直方图：</p>
 
 <p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/23871192.jpg" alt="" /></p>
@@ -509,10 +503,10 @@ Out[6]:
 hrKOofx5.10057.yUUmemEd43Dm</p>
 
 <h2 id="nltk">NLTK</h2>
-<p>斯坦福大学自然语言处理组是世界知名的NLP研究小组，他们提供了一系列开源的Java文本分析工具，包括分词器(Word Segmenter)，词性标注工具（Part-Of-Speech Tagger），命名实体识别工具（Named Entity Recognizer），句法分析器（Parser）等，可喜的事，他们还为这些工具训练了相应的中文模型，支持中文文本处理。NLTK<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>是针对python的一个自然语言处理平台,在windows、mac、linux平台上通用，并且是开源免费的，国内好多项目都是在它基础上做的。
+<p>斯坦福大学自然语言处理组是世界知名的NLP研究小组，他们提供了一系列开源的Java文本分析工具，包括分词器(Word Segmenter)，词性标注工具（Part-Of-Speech Tagger），命名实体识别工具（Named Entity Recognizer），句法分析器（Parser）等，可喜的事，他们还为这些工具训练了相应的中文模型，支持中文文本处理。NLTK<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote">4</a></sup>是针对python的一个自然语言处理平台,在windows、mac、linux平台上通用，并且是开源免费的，国内好多项目都是在它基础上做的。
 下面用nltk分析下抓到的数据。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -579,39 +573,40 @@ hrKOofx5.10057.yUUmemEd43Dm</p>
 65
 66
 67
-68</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">nltk</span>
+68
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">nltk</span>
 <span class="kn">from</span> <span class="nn">bosonnlp</span> <span class="kn">import</span> <span class="n">BosonNLP</span>
 
 <span class="n">nlp</span> <span class="o">=</span> <span class="n">BosonNLP</span><span class="p">(</span><span class="s">'你自己的api_key'</span><span class="p">)</span>
 
-<span class="c">#将所有记录转化为一个词语数组tokens</span>
-<span class="n">contents</span><span class="o">=</span><span class="s">'。'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_content</span><span class="p">)</span>
-<span class="n">tokens</span><span class="o">=</span><span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">contents</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span>
-<span class="n">text</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+<span class="c1">#将所有记录转化为一个词语数组tokens
+</span><span class="n">contents</span><span class="o">=</span><span class="s">'。'</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_content</span><span class="p">)</span>
+<span class="n">tokens</span><span class="o">=</span><span class="n">nlp</span><span class="p">.</span><span class="n">tag</span><span class="p">(</span><span class="n">contents</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">nltk</span><span class="p">.</span><span class="n">Text</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
 
-<span class="n">text</span><span class="o">.</span><span class="n">concordance</span><span class="p">(</span><span class="s">"三星"</span><span class="p">)</span><span class="c">#查看出现‘三星’的语句,可选参数包括语句数目和语句长度</span>
-<span class="s">'''
+<span class="n">text</span><span class="p">.</span><span class="n">concordance</span><span class="p">(</span><span class="s">"三星"</span><span class="p">)</span><span class="c1">#查看出现‘三星’的语句,可选参数包括语句数目和语句长度
+</span><span class="s">'''
 Displaying 4 of 4 matches:
  北京 市长 准备 如何 收场 ？ 。 # 看 图 不 说话 1016 ： 三星 手机 名不虚传 。 How to mess up # StarWars a
 假 论文 ， 那 就 是 丢脸 了 。 # 看 图 不 说话 0923 ： 三星 一生 黑 http://cinacn.blogspot.com/2016/
  ： 心里 想 说 没事 了 。 # 看 图 不 说话 0917 ： 使用 三星 手机 的 后果 。 这个 错误 有点 大 了 。 看看 朝鲜 战争 大事记
  你们 开学 一次性 交 多少 钱 。 # 看 图 不 说话 0906 ： 三星 手机 的 中东 版 。 舆情 监控 ， 已经 是 大陆 媒界 不用 公开 
 '''</span>
-<span class="n">text</span><span class="o">.</span><span class="n">collocations</span><span class="p">()</span><span class="c">#最搭配的用词</span>
-<span class="s">'''
+<span class="n">text</span><span class="p">.</span><span class="n">collocations</span><span class="p">()</span><span class="c1">#最搭配的用词
+</span><span class="s">'''
 Displaying 4 of 4 matches:
  北京 市长 准备 如何 收场 ？ 。 # 看 图 不 说话 1016 ： 三星 手机 名不虚传 。 How to mess up # StarWars a
 假 论文 ， 那 就 是 丢脸 了 。 # 看 图 不 说话 0923 ： 三星 一生 黑 http://cinacn.blogspot.com/2016/
  ： 心里 想 说 没事 了 。 # 看 图 不 说话 0917 ： 使用 三星 手机 的 后果 。 这个 错误 有点 大 了 。 看看 朝鲜 战争 大事记
  你们 开学 一次性 交 多少 钱 。 # 看 图 不 说话 0906 ： 三星 手机 的 中东 版 。 舆情 监控 ， 已经 是 大陆 媒界 不用 公开 
 '''</span>
-<span class="n">text</span><span class="o">.</span><span class="n">collocations</span><span class="p">()</span><span class="c">#最搭配的用词</span>
-<span class="s">'''
+<span class="n">text</span><span class="p">.</span><span class="n">collocations</span><span class="p">()</span><span class="c1">#最搭配的用词
+</span><span class="s">'''
 @Homebaby Wen; little pink; sounds cute; 核废料 处理厂; 诺贝尔 文学奖; 连云港 核废料;
 创业者 越来越
 '''</span>
-<span class="n">fdist</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">vocab</span><span class="p">()</span><span class="c">#{词1：词1出现的个数，词2：词2出现的个数，...}</span>
-<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"大陆"</span><span class="p">])</span>
+<span class="n">fdist</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="n">vocab</span><span class="p">()</span><span class="c1">#{词1：词1出现的个数，词2：词2出现的个数，...}
+</span><span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"大陆"</span><span class="p">])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"老百姓"</span><span class="p">])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"的"</span><span class="p">])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">[</span><span class="s">"不"</span><span class="p">])</span>
@@ -621,42 +616,40 @@ Displaying 4 of 4 matches:
 1250
 351
 '''</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span> <span class="c">#总共的词数</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="c">#不重复词</span>
-<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">freq</span><span class="p">(</span><span class="s">'的'</span><span class="p">))</span><span class="c">#1250/27232</span>
-<span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span><span class="c"># 出现次数最大的前20个</span>
-<span class="s">'''
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span> <span class="c1">#总共的词数
+</span><span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fdist</span><span class="p">.</span><span class="n">keys</span><span class="p">()))</span> <span class="c1">#不重复词
+</span><span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">.</span><span class="n">freq</span><span class="p">(</span><span class="s">'的'</span><span class="p">))</span><span class="c1">#1250/27232
+</span><span class="k">print</span><span class="p">(</span><span class="n">fdist</span><span class="p">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span><span class="c1"># 出现次数最大的前20个
+</span><span class="s">'''
 27232
 6465
 0.04590188014101058
 [('，', 1651), ('的', 1250), ('。', 959), ('：', 568), ('是', 495), ('了', 380), ('不', 351), ('”', 257), ('“', 255), ('#', 242), ('一', 222), ('就', 207), ('在', 200), ('有', 162), ('？', 150), ('你', 130), ('我', 129), ('这', 129), ('人', 127), ('都', 124)]
 '''</span>
-<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s">'stopwords'</span><span class="p">)</span>
+<span class="n">nltk</span><span class="p">.</span><span class="n">download</span><span class="p">(</span><span class="s">'stopwords'</span><span class="p">)</span>
 <span class="s">'''
 [nltk_data] Downloading package stopwords to /Users/Trucy/nltk_data...
 [nltk_data]   Unzipping corpora/stopwords.zip.
 然后在解压的停词目录中添加china文件，里面添加停词，这里用的哈工大停词库
 '''</span>
-<span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">100</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span><span class="c">#100个热词中非停词</span>
-<span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">comm</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+<span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="p">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">100</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span><span class="c1">#100个热词中非停词
+</span><span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">comm</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="p">.</span><span class="n">corpus</span><span class="p">.</span><span class="n">stopwords</span><span class="p">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
 <span class="s">'''
 ['中国', '说', '国家', '毛', '微', '语录', '精选', '图', '说话', '中共', '日', '政府', '年', '爱国', '美国', '天', '钱', '荟萃', '段子', '里', '想']
 '''</span>
-<span class="c"># 非url的长词语</span>
-<span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">12</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">w</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"http"</span><span class="p">)])</span>
+<span class="c1"># 非url的长词语
+</span><span class="k">print</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">fdist</span><span class="p">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">12</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">w</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"http"</span><span class="p">)])</span>
 <span class="s">'''
 ['@jianshenbiao', '@Jackstraw_PRC', '@Andrew19751110', '@boattractor_cj', '@_markhorton搞得后者不得不', '@Weaponmagazine-肖宁）', '@YE5MQ5Vtp2jlWX7', '@Menghuanlangqi2', '@szstupidcool', '@zhifangnvren', 'HappyBirthday', '@freedomandlaw', '@_mackhorton结果攻击了一个字母之差的无辜鬼佬', '@和菜头）——中国人能接受么？丝毫没有对他国的尊重', '@BattlerHenry', '@c338ki_selina', '@shangguanluan', '@zhanghui8964', '@fedsneighbor']
 '''</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>相信你肯定听过二八原则，如果把所有的单词（字）放在一起看呢？会不会20%的词（字）占了80%的出现次数？答案是肯定的。</p>
 
 <p>早在上个世纪30年代，就有人（Zipf）对此作出了研究，并给出了量化的表达——齐普夫定律（Zipf’s Law）：一个词在一个有相当长度的语篇中的等级序号（该词在按出现次数排列的词表中的位置，他称之为rank，简称r）与该词的出现次数（他称为frequency，简称f）的乘积几乎是一个常数（constant，简称C）。用公式表示，就是 r × f = C 。（此处的C一般认为取0.1）。Zipf定律是文献计量学的重要定律之一，它和洛特卡定律、布拉德福定律一起被并称为文献计量学的三大定律。</p>
 
 <p>我们直观地验证下，100个热词频度和排名的规律：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -666,20 +659,19 @@ Displaying 4 of 4 matches:
 8
 9
 10
-11</pre></td><td class="code"><pre><span class="c">#前100热词统计</span>
-<span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">400</span><span class="p">)))</span>
+11
+</pre></td><td class="rouge-code"><pre><span class="c1">#前100热词统计
+</span><span class="n">comm</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">fdist</span><span class="p">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">400</span><span class="p">)))</span>
 <span class="n">top</span><span class="o">=</span><span class="p">[(</span><span class="n">w</span><span class="p">,</span><span class="n">comm</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> \
-<span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)]</span>
+<span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="p">.</span><span class="n">corpus</span><span class="p">.</span><span class="n">stopwords</span><span class="p">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)]</span>
 <span class="n">dd</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">top</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">'-'</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="mi">2</span><span class="p">],</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'前100热词'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'频数'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'前100热词统计'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">'-'</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="mi">2</span><span class="p">],</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'前100热词'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'频数'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'前100热词统计'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s">'x-large'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p><img src="http://oc5ofszxe.bkt.clouddn.com/16-10-18/30574312.jpg" alt="" /></p>
 
 <p>很明显如果去拟合的话是反比例曲线，有兴趣的使用最小二乘法拟合下，看下c等于多少。同样可以看到，热词中涉及政治词汇比较多，实际上好多中文说说都涉及敏感词汇，这已经是我挑的不怎么敏感的了，万恶腐朽的google+，天朝早晚取缔你😁。</p>
@@ -689,16 +681,15 @@ Displaying 4 of 4 matches:
 
 <p>特征词/关键词提取最简单最基础的就是TFIDF，记得5年前我同学让我帮做DI-TFIDF的论文，也就只多了个类内离散度(DI)，今年阿里校招笔试题都有，用mapreduce实现的，很是广泛。实际上tfidf算法的岁数估计比我还大，目前应用还是很广。其他特征提取方法还有TF、MI、ECE、QEMI、IG、OR、GA、SA、PCA、N-Gram等，各有好坏，个人喜欢SA（模拟退火算法）。</p>
 
-<p>简单介绍下TFIDF，TFIDF的主要思想是：如果某个词或短语在一篇文章中出现的频率TF高，并且在其他文章中很少出现，则认为此词或者短语具有很好的类别区分能力，适合用来分类。TFIDF实际上是：TF * IDF，TF词频(Term Frequency)，IDF反文档频率(Inverse Document Frequency)。TF词频(Term Frequency)指的是某一个给定的词语在该文件中出现的次数）。IDF反文档频率(Inverse Document Frequency)是指果包含词条的文档越少，IDF越大，则说明词条具有很好的类别区分能力。公式看看阮一峰的文章<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup>就懂。</p>
+<p>简单介绍下TFIDF，TFIDF的主要思想是：如果某个词或短语在一篇文章中出现的频率TF高，并且在其他文章中很少出现，则认为此词或者短语具有很好的类别区分能力，适合用来分类。TFIDF实际上是：TF * IDF，TF词频(Term Frequency)，IDF反文档频率(Inverse Document Frequency)。TF词频(Term Frequency)指的是某一个给定的词语在该文件中出现的次数）。IDF反文档频率(Inverse Document Frequency)是指果包含词条的文档越少，IDF越大，则说明词条具有很好的类别区分能力。公式看看阮一峰的文章<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote">5</a></sup>就懂。</p>
 
 <p>先用波森来玩一下。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre><span class="c">#第100到109条记录各前五个关键字分析</span>
-<span class="n">nlp</span><span class="o">.</span><span class="n">extract_keywords</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">],</span><span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#第100到109条记录各前五个关键字分析
+</span><span class="n">nlp</span><span class="p">.</span><span class="n">extract_keywords</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">],</span><span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <blockquote>
   <p>[[[0.7099039005468386, ‘林志颖’],
@@ -762,7 +753,7 @@ Displaying 4 of 4 matches:
   <li>排序，topK</li>
 </ol>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -783,31 +774,30 @@ Displaying 4 of 4 matches:
 19
 20
 21
-22</pre></td><td class="code"><pre><span class="n">cts</span><span class="o">=</span><span class="p">[]</span>
-<span class="c">#1.十条记录的分词</span>
-<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">]):</span>
-    <span class="n">cts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s">'word'</span><span class="p">])</span>
+22
+</pre></td><td class="rouge-code"><pre><span class="n">cts</span><span class="o">=</span><span class="p">[]</span>
+<span class="c1">#1.十条记录的分词
+</span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nlp</span><span class="p">.</span><span class="n">tag</span><span class="p">(</span><span class="n">all_content</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">]):</span>
+    <span class="n">cts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s">'word'</span><span class="p">])</span>
 <span class="n">tfidfC</span><span class="o">=</span><span class="p">[]</span>
-<span class="c">#2.去停词</span>
-<span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">cts</span><span class="p">:</span> 
-    <span class="n">tfidfC</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">ac</span> 
-                   <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
-<span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">tfidfC</span><span class="p">)</span>
+<span class="c1">#2.去停词
+</span><span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">cts</span><span class="p">:</span> 
+    <span class="n">tfidfC</span><span class="p">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">ac</span> 
+                   <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="p">.</span><span class="n">corpus</span><span class="p">.</span><span class="n">stopwords</span><span class="p">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+<span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="p">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">tfidfC</span><span class="p">)</span>
 <span class="n">tfidfR</span><span class="o">=</span><span class="p">[]</span>
 <span class="n">topK</span><span class="o">=</span><span class="mi">5</span>
-<span class="c">#3.计算tfidf</span>
-<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tfidfC</span><span class="p">:</span>
+<span class="c1">#3.计算tfidf
+</span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tfidfC</span><span class="p">:</span>
     <span class="n">res</span><span class="o">=</span><span class="p">[]</span>
     <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
-        <span class="n">val</span><span class="o">=</span><span class="n">tc</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">val</span><span class="p">,</span><span class="n">sc</span><span class="p">])</span>
-    <span class="c">#4.topK</span>
-    <span class="n">sres</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="n">topK</span><span class="p">]</span>
-    <span class="n">tfidfR</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sres</span><span class="p">)</span>
+        <span class="n">val</span><span class="o">=</span><span class="n">tc</span><span class="p">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">([</span><span class="n">val</span><span class="p">,</span><span class="n">sc</span><span class="p">])</span>
+    <span class="c1">#4.topK
+</span>    <span class="n">sres</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="n">topK</span><span class="p">]</span>
+    <span class="n">tfidfR</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">sres</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">tfidfR</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>结果:</p>
 
 <blockquote>
@@ -895,19 +885,19 @@ Displaying 4 of 4 matches:
 
 <p>接下来计算余弦相似度:</p>
 
-<script type="math/tex; mode=display">CosineDistance(u, v)=\frac{u\cdot v}{|u||v|}</script>
+\[CosineDistance(u, v)=\frac{u\cdot v}{|u||v|}\]
 
 <p>这个公式代表两个向量的夹角，二维向量夹角高中不就是这个公式么，推广到三维甚至多维也一样。
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-19/6547011.jpg" alt="" /></p>
 
 <p>余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似，这就叫”余弦相似性”。所以上面两文本相似度为:</p>
 
-<script type="math/tex; mode=display">\frac{2}{\sqrt{1^2+1^2+1^2+1^2+0^2}\times \sqrt{1^2+0^2+1^2+0^2+1^2}}=\frac{\sqrt{3}}{3}</script>
+\[\frac{2}{\sqrt{1^2+1^2+1^2+1^2+0^2}\times \sqrt{1^2+0^2+1^2+0^2+1^2}}=\frac{\sqrt{3}}{3}\]
 
 <p>下面我们来统计下内容较长的记录相似文本(内容较短相似度不明显)。
 第一步：找出内容长度大于700的记录，并做好分词和停词</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -915,21 +905,20 @@ Displaying 4 of 4 matches:
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="c">#筛选要比较的文本数据,共24条记录</span>
-<span class="n">data</span><span class="o">=</span><span class="p">[]</span><span class="c">#保存object.content内容大于700的所有数据</span>
-<span class="n">all_posts</span><span class="o">=</span><span class="p">[]</span><span class="c">#只保留发布的内容数据</span>
-<span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">activity_results</span><span class="p">:</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="c1">#筛选要比较的文本数据,共24条记录
+</span><span class="n">data</span><span class="o">=</span><span class="p">[]</span><span class="c1">#保存object.content内容大于700的所有数据
+</span><span class="n">all_posts</span><span class="o">=</span><span class="p">[]</span><span class="c1">#只保留发布的内容数据
+</span><span class="k">for</span> <span class="n">ac</span> <span class="ow">in</span> <span class="n">activity_results</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ac</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">700</span><span class="p">:</span>
         <span class="n">c</span><span class="o">=</span><span class="n">ac</span><span class="p">[</span><span class="s">'object'</span><span class="p">][</span><span class="s">'content'</span><span class="p">]</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ac</span><span class="p">)</span>
-        <span class="c">#分词和停词</span>
-        <span class="n">all_posts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">nlp</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">c</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+        <span class="n">data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">ac</span><span class="p">)</span>
+        <span class="c1">#分词和停词
+</span>        <span class="n">all_posts</span><span class="p">.</span><span class="n">append</span><span class="p">([</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">nlp</span><span class="p">.</span><span class="n">tag</span><span class="p">(</span><span class="n">c</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s">'word'</span><span class="p">]</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nltk</span><span class="p">.</span><span class="n">corpus</span><span class="p">.</span><span class="n">stopwords</span><span class="p">.</span><span class="n">words</span><span class="p">(</span><span class="s">'china'</span><span class="p">)])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>第二步：构造词条文档矩阵。形式如$td_matrix={(title_i,url_i):{term_j:tfidf_j,…},…}$</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -941,29 +930,28 @@ Displaying 4 of 4 matches:
 10
 11
 12
-13</pre></td><td class="code"><pre><span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">all_posts</span><span class="p">)</span>
-<span class="c">#构造词条文档矩阵</span>
-<span class="n">td_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+13
+</pre></td><td class="rouge-code"><pre><span class="n">tc</span> <span class="o">=</span> <span class="n">nltk</span><span class="p">.</span><span class="n">TextCollection</span><span class="p">(</span><span class="n">all_posts</span><span class="p">)</span>
+<span class="c1">#构造词条文档矩阵
+</span><span class="n">td_matrix</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_posts</span><span class="p">)):</span>
     <span class="n">post</span> <span class="o">=</span> <span class="n">all_posts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-    <span class="n">fdist</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">FreqDist</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
+    <span class="n">fdist</span> <span class="o">=</span> <span class="n">nltk</span><span class="p">.</span><span class="n">FreqDist</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
 
     <span class="n">doc_title</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s">'title'</span><span class="p">]</span>
     <span class="n">url</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s">'url'</span><span class="p">]</span>
     <span class="n">td_matrix</span><span class="p">[(</span><span class="n">doc_title</span><span class="p">,</span> <span class="n">url</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">fdist</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">td_matrix</span><span class="p">[(</span><span class="n">doc_title</span><span class="p">,</span> <span class="n">url</span><span class="p">)][</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">post</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">fdist</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">td_matrix</span><span class="p">[(</span><span class="n">doc_title</span><span class="p">,</span> <span class="n">url</span><span class="p">)][</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">tc</span><span class="p">.</span><span class="n">tf_idf</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">post</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>第三步:计算相似度<br />
 这里用到nltk.cluster.util.cosine_distance，这个函数说明如下：
 nltk.cluster.util.cosine_distance(u, v)[source]
 Returns 1 minus the cosine of the angle between vectors v and u. This is equal to 1 - (u.v / |u||v|).
 可以看到返回的是1-余弦相似度，表示的是余弦距离，也就是说余弦距离越小相似度越高。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -999,19 +987,20 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
 34
 35
 36
-37</pre></td><td class="code"><pre><span class="n">distances</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="p">(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+37
+</pre></td><td class="rouge-code"><pre><span class="n">distances</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
 
     <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">most_similar</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">td_matrix</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
 
-        <span class="n">terms1</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">terms2</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">terms1</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)].</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">terms2</span> <span class="o">=</span> <span class="n">td_matrix</span><span class="p">[(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)].</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="c"># 填充0使两向量长度相同</span>
-        <span class="k">for</span> <span class="n">term1</span> <span class="ow">in</span> <span class="n">terms1</span><span class="p">:</span>
+        <span class="c1"># 填充0使两向量长度相同
+</span>        <span class="k">for</span> <span class="n">term1</span> <span class="ow">in</span> <span class="n">terms1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">term1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">terms2</span><span class="p">:</span>
                 <span class="n">terms2</span><span class="p">[</span><span class="n">term1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -1019,29 +1008,27 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
             <span class="k">if</span> <span class="n">term2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">terms1</span><span class="p">:</span>
                 <span class="n">terms1</span><span class="p">[</span><span class="n">term2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="c"># 产生v1,v2向量，向量元素映射一致</span>
-        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms1</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
-        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms2</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
+        <span class="c1"># 产生v1,v2向量，向量元素映射一致
+</span>        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms1</span><span class="p">.</span><span class="n">items</span><span class="p">())]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="n">score</span> <span class="k">for</span> <span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">terms2</span><span class="p">.</span><span class="n">items</span><span class="p">())]</span>
 
-        <span class="c"># 计算余弦相似度</span>
-        <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">=</span> \
-            <span class="n">nltk</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">cosine_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+        <span class="c1"># 计算余弦相似度
+</span>        <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">=</span> \
+            <span class="n">nltk</span><span class="p">.</span><span class="n">cluster</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">cosine_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">url1</span> <span class="o">==</span> <span class="n">url2</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="c"># 标记余弦距离最小的（相似度最大）</span>
-        <span class="k">if</span> <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
+        <span class="c1"># 标记余弦距离最小的（相似度最大）
+</span>        <span class="k">if</span> <span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
             <span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">most_similar</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">distances</span><span class="p">[(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">)][(</span><span class="n">title2</span><span class="p">,</span>
                                          <span class="n">url2</span><span class="p">)],</span> <span class="p">(</span><span class="n">title2</span><span class="p">,</span> <span class="n">url2</span><span class="p">))</span>
     
-    <span class="k">print</span> <span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="se">\n</span><span class="s">(</span><span class="si">%</span><span class="s">s) </span><span class="se">\n</span><span class="s"> 最相似的是:</span><span class="se">\n</span><span class="s"> </span><span class="si">%</span><span class="s">s</span><span class="se">\n</span><span class="s">(</span><span class="si">%</span><span class="s">s) </span><span class="se">\n</span><span class="s"> 相似度: </span><span class="si">%</span><span class="s">f </span><span class="se">\n</span><span class="s"> ------------------------------</span><span class="se">\n</span><span class="s">"</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">(%s) </span><span class="se">\n</span><span class="s"> 最相似的是:</span><span class="se">\n</span><span class="s"> %s</span><span class="se">\n</span><span class="s">(%s) </span><span class="se">\n</span><span class="s"> 相似度: %f </span><span class="se">\n</span><span class="s"> ------------------------------</span><span class="se">\n</span><span class="s">"</span>
            <span class="o">%</span> <span class="p">(</span><span class="n">title1</span><span class="p">,</span> <span class="n">url1</span><span class="p">,</span><span class="n">most_similar</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">most_similar</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="o">-</span><span class="n">min_dist</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>查看部分结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -1090,7 +1077,8 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
 47
 48
 49
-50</pre></td><td class="code"><pre>
+50
+</pre></td><td class="rouge-code"><pre>
 #一日段子荟萃
 2016-9-5
 
@@ -1140,9 +1128,7 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
 (https://plus.google.com/+MulinHong/posts/UVZVyshut8R) 
  相似度: 0.082137 
  ------------------------------
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>为查看方便，绘制相似度矩阵图：
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-10-19/4103503.jpg" alt="" /></p>
 
@@ -1150,22 +1136,22 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
 <ul>
   <li>Russell, Matthew A. Mining the Social Web: Data Mining Facebook, Twitter, LinkedIn, Google+, GitHub, and More. O’Reilly Media, Inc. 2013.</li>
 </ul>
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1">
-      <p>python3.4学习笔记(十七) 网络爬虫使用Beautifulsoup4抓取内容.http://www.cnblogs.com/zdz8207/p/python_learn_note_17.html&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:1" role="doc-endnote">
+      <p>python3.4学习笔记(十七) 网络爬虫使用Beautifulsoup4抓取内容.http://www.cnblogs.com/zdz8207/p/python_learn_note_17.html <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:2">
-      <p>Beautiful Soup 4.2.0 文档.https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:2" role="doc-endnote">
+      <p>Beautiful Soup 4.2.0 文档.https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:3">
-      <p>11 款开放中文分词引擎评测.http://www.cnblogs.com/croso/p/5349517.html&nbsp;<a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:3" role="doc-endnote">
+      <p>11 款开放中文分词引擎评测.http://www.cnblogs.com/croso/p/5349517.html <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:4">
-      <p>Natural Language Toolkit.http://www.nltk.org/index.html&nbsp;<a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:4" role="doc-endnote">
+      <p>Natural Language Toolkit.http://www.nltk.org/index.html <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:5">
-      <p>TF-IDF与余弦相似性的应用（一）：自动提取关键词.http://www.ruanyifeng.com/blog/2013/03/tf-idf.html&nbsp;<a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:5" role="doc-endnote">
+      <p>TF-IDF与余弦相似性的应用（一）：自动提取关键词.http://www.ruanyifeng.com/blog/2013/03/tf-idf.html <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -1408,7 +1394,7 @@ Returns 1 minus the cosine of the angle between vectors v and u. This is equal t
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

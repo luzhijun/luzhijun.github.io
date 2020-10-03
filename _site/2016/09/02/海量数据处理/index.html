@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>海量大数据处理单机方案 - 楚汐|Trucy Luce Blog</title>
@@ -265,7 +265,7 @@ MathJax.Hub.Config({
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-17/50512419.jpg" alt="" />
 	接下来从MapReudce的源码角度来研究一下Partition的实现原理：</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -277,22 +277,21 @@ MathJax.Hub.Config({
 10
 11
 12
-13</pre></td><td class="code"><pre>	<span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">mapreduce</span><span class="o">.</span><span class="na">lib</span><span class="o">.</span><span class="na">partition</span><span class="o">;</span>
+13
+</pre></td><td class="rouge-code"><pre>	<span class="kn">package</span> <span class="nn">org.apache.hadoop.mapreduce.lib.partition</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceAudience</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.classification.InterfaceStability</span><span class="o">;</span>
 	<span class="kn">import</span> <span class="nn">org.apache.hadoop.mapreduce.Partitioner</span><span class="o">;</span>
 	<span class="cm">/** Partition keys by their {@link Object#hashCode()}. */</span>
 	<span class="nd">@InterfaceAudience</span><span class="o">.</span><span class="na">Public</span>
 	<span class="nd">@InterfaceStability</span><span class="o">.</span><span class="na">Stable</span>
-	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HashPartitioner</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Partitioner</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HashPartitioner</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">Partitioner</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="o">{</span>
 	<span class="err"> </span> <span class="cm">/** Use {@link Object#hashCode()} to partition. */</span>
-	<span class="err"> </span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPartition</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="n">V</span> <span class="n">value</span><span class="o">,</span><span class="err"> </span><span class="kt">int</span> <span class="n">numReduceTasks</span><span class="o">)</span> <span class="o">{</span>
-	<span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">%</span> <span class="n">numReduceTasks</span><span class="o">;</span>
+	<span class="err"> </span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPartition</span><span class="o">(</span><span class="no">K</span> <span class="n">key</span><span class="o">,</span> <span class="no">V</span> <span class="n">value</span><span class="o">,</span><span class="err"> </span><span class="kt">int</span> <span class="n">numReduceTasks</span><span class="o">)</span> <span class="o">{</span>
+	<span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">%</span> <span class="n">numReduceTasks</span><span class="o">;</span>
 	<span class="err"> </span> <span class="o">}</span>
 	<span class="o">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>我们看到第11行，在这里我们有看到了可爱的Hash取模映射方法，这样做的原因大家看到这里都应该已经了然于心了。另外，TotalOrderPartitioner、BinaryPartitioner等几种Partitioner的实现都是基于Hash取模映射方法，只是他们为了实现自己自定义的功能而添加了一些逻辑，例如其中的TotalOrderPartitioner可以实现全排序功能。其他几个Partition的源代码这里就不贴了，有兴趣的可以自己看看。</p>
 <h2 id="2-bitmap">2. BitMap</h2>
 <p>先看看这样的一个场景：给一台普通PC，2G内存，要求处理一个包含40亿个不重复并且没有排过序的无符号的int整数，给出一个整数，问如果快速地判断这个整数是否在文件40亿个数据当中？</p>
@@ -312,7 +311,7 @@ tmp[2]可表示64~95<br />
 如何判断int数字在tmp数组的哪个下标，这个其实可以通过直接除以32取整数部分，例如：整数8除以32取整等于0，那么8就在tmp[0]上。另外，我们如何知道了8在tmp[0]中的32个位中的哪个位，这种情况直接mod上32就ok，又如整数8，在tmp[0]中的第8 mod上32等于8，那么整数8就在tmp[0]中的第八个bit位（从右边数起）。</p>
 <h3 id="21-bitmap算法实现">2.1 BitMap算法实现</h3>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -377,28 +376,29 @@ tmp[2]可表示64~95<br />
 63
 64
 65
-66</pre></td><td class="code"><pre>	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">BitMap</span> <span class="o">{</span>
-	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">BITWORD</span><span class="o">=</span><span class="mi">32</span><span class="o">;</span><span class="c1">//int32大小</span>
-	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">SHIFT</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span><span class="c1">//2^5=32</span>
-	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">MASK</span><span class="o">=</span><span class="mh">0x1f</span><span class="o">;</span><span class="c1">//0001 1111   </span>
-	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="o">;</span> <span class="c1">//存放1~10000个数</span>
-	<span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">A</span><span class="o">;</span>
+66
+</pre></td><td class="rouge-code"><pre>	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">BitMap</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="no">BITWORD</span><span class="o">=</span><span class="mi">32</span><span class="o">;</span><span class="c1">//int32大小</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="no">SHIFT</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span><span class="c1">//2^5=32</span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="no">MASK</span><span class="o">=</span><span class="mh">0x1f</span><span class="o">;</span><span class="c1">//0001 1111   </span>
+	<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="no">N</span><span class="o">=</span><span class="mi">10000</span><span class="o">;</span> <span class="c1">//存放1~10000个数</span>
+	<span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="no">A</span><span class="o">;</span>
 	<span class="kd">public</span> <span class="nf">BitMap</span><span class="o">(){</span>
-	<span class="n">A</span><span class="o">=</span><span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">N</span><span class="o">/</span><span class="n">BITWORD</span><span class="o">+</span><span class="mi">1</span><span class="o">];</span><span class="c1">//所需字节数</span>
+	<span class="no">A</span><span class="o">=</span><span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="no">N</span><span class="o">/</span><span class="no">BITWORD</span><span class="o">+</span><span class="mi">1</span><span class="o">];</span><span class="c1">//所需字节数</span>
 	<span class="o">}</span>
 	<span class="cm">/**
 	* 将i位设置为1
 	* @param i
 	*/</span>
 	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
-	<span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]|=</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">);</span>
+	<span class="no">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="no">SHIFT</span><span class="o">]|=</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="no">MASK</span><span class="o">);</span>
 	<span class="o">}</span>
 	<span class="cm">/**
 	* 清空第i位为0
 	* @param i
 	*/</span>
 	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">clr</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
-	<span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]&amp;=~(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">));</span>
+	<span class="no">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="no">SHIFT</span><span class="o">]&amp;=~(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="no">MASK</span><span class="o">));</span>
 	<span class="o">}</span>
 	<span class="cm">/**
 	* 返回第i位的状态
@@ -406,7 +406,7 @@ tmp[2]可表示64~95<br />
 	* @return 0或2^k,k表示在BitWord单元中的位置
 	*/</span>
 	<span class="kd">public</span><span class="err"> </span> <span class="kt">int</span> <span class="nf">getI</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">){</span>
-	<span class="k">return</span> <span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="n">SHIFT</span><span class="o">]&amp;(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="n">MASK</span><span class="o">));</span>
+	<span class="k">return</span> <span class="no">A</span><span class="o">[</span><span class="n">i</span><span class="o">&gt;&gt;</span><span class="no">SHIFT</span><span class="o">]&amp;(</span><span class="mi">1</span><span class="o">&lt;&lt;(</span><span class="n">i</span><span class="o">&amp;</span><span class="no">MASK</span><span class="o">));</span>
 	<span class="o">}</span>
 	<span class="cm">/**
 	* 统计二进制几个1
@@ -426,26 +426,24 @@ tmp[2]可表示64~95<br />
 	*/</span>
 	<span class="kd">public</span> <span class="kt">int</span> <span class="nf">count</span><span class="o">(){</span>
 	<span class="kt">int</span> <span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
-	<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="nl">a:</span><span class="n">A</span><span class="o">){</span>
+	<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="nl">a:</span><span class="no">A</span><span class="o">){</span>
 	<span class="n">cnt</span><span class="o">+=</span><span class="n">count_ones_bit</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
 	<span class="o">}</span>
 	<span class="k">return</span> <span class="n">cnt</span><span class="o">;</span>
 	<span class="o">}</span>
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">BitMap</span> <span class="n">b</span><span class="o">=</span><span class="k">new</span> <span class="n">BitMap</span><span class="o">();</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+	<span class="nc">BitMap</span> <span class="n">b</span><span class="o">=</span><span class="k">new</span> <span class="nc">BitMap</span><span class="o">();</span>
 	<span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="o">;</span>
 	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">toBinaryString</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">)));</span><span class="c1">//结果：0b100000</span>
+	<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">toBinaryString</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">)));</span><span class="c1">//结果：0b100000</span>
 	<span class="n">b</span><span class="o">.</span><span class="na">clr</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">));</span><span class="c1">//结果:0</span>
+	<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getI</span><span class="o">(</span><span class="n">a</span><span class="o">));</span><span class="c1">//结果:0</span>
 	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
 	<span class="n">b</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">count</span><span class="o">());</span><span class="c1">//结果：2</span>
+	<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">count</span><span class="o">());</span><span class="c1">//结果：2</span>
 	<span class="o">}</span>
 	<span class="o">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <h3 id="22-bitmap应用案例">2.2 bitmap应用案例</h3>
 <p><strong>案例1 已知某文件中包含一些电话号码，每个号码8位，统计不同号码个数。</strong></p>
 
@@ -526,33 +524,33 @@ tmp[2]可表示64~95<br />
 <p>给定一个元素e，为了判断它是否是集合中的元素，也利用该k个函数得到k个位置，检查该k个位置是否都为1，如果是，认为$e\in S$，否则认为$e\notin S$.不难看出，如果e∈S
 ，那么Bloom Filter肯定会正确判断出$e\in S$
 ，但是它还是可能产生false positive。那么，如何分析false positive的概率呢？
-false positive发生时，表示哈希该元素后得到的k个位置都为1。这个概率大概为：<script type="math/tex">P≈p_1^k</script>其中$p_1$代表某位为1的概率，它等于：<br />
-<script type="math/tex">p_1=1-p_0</script><br />
+false positive发生时，表示哈希该元素后得到的k个位置都为1。这个概率大概为：\(P≈p_1^k\)其中$p_1$代表某位为1的概率，它等于：<br />
+\(p_1=1-p_0\)<br />
 对于$p_0$，表示某个特定的比特位为0。什么时候该位才为0呢？也就是说m个元素各自经过k次哈希得到km个对象，没有一个对象定位到了该位置。某个对象定位到该位置的概率为$\frac{1}{n}$，因此我们可以得到：<br />
-<script type="math/tex">p_0=(1-\frac{1}{n})^{mk}</script><br />
+\(p_0=(1-\frac{1}{n})^{mk}\)<br />
 分析$p_0$。在实际应用中，n一般很大，根据重要极限公式，我们有：<br />
-<script type="math/tex">p_0=(1-\frac{1}{n})^{mk}=(1-\frac{1}{n})^{-n\frac{mk}{-n}}\approx e^{-\frac{mk}{n}}</script><br />
+\(p_0=(1-\frac{1}{n})^{mk}=(1-\frac{1}{n})^{-n\frac{mk}{-n}}\approx e^{-\frac{mk}{n}}\)<br />
 代入到最上面的那个式子，我们不难得到：<br />
-<script type="math/tex">P\approx (1-e^{-\frac{mk}{n}})^k</script><br />
+\(P\approx (1-e^{-\frac{mk}{n}})^k\)<br />
 当k为何值时，P取得最小，false positive possibility最低呢？<br />
 令$f(k)=P\approx (1-e^{-\frac{mk}{n}})^k$<br />
-<script type="math/tex">ln(f(k))=kln(1-e^{-\frac{mk}{n}})</script><br />
+\(ln(f(k))=kln(1-e^{-\frac{mk}{n}})\)<br />
 求导，得<br />
-<script type="math/tex">\frac{f'(k)}{f(k)}=ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})</script><br />
+\(\frac{f'(k)}{f(k)}=ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})\)<br />
 令$f’(k)=0$, 我们有(注意到f(k)&gt;0恒成立)：<br />
-<script type="math/tex">ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})=0</script><br />
+\(ln(1-e^{-\frac{mk}{n}})+k(\frac{1}{1-e^{-\frac{mk}{n}}})(-e^{-\frac{mk}{n}})(\frac{-m}{n})=0\)<br />
 令$\lambda=e^{-\frac{mk}{n}},则k=-\frac{nln\lambda }{m}$,代入上式,得到<br />
-<script type="math/tex">(1-\lambda)ln(1-\lambda)=\lambda ln\lambda</script><br />
+\((1-\lambda)ln(1-\lambda)=\lambda ln\lambda\)<br />
 因此，$\lambda=\frac{1}{2},k=\frac{n}{m}ln2$.<br />
 也就是说，当n和m固定时，选择$k=\frac{n}{m}ln2\approx0.693\frac{n}{m}$
 附近的一个整数，将使false positive possibility最小。注意$\lambda=\frac{1}{2}$表示最后数组中取0的概率占一半，也就是说要想误差率最低，最好让数组一半空着。<br />
 工程实现时，我们需要k个哈希函数或者哈希函数值。如何构造和获得k个独立的哈希函数呢？<a href="https://www.eecs.harvard.edu/~michaelm/postscripts/rsa2008.pdf">这篇论文</a> 提出，只需要两个独立的哈希函数hf1和hf2即可，也就是通过如下方式获得k个哈希函数值：</p>
 
-<p><script type="math/tex">hash value = hf_1(key) + ihf_2(key)</script>
+<p>\(hash value = hf_1(key) + ihf_2(key)\)
 其中$i=0、1、2…k-1$。</p>
 
 <p>在允许误差$\epsilon$内应该分配n为多大呢？通过一系列计算，可以算出：
-<script type="math/tex">n\geq m\frac{-log_2^\epsilon } {ln2}</script>
+\(n\geq m\frac{-log_2^\epsilon } {ln2}\)
 总结一下，Bloom filter将集合中的元素映射到位数组中，用k（k为哈希函数个数）个映射位是否全1表示元素在不在这个集合中。另外Counting bloom filter（CBF）将位数组中的每一位扩展为一个counter，从而支持了元素的删除操作。Spectral Bloom Filter（SBF）将其与集合元素的出现次数关联。SBF采用counter中的最小值来近似表示元素的出现频率。感兴趣可以自己百科。
 总结下，使用bloom filter的场景必然允许false positive。也就是说，发生false positive不应该是致命的。比如说，搜索引擎的爬虫里，如果url不是set的元素，却被bloom filter过滤了，那么顶多就是不抓它而已，没啥特别大的损失。</p>
 
@@ -798,7 +796,7 @@ false positive发生时，表示哈希该元素后得到的k个位置都为1。�
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

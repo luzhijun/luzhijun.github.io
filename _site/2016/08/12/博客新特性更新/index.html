@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>博客新特性更新 - 楚汐|Trucy Luce Blog</title>
@@ -232,41 +232,40 @@ MathJax.Hub.Config({
 
 <p>但估计是后来作者更新后的漏洞，显示样式是这样的：</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
+4
+</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
   <span class="n">puts</span> <span class="s">'foo'</span> 
 <span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w">
-</span></pre></td></tr></tbody></table></code></pre></figure>
+<span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></figure>
 
 <p>看一下解析的源码,嵌套层次是&lt;figure&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;pre&gt;然后再显示代码疯了吧，果断不用这个语法。用原声&lt;pre&gt;语法改下,通过css来增加行号。实践过程中发现css的强大之处：伪选择器。在syntax.css中加入了linenumber的样式方案。js做的主要根据代码行数加入span标签，具体看博客源码提交描述为“特性2”的更新部分。现在可以通过最原始的插入代码方法，让代码显示如下：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">foo</span><span class="p">:</span>
   <span class="n">puts</span> <span class="s">'foo'</span>  
 <span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>以上是python显示方式，如果在```之后没有加语言类型标注，css默认把行号和高亮去掉，并且取消缩进，显示如下格式。</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>def foo:
+3
+</pre></td><td class="rouge-code"><pre>def foo:
   puts 'foo'  
 a=[1,2,3]
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="添加latex公式支持">添加latex公式支持</h3>
 <p>虽然kramdown支持解析公式，但需要mathjax支持显示。考虑搞算法的避免不了公式，轻量级公式怕支持度不够，于是装上了mathjax。注意到代码太长也不怕喽，支持滚动哟。</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -275,39 +274,36 @@ a=[1,2,3]
 7
 8
 9
-10</pre></td><td class="code"><pre><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/x-mathjax-config"</span><span class="o">&gt;</span> 
+10
+</pre></td><td class="rouge-code"><pre><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text/x-mathjax-config</span><span class="dl">"</span><span class="o">&gt;</span> 
 <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Config</span><span class="p">({</span> 
   <span class="na">tex2jax</span><span class="p">:</span> <span class="p">{</span>
-  <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="s1">'$'</span><span class="p">,</span><span class="s1">'$'</span><span class="p">],</span> <span class="p">[</span><span class="s2">"\\("</span><span class="p">,</span><span class="s2">"\\)"</span><span class="p">]</span> <span class="p">],</span>
-      <span class="na">displayMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="s1">'$$'</span><span class="p">,</span><span class="s1">'$$'</span><span class="p">],</span> <span class="p">[</span><span class="s2">"\\["</span><span class="p">,</span><span class="s2">"\\]"</span><span class="p">]</span> <span class="p">],</span>
+  <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">"</span><span class="se">\\</span><span class="s2">(</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="se">\\</span><span class="s2">)</span><span class="dl">"</span><span class="p">]</span> <span class="p">],</span>
+      <span class="na">displayMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="dl">'</span><span class="s1">$$</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">$$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">"</span><span class="se">\\</span><span class="s2">[</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="se">\\</span><span class="s2">]</span><span class="dl">"</span><span class="p">]</span> <span class="p">],</span>
       <span class="na">processEscapes</span><span class="p">:</span> <span class="kc">true</span>
   <span class="p">}</span> 
 <span class="p">});</span> 
 <span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"</span><span class="o">&gt;</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</span><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text/javascript</span><span class="dl">"</span> <span class="nx">src</span><span class="o">=</span><span class="dl">"</span><span class="s2">https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML</span><span class="dl">"</span><span class="o">&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>可以很好的支持公式显示，通过</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>&lt;script type="math/tex; mode=display"&gt;
+3
+</pre></td><td class="rouge-code"><pre>&lt;script type="math/tex; mode=display"&gt;
 O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}
 &lt;/script&gt;
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>或者</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre>$$公式行居中$$
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>$$公式行居中$$
 $公式$
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
-<script type="math/tex; mode=display">O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}</script>
+\[O(g(n)) = \{f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)\}\]
 
 <p>$O(g(n)) = {f(n): \exists c,n， \forall n \geq n_0,  0 \leq f(n) \leq cg(n)}$</p>
 
@@ -549,7 +545,7 @@ $公式$
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

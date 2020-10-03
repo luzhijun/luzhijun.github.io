@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>如何理解特征值 - 楚汐|Trucy Luce Blog</title>
@@ -219,7 +219,7 @@ MathJax.Hub.Config({
 做法：把数据集赋给一个178行13列的矩阵R，减掉均值并归一化(中心化)，它的协方差矩阵$C=R^{T}R$，C是13行13列的矩阵，对C进行特征分解，对角化$C=UDU^{T}$，其中U是特征向量组成的矩阵，D是特征之组成的对角矩阵，并按由大到小排列。然后，另$R’ =RU$，就实现了数据集在特征向量这组正交基上的投影。嗯，重点来了，R’中的数据列是按照对应特征值的大小排列的，后面的列对应小特征值，去掉以后对整个数据集的影响比较小。比如，现在我们直接去掉后面的7列，只保留前6列，就完成了降维。这个降维方法叫PCA（Principal Component Analysis）。
 以下是PCA的python代码:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -232,23 +232,22 @@ MathJax.Hub.Config({
 11
 12
 13
-14</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+14
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">def</span> <span class="nf">pca</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">topNfeat</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="n">meanVals</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">meanRemoved</span> <span class="o">=</span> <span class="n">dataMat</span> <span class="o">-</span> <span class="n">meanVals</span> <span class="c">#减去均值</span>
-    <span class="n">stded</span> <span class="o">=</span> <span class="n">meanRemoved</span> <span class="o">/</span> <span class="n">std</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span> <span class="c">#用标准差归一化</span>
-    <span class="n">covMat</span> <span class="o">=</span> <span class="n">cov</span><span class="p">(</span><span class="n">stded</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c">#求协方差方阵</span>
-    <span class="n">eigVals</span><span class="p">,</span> <span class="n">eigVects</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">mat</span><span class="p">(</span><span class="n">covMat</span><span class="p">))</span> <span class="c">#求特征值和特征向量</span>
-    <span class="n">eigValInd</span> <span class="o">=</span> <span class="n">argsort</span><span class="p">(</span><span class="n">eigVals</span><span class="p">)</span>  <span class="c">#对特征值进行排序</span>
-    <span class="n">eigValInd</span> <span class="o">=</span> <span class="n">eigValInd</span><span class="p">[:</span><span class="o">-</span><span class="p">(</span><span class="n">topNfeat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
-    <span class="n">redEigVects</span> <span class="o">=</span> <span class="n">eigVects</span><span class="p">[:,</span> <span class="n">eigValInd</span><span class="p">]</span>       <span class="c"># 除去不需要的特征向量</span>
-    <span class="n">lowDDataMat</span> <span class="o">=</span> <span class="n">stded</span> <span class="o">*</span> <span class="n">redEigVects</span>    <span class="c">#求新的数据矩阵</span>
-    <span class="n">reconMat</span> <span class="o">=</span> <span class="p">(</span><span class="n">lowDDataMat</span> <span class="o">*</span> <span class="n">redEigVects</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span> <span class="o">+</span> <span class="n">meanVals</span>
+    <span class="n">meanRemoved</span> <span class="o">=</span> <span class="n">dataMat</span> <span class="o">-</span> <span class="n">meanVals</span> <span class="c1">#减去均值
+</span>    <span class="n">stded</span> <span class="o">=</span> <span class="n">meanRemoved</span> <span class="o">/</span> <span class="n">std</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span> <span class="c1">#用标准差归一化
+</span>    <span class="n">covMat</span> <span class="o">=</span> <span class="n">cov</span><span class="p">(</span><span class="n">stded</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#求协方差方阵
+</span>    <span class="n">eigVals</span><span class="p">,</span> <span class="n">eigVects</span> <span class="o">=</span> <span class="n">linalg</span><span class="p">.</span><span class="n">eig</span><span class="p">(</span><span class="n">mat</span><span class="p">(</span><span class="n">covMat</span><span class="p">))</span> <span class="c1">#求特征值和特征向量
+</span>    <span class="n">eigValInd</span> <span class="o">=</span> <span class="n">argsort</span><span class="p">(</span><span class="n">eigVals</span><span class="p">)</span>  <span class="c1">#对特征值进行排序
+</span>    <span class="n">eigValInd</span> <span class="o">=</span> <span class="n">eigValInd</span><span class="p">[:</span><span class="o">-</span><span class="p">(</span><span class="n">topNfeat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
+    <span class="n">redEigVects</span> <span class="o">=</span> <span class="n">eigVects</span><span class="p">[:,</span> <span class="n">eigValInd</span><span class="p">]</span>       <span class="c1"># 除去不需要的特征向量
+</span>    <span class="n">lowDDataMat</span> <span class="o">=</span> <span class="n">stded</span> <span class="o">*</span> <span class="n">redEigVects</span>    <span class="c1">#求新的数据矩阵
+</span>    <span class="n">reconMat</span> <span class="o">=</span> <span class="p">(</span><span class="n">lowDDataMat</span> <span class="o">*</span> <span class="n">redEigVects</span><span class="p">.</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span> <span class="o">+</span> <span class="n">meanVals</span>
     <span class="k">return</span> <span class="n">lowDDataMat</span><span class="p">,</span> <span class="n">reconMat</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>下面看结果：<br />
 <img src="http://oc5ofszxe.bkt.clouddn.com/16-9-10/84800048.jpg" alt="" /><br />
 这是不降维时候的分类错误。<br />
@@ -495,7 +494,7 @@ MathJax.Hub.Config({
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

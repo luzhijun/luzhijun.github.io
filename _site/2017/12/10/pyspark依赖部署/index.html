@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>pyspark依赖部署 - 楚汐|Trucy Luce Blog</title>
@@ -216,25 +216,23 @@ MathJax.Hub.Config({
 
 <p><a href="https://virtualenv.pypa.io/en/stable/">官网</a>是最权威的教材了，想要详细了解的直接点开，下面说一下简单应用。</p>
 <h3 id="安装">安装</h3>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>$ [sudo] pip install virtualenv
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>$ [sudo] pip install virtualenv
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>pip默认使用国外镜像，可以修改下让下载快点</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
-6</pre></td><td class="code"><pre>$ vim ~/.pip/pip.conf
+6
+</pre></td><td class="rouge-code"><pre>$ vim ~/.pip/pip.conf
 添加如下内容
 [global]
 index-url = https://pypi.tuna.tsinghua.edu.cn/simple
 [install]
 trusted-host=mirrors.aliyun.com
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>除了清华的源，还有其他：
 清华：https://pypi.tuna.tsinghua.edu.cn/simple
 阿里云：http://mirrors.aliyun.com/pypi/simple/
@@ -245,33 +243,32 @@ trusted-host=mirrors.aliyun.com
 当然python3之前版本默认是没有pip的，推荐按照这个<a href="http://pip-cn.readthedocs.io/en/latest/installing.html">教程</a>安装。</p>
 <h3 id="创建虚拟环境">创建虚拟环境</h3>
 <p>安装好virtualenv后就可以创建虚拟环境了，接下来要创建一个sklearn的虚拟环境：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre>$ virtualenv sklearn_env
+4
+</pre></td><td class="rouge-code"><pre>$ virtualenv sklearn_env
 New python executable in sklearn_env/bin/python2
 Also creating executable in sklearn_env/bin/python
 Installing setuptools, pip, wheel...done.
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>这样我们就在当前目录下创建了一个名为sklearn_env的目录，其中include和lib目录会存放我们要安装库的相关文件。bin目录有启动虚拟环境的相关脚本和这个虚拟环境自己的python和pip.
 默认创建的环境是不带有额外装的包的，想要继承现有Python所有依赖包，使用如下命令</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>virtualenv --system-site-packages ENV
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>virtualenv --system-site-packages ENV
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>该脚本会从/usr/lib/python**/site-packages中复制相应的包，或者其他任何sys.path目录中有site-packages都可以。</p>
 <h3 id="激活环境">激活环境</h3>
 <p>创建环境后可以通过bin下的脚本来激活环境</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre>$ source sklearn_env/bin/activate
+8
+</pre></td><td class="rouge-code"><pre>$ source sklearn_env/bin/activate
 #启动虚拟环境之前
 $ which python
 /opt/rh/python27/root/usr/bin/python
@@ -279,21 +276,18 @@ $ which python
 #启动虚拟环境之后
 (sklearn_env)$ which python
 ~/sklearn_env/bin/python
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>然后通过pip直接安装想要的包了，（这里的pip是自己环境包下面的，不是开发机默认的）。 
 确认无误后，我们需要需要将这个虚拟环境变成可迁移的，这样才能在集群上运行：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre>#将虚拟环境变为可迁移的
+4
+</pre></td><td class="rouge-code"><pre>#将虚拟环境变为可迁移的
 (sklearn_env)$ virtualenv --relocatable sklearn_env
 #打包便于在集群使用
 (sklearn_env)$ zip -r sklearn_env.zip sklearn_env
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>当然，退出环境对应bin下的deactivate脚本。</p>
 
 <h2 id="anaconda">anaconda</h2>
@@ -304,14 +298,15 @@ $ which python
 <p>conda将几乎所有的工具、第三方包都当做package对待，甚至包括python和conda自身！因此，conda打破了包管理与环境管理的约束，能非常方便地安装各种版本python、各种package并方便地切换。因此对于下载anaconda2.7还是3.4版本都无所谓，因为可以自己通过conda创任意版本的环境。</p>
 <h3 id="conda环境管理">conda环境管理</h3>
 <p>关于conda的使用，参考<a href="https://docs.anaconda.com/docs_oss/conda/using/">官方教程</a>是最好的，下面简单介绍下，下载并安装完anaconda后，添加其bin目录到系统环境里：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre>#安装
+8
+</pre></td><td class="rouge-code"><pre>#安装
 bash ~/Downloads/Anaconda2-5.0.1-Linux-x86_64.sh
 # 如果安装过程中对“Do you wish the installer to prepend the Anaconda&lt;2 or 3&gt; install location to PATH in your /home/&lt;user&gt;/.bashrc ?”没有选择yes,手工执行下面命令
 echo 'export PATH="~/anaconda2/bin:$PATH"' &gt;&gt; ~/.bashrc
@@ -319,28 +314,25 @@ echo 'export PATH="~/anaconda2/bin:$PATH"' &gt;&gt; ~/.bashrc
 source ~/.bashrc
 # 检验安装是否正确
 conda --version
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Conda的环境管理功能允许我们同时安装若干不同版本的Python，并能自由切换。对于上述安装过程，假设我们采用的是Python 2.7对应的安装包，那么Python 2.7就是默认的环境（默认名字是root，注意这个root不是超级管理员的意思）。
 然后我们安装python3环境，并安装scikit-learn依赖包</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
-6</pre></td><td class="code"><pre>## python指定版本，后面是顺带需要安装的包
+6
+</pre></td><td class="rouge-code"><pre>## python指定版本，后面是顺带需要安装的包
 conda create --name sklearn_env  python=3 scikit-learn
 ## 列出目前创建的坏境
 conda info --envs
 ## 之后不需要这个环境，可以通过下面命令
 conda remove --name sklearn_env --all
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>使用conda安装包常用命令：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -353,7 +345,8 @@ conda remove --name sklearn_env --all
 11
 12
 13
-14</pre></td><td class="code"><pre># 查看当前环境下已安装的包
+14
+</pre></td><td class="rouge-code"><pre># 查看当前环境下已安装的包
 conda list
 # 查看某个指定环境的已安装包
 conda list -n sklearn_env
@@ -367,47 +360,42 @@ conda install -n sklearn_env numpy
 conda update -n sklearn_env numpy
 # 删除package
 conda remove -n sklearn_env numpy
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>同样，可以为conda设置国内镜像：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre># 添加Anaconda的TUNA镜像
+5
+</pre></td><td class="rouge-code"><pre># 添加Anaconda的TUNA镜像
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 # TUNA的help中镜像地址加有引号，需要去掉
 # 设置搜索时显示通道地址
 conda config --set show_channel_urls yes
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>创建环境并安装相应依赖包后，整个环境都已直接迁移了。
-环境默认在<code class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>~/anaconda/envs/所装环境名<span class="w">
-</span></pre></td></tr></tbody></table>
-</code>下，直接对其打包即可。</p>
+环境默认在<code class="language-plaintext highlighter-rouge"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>~/anaconda/envs/所装环境名
+</pre></td></tr></tbody></table></code>下，直接对其打包即可。</p>
 <blockquote>
   <p>不同与virtualenv的是，anaconda会把环境所需的c库都放在创建环境名下的lib目录，因此不会出现丢失共享库的错误信息，但如果是从低级机器环境迁移到高级机器环境，并且高级机器环境不可触达（spark集群），高级机器环境下的c库可能得重新在低级机器环境下编译好后放到创建环境名下的lib目录下。</p>
 </blockquote>
 
 <h2 id="pyspark">pyspark</h2>
 <p>在pyspark上用指定的环境运行，在提交作业前加上如下参数即可：</p>
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre>--archives &lt;环境包地址，最好放在hdfs集群上，免得上传&gt;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>--archives &lt;环境包地址，最好放在hdfs集群上，免得上传&gt;
 --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=./XX.zip/XX/bin/python
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>如果是yarn-cluster模式，最好也设置下以下参数：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre>spark.yarn.appMasterEnv.PYSPARK_PYTHON = ./XX.zip/XX/bin/python
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>spark.yarn.appMasterEnv.PYSPARK_PYTHON = ./XX.zip/XX/bin/python
 spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON = ./XX.zip/XX/bin/python
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>OK，可以放心大胆地跑啦。</p>
 
@@ -650,7 +638,7 @@ spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON = ./XX.zip/XX/bin/python
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>Leecode(387) - 楚汐|Trucy Luce Blog</title>
@@ -220,7 +220,7 @@ MathJax.Hub.Config({
 
 <p>第一种方法，利用Ordereddict. Ordereddict为python中的顺序字典，存储结构为FIFO的链式。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -235,7 +235,8 @@ MathJax.Hub.Config({
 13
 14
 15
-16</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+16
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="k">def</span> <span class="nf">firstUniqChar1</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="s">"""
     :type s: str
@@ -243,7 +244,7 @@ MathJax.Hub.Config({
     """</span>
     <span class="n">o</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">==</span><span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">o</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">==</span><span class="bp">None</span><span class="p">:</span>
             <span class="n">o</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">o</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=-</span><span class="mi">1</span>
@@ -251,40 +252,38 @@ MathJax.Hub.Config({
         <span class="k">if</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">o</span><span class="p">[</span><span class="n">oi</span><span class="p">]</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>上述程序设置OrderedDict初始值都为字符所在索引值，若有重复标记为-1，那么结果中只要查第一个非-1的item即可拿到索引。程序中用OrderedDict保持索引顺序性，但实际上字符串本身就有顺序性，只需要一个普通字典就可以了，以字符串为字典的键，无需OrderedDict这种高昂的结构。</p>
 
 <p>第二种方法，利用collections中的计数字典Counter来替代</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="k">def</span> <span class="nf">firstUniqChar2</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="n">char_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>     
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">char_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">i</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
-
-<p>其实仔细想想字典的键值既然都是字符，那么其ASCII码对应的整数可以用数组索引表示。初始化一个128位的字符数组即可表示所有可能的拉丁字符,对应字典中的键值。</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">firstUniqChar3</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="k">def</span> <span class="nf">firstUniqChar2</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">char_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>     
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">char_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>其实仔细想想字典的键值既然都是字符，那么其ASCII码对应的整数可以用数组索引表示。初始化一个128位的字符数组即可表示所有可能的拉丁字符,对应字典中的键值。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">firstUniqChar3</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="n">chars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">128</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
         <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">+=</span><span class="mi">1</span>
@@ -292,9 +291,7 @@ MathJax.Hub.Config({
         <span class="k">if</span> <span class="n">chars</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">i</span>        
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>以上三种数据结构虽然都能解决问题，但时间复杂度明显有差距，尤其是第三种。
 以”dddccdbba”为例，重复1万次，对应时间做成柱状图如下：<br />
@@ -542,7 +539,7 @@ MathJax.Hub.Config({
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>

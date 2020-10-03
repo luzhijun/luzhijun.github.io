@@ -8,7 +8,7 @@
     <meta name="baidu-site-verification" content="iCQLNHIUn9" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="云计算大数据博客|陆志君,web,数据挖掘与数据分析,分布式算法|这里是 @T.L陆志君的个人博客，与你一起发现更大的世界">
-    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,陆志君,陆志君的博客,大数据，云计算,分布式算法,博客,花梦的男朋友">
+    <meta name="keyword"  content="T.L,tl,luzhijun,trucy,trucyluce,楚汐,陆志君,陆志君的博客,大数据,云计算,分布式算法,楚汐的博客, 【花梦的男朋友】 <!--2020.10.05--> 【花梦的老公】 <!--future--> 【花梦的老伴】 ">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>微博话题爬取与存储分析 - 楚汐|Trucy Luce Blog</title>
@@ -221,45 +221,42 @@ MathJax.Hub.Config({
 
 <p>怎样抓网页呢？其实就是根据URL来获取它的网页信息，虽然我们在浏览器中看到的是一幅幅优美的画面，但是其实是由浏览器解释才呈现出来的，实质它是一段HTML代码，加 JS、CSS，如果把网页比作一个人，那么HTML便是他的骨架，JS便是他的肌肉，CSS便是它的衣服。所以最重要的部分是存在于HTML中的，下面我们就写个例子来扒一个网页下来。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.baidu.com"</span><span class="p">)</span>
-<span class="k">print</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+3
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.baidu.com"</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">response</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>结果就和在Chrome等浏览器中右键查看源码一样的内容，urllib2是python内置库，简化了httplib的用法(urllib2.urlopen相当于Java中的HttpURLConnection)。有2那肯定有urllib啊，urllib2可以接受一个Request类的实例来设置URL请求的headers，但urllib仅可以接受URL。这意味着，你不可以伪装你的User Agent字符串等。urllib2在python3.x中被改为urllib.request。
 接下来用urllib2伪装iphone 6浏览，模拟浏览器发送GET请求。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre><span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s">'http://www.douban.com/'</span><span class="p">)</span>
-<span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Status:'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Data:'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+5
+</pre></td><td class="rouge-code"><pre><span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="s">'http://www.douban.com/'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'Status:'</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">reason</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'Data:'</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>结果会返回移动版的源码信息</p>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre>...
+4
+</pre></td><td class="rouge-code"><pre>...
 &lt;link rel="apple-touch-icon-precomposed" href="https://gss0.bdstatic.com/5bd1bjqh_Q23odCf/static/wiseindex/img/screen_icon.png"/&gt;  
 &lt;meta name="format-detection" content="telephone=no"/&gt;
 ...
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>如果想要以post方式提交，只要在Request中附加data字段就可以，下面附加用户名密码登录新浪博客。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -283,34 +280,33 @@ MathJax.Hub.Config({
 22
 23
 24
-25</pre></td><td class="code"><pre><span class="c">#我们模拟一个微博登录，先读取登录的邮箱和口令，然后按照weibo.cn的登录页的格式以username=xxx&amp;password=xxx的编码传入：</span>
-<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">parse</span>
+25
+</pre></td><td class="rouge-code"><pre><span class="c1">#我们模拟一个微博登录，先读取登录的邮箱和口令，然后按照weibo.cn的登录页的格式以username=xxx&amp;password=xxx的编码传入：
+</span><span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">parse</span>
 <span class="k">print</span><span class="p">(</span><span class="s">'Login to weibo.cn...'</span><span class="p">)</span>
 <span class="n">email</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">'Email: '</span><span class="p">)</span>
 <span class="n">passwd</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">'Password: '</span><span class="p">)</span>
-<span class="n">login_data</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">([</span>
+<span class="n">login_data</span> <span class="o">=</span> <span class="n">parse</span><span class="p">.</span><span class="n">urlencode</span><span class="p">([</span>
     <span class="p">(</span><span class="s">'username'</span><span class="p">,</span> <span class="n">email</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'password'</span><span class="p">,</span> <span class="n">passwd</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'entry'</span><span class="p">,</span> <span class="s">'weibo'</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'client_id'</span><span class="p">,</span> <span class="s">''</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'savestate'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'ec'</span><span class="p">,</span> <span class="s">''</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">'pagerefer'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn/signin/welcome?entry=mweibo&amp;r=http</span><span class="si">%3</span><span class="s">A</span><span class="si">%2</span><span class="s">F</span><span class="si">%2</span><span class="s">Fm.weibo.cn</span><span class="si">%2</span><span class="s">F'</span><span class="p">)</span>
+    <span class="p">(</span><span class="s">'pagerefer'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn/signin/welcome?entry=mweibo&amp;r=http%3A%2F%2Fm.weibo.cn%2F'</span><span class="p">)</span>
 <span class="p">])</span>
 
-<span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s">'https://passport.weibo.cn/sso/login'</span><span class="p">)</span>
-<span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'Origin'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn'</span><span class="p">)</span>
-<span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">)</span>
-<span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'Referer'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn/signin/login?entry=mweibo&amp;res=wel&amp;wm=3349&amp;r=http</span><span class="si">%3</span><span class="s">A</span><span class="si">%2</span><span class="s">F</span><span class="si">%2</span><span class="s">Fm.weibo.cn</span><span class="si">%2</span><span class="s">F'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="s">'https://passport.weibo.cn/sso/login'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'Origin'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">'Referer'</span><span class="p">,</span> <span class="s">'https://passport.weibo.cn/signin/login?entry=mweibo&amp;res=wel&amp;wm=3349&amp;r=http%3A%2F%2Fm.weibo.cn%2F'</span><span class="p">)</span>
 
-<span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Status:'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">getheaders</span><span class="p">():</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="si">%</span><span class="s">s: </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Data:'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+<span class="k">with</span> <span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'Status:'</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">reason</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="p">.</span><span class="n">getheaders</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'%s: %s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'Data:'</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>其中Origin和referer字段是反“反盗链”，就是检查你发送请求的header里面，referer站点是不是他自己。</p>
 
 <h3 id="cookielib">Cookielib</h3>
@@ -321,7 +317,7 @@ MathJax.Hub.Config({
 
 <p>它们的关系：CookieJar–派生-&gt;FileCookieJar –派生–&gt;MozillaCookieJar和LWPCookieJar</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -329,18 +325,17 @@ MathJax.Hub.Config({
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">http.cookiejar</span> <span class="kn">import</span> <span class="n">CookieJar</span>
 
 <span class="n">cookie</span><span class="o">=</span><span class="n">CookieJar</span><span class="p">()</span>
-<span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span><span class="c">#cookie处理器</span>
-<span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
-<span class="n">opener</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s">'http://www.baidu.com'</span><span class="p">)</span>
+<span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span><span class="c1">#cookie处理器
+</span><span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
+<span class="n">opener</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="s">'http://www.baidu.com'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">cookie</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s">':'</span><span class="p">,</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="s">':'</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>结果：</p>
 <blockquote>
@@ -356,7 +351,7 @@ BD_HOME : 0</p>
 
 <p>写脚本从指定网站抓取数据的时候，免不了会被网站屏蔽IP。所以呢，就需要有一些IP代理。随便在网上找了一个提供免费IP的网站<a href="http://www.xicidaili.com/">西刺</a>做IP抓取。观察可以发现有我们需要的信息的页面url有下面的规律：www.xicidaili.com/nn/+页码。可是你如果直接通过get方法访问的话你会发现会出现500错误。原因其实出在这个规律下的url虽然都是get方法获得数据，但都有cookie认证，另外还有反外链等，下面例子用来获得西刺的cookie。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -365,28 +360,27 @@ BD_HOME : 0</p>
 7
 8
 9
-10</pre></td><td class="code"><pre><span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="s">'User-Agent'</span><span class="p">,</span><span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">),</span>
+10
+</pre></td><td class="rouge-code"><pre><span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="s">'User-Agent'</span><span class="p">,</span><span class="s">'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'Host'</span><span class="p">,</span><span class="s">'www.xicidaili.com'</span><span class="p">),</span>
     <span class="p">(</span><span class="s">'Referer'</span><span class="p">,</span><span class="s">'http://www.xicidaili.com/n'</span><span class="p">)]</span>
 <span class="k">def</span> <span class="nf">getCookie</span><span class="p">()</span>
     <span class="n">cookie</span><span class="o">=</span><span class="n">CookieJar</span><span class="p">()</span>
-    <span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span><span class="c">#cookie处理器</span>
-    <span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
-    <span class="n">opener</span><span class="o">.</span><span class="n">addheaders</span><span class="o">=</span><span class="n">headers</span>
-    <span class="n">opener</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s">'http://www.xicidaili.com/'</span><span class="p">)</span>
+    <span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span><span class="c1">#cookie处理器
+</span>    <span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
+    <span class="n">opener</span><span class="p">.</span><span class="n">addheaders</span><span class="o">=</span><span class="n">headers</span>
+    <span class="n">opener</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="s">'http://www.xicidaili.com/'</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cookie</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>有了cookie就可以爬了，爬的内容怎么处理呢，介绍个SB工具—— BeautifulSoup。</p>
 
 <h3 id="beautifulsoup">BeautifulSoup</h3>
 <p><a href="https://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a>翻译叫鸡汤，现在版本是4.5.1，简称BS4，倒过来叫4SB，不过抓数据一点都不SB。提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，所以不需要多少代码就可以写出一个完整的应用程序。Beautiful Soup自动将输入文档转换为Unicode编码，输出文档转换为utf-8编码。你不需要考虑编码方式，除非文档没有指定一个编码方式，这时，Beautiful Soup就不能自动识别编码方式了。然后，你仅仅需要说明一下原始编码方式就可以了。
-关于BS的介绍和用法<a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/">官方文档</a>很详细，下面给几个”Web scraping with python”<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>中的例子看下BS是否好喝，可以和文档对照看。
+关于BS的介绍和用法<a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/">官方文档</a>很详细，下面给几个”Web scraping with python”<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>中的例子看下BS是否好喝，可以和文档对照看。
 首先你得安装了BS，然后爬取<a href="http://www.pythonscraping.com/pages/page3.html">http://www.pythonscraping.com/pages/page3.html</a>中的图片来小试牛刀。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -394,18 +388,17 @@ BD_HOME : 0</p>
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">re</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 
-<span class="n">html</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.pythonscraping.com/pages/page3.html"</span><span class="p">)</span>
+<span class="n">html</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.pythonscraping.com/pages/page3.html"</span><span class="p">)</span>
 <span class="n">bs</span><span class="o">=</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="s">"lxml"</span><span class="p">)</span>
-<span class="c">#打印所有图片地址</span>
-<span class="k">for</span> <span class="n">pic</span> <span class="ow">in</span> <span class="n">bs</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">'img'</span><span class="p">,{</span><span class="s">'src'</span><span class="p">:</span><span class="n">re</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="s">".*</span><span class="err">\</span><span class="s">.jpg$"</span><span class="p">)}):</span>
+<span class="c1">#打印所有图片地址
+</span><span class="k">for</span> <span class="n">pic</span> <span class="ow">in</span> <span class="n">bs</span><span class="p">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">'img'</span><span class="p">,{</span><span class="s">'src'</span><span class="p">:</span><span class="n">re</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="s">".*\.jpg$"</span><span class="p">)}):</span>
     <span class="k">print</span><span class="p">(</span><span class="n">pic</span><span class="p">[</span><span class="s">'src'</span><span class="p">])</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>结果:</p>
 <blockquote>
@@ -419,7 +412,7 @@ BD_HOME : 0</p>
 
 <p>接上文，我们把西刺的高匿代理ip爬出来放到本地proxy.txt。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -440,48 +433,46 @@ BD_HOME : 0</p>
 19
 20
 21
-22</pre></td><td class="code"><pre><span class="n">cookie</span><span class="o">=</span><span class="n">getCookie</span><span class="p">()</span>
-<span class="c"># get the proxy</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'proxy.txt'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+22
+</pre></td><td class="rouge-code"><pre><span class="n">cookie</span><span class="o">=</span><span class="n">getCookie</span><span class="p">()</span>
+<span class="c1"># get the proxy
+</span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'proxy.txt'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">page</span><span class="o">%</span><span class="mi">50</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span><span class="c">#每50页更新下cookie</span>
-            <span class="n">cookie</span><span class="o">=</span><span class="n">getCookie</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">page</span><span class="o">%</span><span class="mi">50</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span><span class="c1">#每50页更新下cookie
+</span>            <span class="n">cookie</span><span class="o">=</span><span class="n">getCookie</span><span class="p">()</span>
 
-        <span class="n">url</span> <span class="o">=</span> <span class="s">'http://www.xicidaili.com/nn/</span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span><span class="n">page</span>
-        <span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
-        <span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s">'http://www.xicidaili.com/nn/%s'</span> <span class="o">%</span><span class="n">page</span>
+        <span class="n">cookie_support</span><span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">cookie_support</span><span class="p">)</span>
+        <span class="n">request</span><span class="p">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
 
-        <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
         <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">content</span><span class="p">,</span><span class="s">"lxml"</span><span class="p">)</span>
-        <span class="n">trs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">'table'</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="s">"ip_list"</span><span class="p">)</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s">'tr'</span><span class="p">)</span>
+        <span class="n">trs</span> <span class="o">=</span> <span class="n">soup</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">'table'</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="s">"ip_list"</span><span class="p">).</span><span class="n">findAll</span><span class="p">(</span><span class="s">'tr'</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">trs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">tds</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s">'td'</span><span class="p">)</span>
-            <span class="n">ip</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">port</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">protocol</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">'</span><span class="si">%</span><span class="s">s://</span><span class="si">%</span><span class="s">s:</span><span class="si">%</span><span class="s">s</span><span class="se">\n</span><span class="s">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+            <span class="n">tds</span> <span class="o">=</span> <span class="n">tr</span><span class="p">.</span><span class="n">findAll</span><span class="p">(</span><span class="s">'td'</span><span class="p">)</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">text</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">text</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">protocol</span> <span class="o">=</span> <span class="n">tds</span><span class="p">[</span><span class="mi">5</span><span class="p">].</span><span class="n">text</span><span class="p">.</span><span class="n">strip</span><span class="p">().</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">'%s://%s:%s</span><span class="se">\n</span><span class="s">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>结果十五秒爬了1万条数据（与电脑环境有关），说明1页正好100条，而总页数超过1000页，也就是记录数超过10w条，如果固定用同一个cookie肯定不安全（谁会有空翻看1000页数据。。。），因此设置每爬50页更新下cookie。
 有了代理地址，不一定能保证有效，可能就被封杀了，因此使用思路是把代理地址存入哈希表，验证无效的删除（看状态码），重新在表中取新的记录。
 代理地址使用方式如下：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="o">...</span>
-<span class="n">proxy_handler</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">({</span><span class="s">'http'</span><span class="p">:</span> <span class="s">'123.165.121.126:81'</span><span class="p">})</span> <span class="c">#http://www.xicidaili.com/nn/2 随便找个</span>
-<span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_handler</span><span class="p">,</span><span class="n">cookie_handler</span> <span class="o">...</span><span class="err">各种其他</span><span class="n">handle</span><span class="p">)</span>
-<span class="o">...</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+4
+</pre></td><td class="rouge-code"><pre><span class="p">...</span>
+<span class="n">proxy_handler</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">ProxyHandler</span><span class="p">({</span><span class="s">'http'</span><span class="p">:</span> <span class="s">'123.165.121.126:81'</span><span class="p">})</span> <span class="c1">#http://www.xicidaili.com/nn/2 随便找个
+</span><span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_handler</span><span class="p">,</span><span class="n">cookie_handler</span> <span class="p">...</span><span class="n">各种其他handle</span><span class="p">)</span>
+<span class="p">...</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>另外推荐个神器，<a href="https://my.oschina.net/jhao104/blog/512384">crawlera</a> ，基本满足各种需要。</p>
 
-<p>假如真要爬1000页，需要花150秒？好吧，好像也不多，但我要说的是可以多进程或者异步处理。多进程很好做，注意以手动维护一个HttpConnection的池，然后每次抓取时从连接池里面选连接进行连接即可（每秒几百个连接正常的有理智的服务器一定会封禁你的）。python的异步处理用到了Twisted库，却远没有同是异步模式的nodejs火，算是python中的巨型框架了，想想python的巨型框架活的不久，感兴趣的推荐看下《Twisted网络编程必备》<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>。关于单线程、多线程、异步有张图推荐看下。</p>
+<p>假如真要爬1000页，需要花150秒？好吧，好像也不多，但我要说的是可以多进程或者异步处理。多进程很好做，注意以手动维护一个HttpConnection的池，然后每次抓取时从连接池里面选连接进行连接即可（每秒几百个连接正常的有理智的服务器一定会封禁你的）。python的异步处理用到了Twisted库，却远没有同是异步模式的nodejs火，算是python中的巨型框架了，想想python的巨型框架活的不久，感兴趣的推荐看下《Twisted网络编程必备》<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote">2</a></sup>。关于单线程、多线程、异步有张图推荐看下。</p>
 
 <p><img src="http://oc5ofszxe.bkt.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-10-28%20%E4%B8%8B%E5%8D%883.37.06.png" alt="" /></p>
 
@@ -529,7 +520,7 @@ BD_HOME : 0</p>
 <p>Scrapy下载器通过中间件控制的，要实现代理IP、user agent切换可以自定义个中间件。
 在项目下创建（如何创建项目，使用scrapy start yourProject命令，参考文档）好项目后，在里面找到setting.py文件，先把agents和代理ip放到setting.py中（代理ip较少情况下这样做，较多的话还是放到数据库中去，方便管理）,设置中间件名字MyCustomSpiderMiddleware和优先级。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -565,7 +556,8 @@ BD_HOME : 0</p>
 34
 35
 36
-37</pre></td><td class="code"><pre><span class="n">USER_AGENTS</span> <span class="o">=</span> <span class="p">[</span>
+37
+</pre></td><td class="rouge-code"><pre><span class="n">USER_AGENTS</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s">"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)"</span><span class="p">,</span>
 	<span class="s">"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)"</span><span class="p">,</span>
 	<span class="s">"Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)"</span><span class="p">,</span>
@@ -591,24 +583,22 @@ BD_HOME : 0</p>
 	<span class="p">{</span><span class="s">'ip_port'</span><span class="p">:</span> <span class="s">'122.96.59.104:80'</span><span class="p">,</span> <span class="s">'user_pass'</span><span class="p">:</span> <span class="s">''</span><span class="p">},</span>
 	<span class="p">{</span><span class="s">'ip_port'</span><span class="p">:</span> <span class="s">'122.224.249.122:8088'</span><span class="p">,</span> <span class="s">'user_pass'</span><span class="p">:</span> <span class="s">''</span><span class="p">},</span>
 <span class="p">]</span>
-<span class="c"># 禁用cookoe (enabled by default)</span>
-<span class="n">COOKIES_ENABLED</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="c1"># 禁用cookoe (enabled by default)
+</span><span class="n">COOKIES_ENABLED</span> <span class="o">=</span> <span class="bp">False</span>
 
-<span class="c">#设置下载延迟</span>
-<span class="n">DOWNLOAD_DELAY</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">#设置下载延迟
+</span><span class="n">DOWNLOAD_DELAY</span> <span class="o">=</span> <span class="mi">1</span>
 
-<span class="c"># 下载中间件</span>
-<span class="c"># See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html</span>
-<span class="n">DOWNLOADER_MIDDLEWARES</span> <span class="o">=</span> <span class="p">{</span>
+<span class="c1"># 下载中间件
+# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
+</span><span class="n">DOWNLOADER_MIDDLEWARES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">'weiboZ.middlewares.MyCustomDownloaderMiddleware'</span><span class="p">:</span> <span class="mi">543</span><span class="p">,</span>
 <span class="p">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>middlewares/MyCustomDownloaderMiddleware.py</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -629,31 +619,30 @@ BD_HOME : 0</p>
 19
 20
 21
-22</pre></td><td class="code"><pre><span class="kn">import</span> <span class="nn">random</span>
+22
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">PROXIES</span>
 <span class="k">class</span> <span class="nc">RandomUserAgent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="s">"""Randomly rotate user agents based on a list of predefined ones"""</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agents</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">agents</span>
-	<span class="nd">@classmethod</span>
+		<span class="bp">self</span><span class="p">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">agents</span>
+	<span class="o">@</span><span class="nb">classmethod</span>
 	<span class="k">def</span> <span class="nf">from_crawler</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">crawler</span><span class="p">):</span>
-		<span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">crawler</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">'USER_AGENTS'</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">crawler</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">'USER_AGENTS'</span><span class="p">))</span>
 	<span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
-		<span class="c">#随机选个agent</span>
-		<span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">))</span>
+		<span class="c1">#随机选个agent
+</span>		<span class="n">request</span><span class="p">.</span><span class="n">headers</span><span class="p">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">'User-Agent'</span><span class="p">,</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">agents</span><span class="p">))</span>
 <span class="k">class</span> <span class="nc">ProxyMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
-		<span class="n">proxy</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">PROXIES</span><span class="p">)</span>
+		<span class="n">proxy</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">PROXIES</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">proxy</span><span class="p">[</span><span class="s">'user_pass'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-			<span class="n">request</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">'proxy'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://</span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">proxy</span><span class="p">[</span><span class="s">'ip_port'</span><span class="p">]</span>
-			<span class="n">encoded_user_pass</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">encodestring</span><span class="p">(</span><span class="n">proxy</span><span class="p">[</span><span class="s">'user_pass'</span><span class="p">])</span>
-			<span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">'Proxy-Authorization'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'Basic '</span> <span class="o">+</span> <span class="n">encoded_user_pass</span>
+			<span class="n">request</span><span class="p">.</span><span class="n">meta</span><span class="p">[</span><span class="s">'proxy'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://%s"</span> <span class="o">%</span> <span class="n">proxy</span><span class="p">[</span><span class="s">'ip_port'</span><span class="p">]</span>
+			<span class="n">encoded_user_pass</span> <span class="o">=</span> <span class="n">base64</span><span class="p">.</span><span class="n">encodestring</span><span class="p">(</span><span class="n">proxy</span><span class="p">[</span><span class="s">'user_pass'</span><span class="p">])</span>
+			<span class="n">request</span><span class="p">.</span><span class="n">headers</span><span class="p">[</span><span class="s">'Proxy-Authorization'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'Basic '</span> <span class="o">+</span> <span class="n">encoded_user_pass</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">request</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">'proxy'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://</span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">proxy</span><span class="p">[</span><span class="s">'ip_port'</span><span class="p">]</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+			<span class="n">request</span><span class="p">.</span><span class="n">meta</span><span class="p">[</span><span class="s">'proxy'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://%s"</span> <span class="o">%</span> <span class="n">proxy</span><span class="p">[</span><span class="s">'ip_port'</span><span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="互联网道德和规约">互联网道德和规约</h3>
 
@@ -716,9 +705,9 @@ json内容如下：</p>
 
 <p>采用Trie树搜索最多经过n次匹配即可完成一次查找(即最坏是0(n))，而与词库中词条的数目无关，缺点是空间空闲率高，它是中文匹配分词算法中词典的一种常见实现。</p>
 
-<p>双数组Trie（doublearrayTrie,DAT）是trie树的一个简单而有效的实现（日本人发明的），由两个整数数组构成，一个是base[]，另一个是check[]。双数组Trie树是Trie树的一种变形，是在保证Trie树检索速度的前提下，提高空间利用率而提出的一种数据结构.其本质是一个确定有限状态自动机(DeterministicFiniteAutomaton，DFA)，每个节点代表自动机的一个状态，根据变量的不同，进行状态转移，当到达结束状态或者无法转移时完成查询.DAT采用两个线性数组(base和check)对Trie树保存，base和check数组拥有一致的下标，即DFA中的每一个状态，也即Trie树中所说的节点，base数组用于确定状态的转移，check数组用于检验转移的正确性，检验该状态是否存在<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup><sup id="fnref:5"><a href="#fn:5" class="footnote">4</a></sup>。</p>
+<p>双数组Trie（doublearrayTrie,DAT）是trie树的一个简单而有效的实现（日本人发明的），由两个整数数组构成，一个是base[]，另一个是check[]。双数组Trie树是Trie树的一种变形，是在保证Trie树检索速度的前提下，提高空间利用率而提出的一种数据结构.其本质是一个确定有限状态自动机(DeterministicFiniteAutomaton，DFA)，每个节点代表自动机的一个状态，根据变量的不同，进行状态转移，当到达结束状态或者无法转移时完成查询.DAT采用两个线性数组(base和check)对Trie树保存，base和check数组拥有一致的下标，即DFA中的每一个状态，也即Trie树中所说的节点，base数组用于确定状态的转移，check数组用于检验转移的正确性，检验该状态是否存在<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote">3</a></sup><sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote">4</a></sup>。</p>
 
-<p>在比较用于正向最大匹配分词的速度方面，DAT分词平均速度为936kB/s<sup id="fnref:4"><a href="#fn:4" class="footnote">5</a></sup>（2006年），项目用到github上一日本人的python版的<a href="https://github.com/pytries/datrie">DAT</a>，其查询速度可以达到 2.755M/s，查询速度和分词速度基本是差不多的，这三倍的差距应该是做了优化的。</p>
+<p>在比较用于正向最大匹配分词的速度方面，DAT分词平均速度为936kB/s<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote">5</a></sup>（2006年），项目用到github上一日本人的python版的<a href="https://github.com/pytries/datrie">DAT</a>，其查询速度可以达到 2.755M/s，查询速度和分词速度基本是差不多的，这三倍的差距应该是做了优化的。</p>
 
 <p>词典的收集是比较麻烦，没有现成的，项目中搜集了上海地铁、街道、行政区、乡镇等信息，其中价格信息范围是从600~9000，可识别二千、二千二、两千一等中文价格，后面微博上看到有人用1.2k做价格的，暂时没加入，自己可以加入词条后重新运行下makeData.py文件即可收录。</p>
 
@@ -738,18 +727,17 @@ json内容如下：</p>
 
 <p>需要统一转化，使用DataUtil类处理。其中mongodb使用的是ISO时间，比北京时间早8小时，而pymongo中的datetime.datetime 数据并不会按时区处理，因此手动减少8小时后存储。同样从mongoDB中取出的时间要转化为当地时间。</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre><span class="o">&gt;</span> <span class="nx">d</span><span class="o">=</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+5
+</pre></td><td class="rouge-code"><pre><span class="o">&gt;</span> <span class="nx">d</span><span class="o">=</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
 <span class="o">&gt;</span> <span class="nx">d</span>
-<span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2016-10-29T06:59:49.461Z"</span><span class="p">)</span>
+<span class="nx">ISODate</span><span class="p">(</span><span class="dl">"</span><span class="s2">2016-10-29T06:59:49.461Z</span><span class="dl">"</span><span class="p">)</span>
 <span class="o">&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">toLocaleDateString</span><span class="p">()</span>
 <span class="mi">10</span><span class="o">/</span><span class="mi">29</span><span class="o">/</span><span class="mi">2016</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="数据存储">数据存储</h2>
 
@@ -823,7 +811,7 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 如果要数据库收录‘浦东租房’历史记录信息，请将<a href="https://github.com/luzhijun/weiboSA/blob/master/weiboZ/pipelines.py">pipelines.py</a>第87、88行注释掉。一般如果有‘上海租房’了就不要去搜索‘浦东租房’，因为基本上有‘浦东租房’的微博都会有@‘上海租房’，所以下面会出现插入重复记录错误。</li>
 </ul>
 
-<div class="highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -839,7 +827,8 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 14
 15
 16
-17</pre></td><td class="code"><pre>➜  weiboZ git:(master) ✗ scrapy crawl mblogSpider -a num=10 -a new_url="http://m.weibo.cn/page/pageJson\?containerid\=\&amp;containerid\=100103type%3D1%26q%3D%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;type\=all\&amp;queryVal\=%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;luicode\=10000011\&amp;lfid\=100103type%3D%26q%3D%E4%B8%8A%E6%B5%B7%E6%97%A0%E4%B8%AD%E4%BB%8B%E7%A7%9F%E6%88%BF\&amp;title\=%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;v_p\=11\&amp;ext\=\&amp;fid\=100103type%3D1%26q%3D%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;uicode\=10000011\&amp;next_cursor\=\&amp;page\="
+17
+</pre></td><td class="rouge-code"><pre>➜  weiboZ git:(master) ✗ scrapy crawl mblogSpider -a num=10 -a new_url="http://m.weibo.cn/page/pageJson\?containerid\=\&amp;containerid\=100103type%3D1%26q%3D%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;type\=all\&amp;queryVal\=%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;luicode\=10000011\&amp;lfid\=100103type%3D%26q%3D%E4%B8%8A%E6%B5%B7%E6%97%A0%E4%B8%AD%E4%BB%8B%E7%A7%9F%E6%88%BF\&amp;title\=%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;v_p\=11\&amp;ext\=\&amp;fid\=100103type%3D1%26q%3D%E6%B5%A6%E4%B8%9C%E7%A7%9F%E6%88%BF\&amp;uicode\=10000011\&amp;next_cursor\=\&amp;page\="
 2016-10-29 14:41:11 [root] WARNING: 生成MongoPipeline对象
 2016-10-29 14:41:11 [root] WARNING: 开始spider
 2016-10-29 14:41:11 [root] WARNING: 允许插入数据的时间大于2016-10-29 14:15:05.875000
@@ -856,9 +845,7 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 2016-10-29 14:41:13 [root] ERROR: 编号为:EeYlBv7bn的数据插入异常
 2016-10-29 14:41:13 [root] ERROR: 编号为:EeXkop2vu的数据插入异常
 2016-10-29 14:41:15 [root] WARNING: 结束spider
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>更改日志显示级别请在<a href="https://github.com/luzhijun/weiboSA/blob/master/weiboZ/settings.py">setting.py</a>中修改LOG_LEVEL，介意采用项目默认的WARNNING，否则信息会很多。</p>
 
@@ -866,7 +853,7 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 
 <p>查询当前时区的2016-10-20至今有在9号线附近租房房租不高于2000的信息。</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -904,15 +891,16 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 36
 37
 38
-39</pre></td><td class="code"><pre><span class="nx">db</span><span class="p">.</span><span class="nx">house</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
+39
+</pre></td><td class="rouge-code"><pre><span class="nx">db</span><span class="p">.</span><span class="nx">house</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
 <span class="p">{</span>
-	<span class="na">created_at</span><span class="p">:{</span><span class="na">$gt</span><span class="p">:</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s1">'2016-10-20T00:00:00'</span><span class="p">)},</span>
+	<span class="na">created_at</span><span class="p">:{</span><span class="na">$gt</span><span class="p">:</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="dl">'</span><span class="s1">2016-10-20T00:00:00</span><span class="dl">'</span><span class="p">)},</span>
 	<span class="na">$or</span><span class="p">:</span>
 		<span class="p">[</span>
 			<span class="p">{</span><span class="na">price</span><span class="p">:{</span><span class="na">$lte</span><span class="p">:</span><span class="mi">2000</span><span class="p">}},</span>
 			<span class="p">{</span><span class="na">price</span><span class="p">:[]}</span>
 		<span class="p">],</span>
-	<span class="na">admin</span><span class="p">:</span><span class="s1">'9号线'</span><span class="p">,</span>
+	<span class="na">admin</span><span class="p">:</span><span class="dl">'</span><span class="s1">9号线</span><span class="dl">'</span><span class="p">,</span>
 	<span class="na">tag</span><span class="p">:</span><span class="kc">true</span>
 <span class="p">},</span>
 <span class="p">{</span>	
@@ -921,31 +909,29 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 	<span class="na">created_at</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
 	<span class="na">scheme</span><span class="p">:</span><span class="mi">1</span>
 <span class="p">}</span>
-<span class="p">).</span><span class="nx">hint</span><span class="p">(</span><span class="s1">'created_at_-1'</span><span class="p">).</span><span class="nx">pretty</span><span class="p">()</span>
+<span class="p">).</span><span class="nx">hint</span><span class="p">(</span><span class="dl">'</span><span class="s1">created_at_-1</span><span class="dl">'</span><span class="p">).</span><span class="nx">pretty</span><span class="p">()</span>
 
 <span class="p">{</span>
-	<span class="s2">"text"</span> <span class="p">:</span> <span class="s2">"房子在大上海国际花园，漕宝路1555弄，距9号线合川路地铁站步行5分钟，距徐家汇站只有4站，现在转租大床，有独立卫生间，公共厨房，房租2400，平摊下来1200，有一女室友，室友宜家上班，限女生，没有物业费，包网络，水电自理@上海租房无中介 @上海租房无中介 @上海租房 @上海租房无中介联盟"</span><span class="p">,</span>
-	<span class="s2">"scheme"</span> <span class="p">:</span> <span class="s2">"http://m.weibo.cn/1641537045/EetVm3WBV?"</span><span class="p">,</span>
-	<span class="s2">"created_at"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2016-10-25T09:18:00Z"</span><span class="p">)</span>
+	<span class="dl">"</span><span class="s2">text</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">房子在大上海国际花园，漕宝路1555弄，距9号线合川路地铁站步行5分钟，距徐家汇站只有4站，现在转租大床，有独立卫生间，公共厨房，房租2400，平摊下来1200，有一女室友，室友宜家上班，限女生，没有物业费，包网络，水电自理@上海租房无中介 @上海租房无中介 @上海租房 @上海租房无中介联盟</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">scheme</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">http://m.weibo.cn/1641537045/EetVm3WBV?</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">created_at</span><span class="dl">"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="dl">"</span><span class="s2">2016-10-25T09:18:00Z</span><span class="dl">"</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="p">{</span>
-	<span class="s2">"text"</span> <span class="p">:</span> <span class="s2">"#上海租房##上海出租#9号线松江泗泾地铁站金地自在城，12层，步行、公交或小区班车直达地铁站。精装，品牌家具家电，主卧1800RMB/月；公寓门禁出入，房东直租，电话：13816835869，或QQ：36804408。@上海租房 @互助租房 @房天下上海租房 @上海租房无中介   @应届毕业生上海租房"</span><span class="p">,</span>
-	<span class="s2">"scheme"</span> <span class="p">:</span> <span class="s2">"http://m.weibo.cn/1641537045/Een8cAoy8?"</span><span class="p">,</span>
-	<span class="s2">"created_at"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2016-10-24T16:00:00Z"</span><span class="p">)</span>
+	<span class="dl">"</span><span class="s2">text</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">#上海租房##上海出租#9号线松江泗泾地铁站金地自在城，12层，步行、公交或小区班车直达地铁站。精装，品牌家具家电，主卧1800RMB/月；公寓门禁出入，房东直租，电话：13816835869，或QQ：36804408。@上海租房 @互助租房 @房天下上海租房 @上海租房无中介   @应届毕业生上海租房</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">scheme</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">http://m.weibo.cn/1641537045/Een8cAoy8?</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">created_at</span><span class="dl">"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="dl">"</span><span class="s2">2016-10-24T16:00:00Z</span><span class="dl">"</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="p">{</span>
-	<span class="s2">"text"</span> <span class="err">:</span> <span class="s2">"#上海租房# 个人离开上海：转租地铁9号线朝南主卧带大阳台，离地铁站两分钟！设备齐全，交通方便，随时入住。具体信息看图片～@上海租房 @上海租房无中介联盟 @魔都租房 帮转谢谢！"</span><span class="p">,</span>
-	<span class="s2">"scheme"</span> <span class="err">:</span> <span class="s2">"http://m.weibo.cn/1641537045/EdRpfuKuH?"</span><span class="p">,</span>
-	<span class="s2">"created_at"</span> <span class="err">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2016-10-21T07:14:00Z"</span><span class="p">)</span>
+	<span class="dl">"</span><span class="s2">text</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">#上海租房# 个人离开上海：转租地铁9号线朝南主卧带大阳台，离地铁站两分钟！设备齐全，交通方便，随时入住。具体信息看图片～@上海租房 @上海租房无中介联盟 @魔都租房 帮转谢谢！</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">scheme</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">http://m.weibo.cn/1641537045/EdRpfuKuH?</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">created_at</span><span class="dl">"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="dl">"</span><span class="s2">2016-10-21T07:14:00Z</span><span class="dl">"</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="p">{</span>
-	<span class="s2">"text"</span> <span class="err">:</span> <span class="s2">"9号线桂林路 离地铁站8分钟 招女生室友哦 @上海租房 @上海租房无中介联盟 上海·南京西路"</span><span class="p">,</span>
-	<span class="s2">"scheme"</span> <span class="err">:</span> <span class="s2">"http://m.weibo.cn/1641537045/EdJ2U8Kv3?"</span><span class="p">,</span>
-	<span class="s2">"created_at"</span> <span class="err">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2016-10-20T09:57:00Z"</span><span class="p">)</span>
+	<span class="dl">"</span><span class="s2">text</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">9号线桂林路 离地铁站8分钟 招女生室友哦 @上海租房 @上海租房无中介联盟 上海·南京西路</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">scheme</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">http://m.weibo.cn/1641537045/EdJ2U8Kv3?</span><span class="dl">"</span><span class="p">,</span>
+	<span class="dl">"</span><span class="s2">created_at</span><span class="dl">"</span> <span class="p">:</span> <span class="nx">ISODate</span><span class="p">(</span><span class="dl">"</span><span class="s2">2016-10-20T09:57:00Z</span><span class="dl">"</span><span class="p">)</span>
 <span class="p">}</span>
-</pre></td></tr></tbody></table>
-</div>
-</div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="note">Note</h2>
 
@@ -959,22 +945,22 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
 
 <h2 id="ref">Ref</h2>
 
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1">
-      <p>Web scraping with python, http://shop.oreilly.com/product/0636920034391.do&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:1" role="doc-endnote">
+      <p>Web scraping with python, http://shop.oreilly.com/product/0636920034391.do <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:2">
-      <p>Twisted网络编程必备, http://down.51cto.com/data/616351&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:2" role="doc-endnote">
+      <p>Twisted网络编程必备, http://down.51cto.com/data/616351 <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:3">
-      <p>THEPPITAKK.Animplementationofdouble-araytrie[z].http:/Ainux.thai.net/–thep/datrie/datrie.html，2006.&nbsp;<a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:3" role="doc-endnote">
+      <p>THEPPITAKK.Animplementationofdouble-araytrie[z].http:/Ainux.thai.net/–thep/datrie/datrie.html，2006. <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:5">
-      <p>双数组Tire树简介. http://www.cnblogs.com/ooon/p/4883159.html&nbsp;<a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:5" role="doc-endnote">
+      <p>双数组Tire树简介. http://www.cnblogs.com/ooon/p/4883159.html <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:4">
-      <p>王思力，张华平，王斌.双数组Trie树算法优化及其应用研究[J].中文信息学报，2006，20(5):24—30&nbsp;<a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:4" role="doc-endnote">
+      <p>王思力，张华平，王斌.双数组Trie树算法优化及其应用研究[J].中文信息学报，2006，20(5):24—30 <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -1217,7 +1203,7 @@ containerid=&amp;containerid=100103type%3D1%26q%3D浦东租房<br />
                     
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; T.L Blog 2018
+                    Copyright &copy; T.L Blog 2020
                     <br>
                 </p>
             </div>
